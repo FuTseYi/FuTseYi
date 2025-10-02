@@ -13,5 +13,6 @@
 
 ## **Reaching a life stage**📈
 
-<img src="https://blog.246612.xyz/content/2025/10/香港科技大学（广州）-logo.svg"  align="right" >
+  <img src="https://blog.246612.xyz/content/2025/10/香港科技大学（广州）-logo.svg"  align="right" width="2%">
+  
 - "Admitted to HKUST MPhil program one year early through a recommendation-based scheme."
