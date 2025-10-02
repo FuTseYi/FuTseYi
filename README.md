@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > People can retire, but the spirit cannot retire--Gundam
-> <img src="https://blog.246612.xyz/content/2025/06/gundam-arts.gif" width="20%" align="right" style="border-radius: 30px;">
+> <img src="https://blog.246612.xyz/content/2025/06/gundam-arts.gif" width="20%" align="right">
 
 - **HKUST - Full Tuition Scholarship - Red Bird MPhil**
 - As an undergraduate majoring in Automation, I aspire to become a leading figure in the field of artificial intelligence.
@@ -13,5 +13,5 @@
 
 ## **Reaching a life stage**📈
 
-<img src="https://blog.246612.xyz/content/2025/10/香港科技大学（广州）-logo.svg"  align="left" >
+<img src="https://blog.246612.xyz/content/2025/10/香港科技大学（广州）-logo.svg"  align="right" >
 - "Admitted to HKUST MPhil program one year early through a recommendation-based scheme."
