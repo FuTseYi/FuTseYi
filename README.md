@@ -8,7 +8,7 @@
 - *As an undergraduate majoring in Automation, I aspire to become a leading figure in the field of artificial intelligence.*
 - *Lang: English, Chinese.*
 - *Contact:*
-	- *Email: [xieyiwork@icloud.com](mailto:xieyiwork@icloud.com)*
+	- *Email: [tseyi.wk@icloud.com](mailto:tseyi.wk@icloud.com)*
 
 ## 📈*Reaching a life stage*
 
