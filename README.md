@@ -12,4 +12,4 @@
 
 ## 💠*Motto*
 
->  *”People can retire, but the spirit cannot retire“-Gundam*<img src="https://blog.246612.xyz/content/2025/11/apple-smile.png"  align="right" width="10%">
+>  *”People can retire, but the spirit cannot retire“-Gundam*<img src="https://blog.246612.xyz/apple-smile.png"  align="right" width="10%">
