@@ -1,4 +1,4 @@
-## <img width="180" height="25" src="https://glitch-art.vercel.app/api/simple?word=Hi%20I'm%20Shine&font=Doto" />
+![](assets/i-am-shine.svg)
 
 ## 🖖🏻*About*
 

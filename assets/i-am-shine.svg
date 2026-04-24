@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="52" viewBox="0 0 300 52" fill="none">
+  <defs>
+    <style>
+      /* 统一颜色变量 */
+      :root {
+        --bubble-bg: #e8e8e8;
+        --bubble-text: #1a1a1a;
+        --dot-color: #999;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bubble-bg: #3a3a3c;
+          --bubble-text: #f2f2f7;
+          --dot-color: #888;
+        }
+      }
+
+      /* SVG 打字气泡 */
+      .svg-bubble { fill: var(--bubble-bg); }
+      .dot-color  { fill: var(--dot-color); }
+
+      /* HTML 消息气泡 */
+      .chat-bubble {
+        display: inline-block;
+        width: fit-content;
+        background: var(--bubble-bg);
+        color: var(--bubble-text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 15px;
+        line-height: 42px;
+        padding: 0 14px;
+        border-radius: 18px;
+        white-space: nowrap;
+      }
+
+      @keyframes bounce {
+        0%, 60%, 100% { transform: translateY(0px); }
+        30%           { transform: translateY(-5px); }
+      }
+      .dot1 { animation: bounce 1.2s ease-in-out infinite 0.0s; }
+      .dot2 { animation: bounce 1.2s ease-in-out infinite 0.2s; }
+      .dot3 { animation: bounce 1.2s ease-in-out infinite 0.4s; }
+
+      @keyframes showTyping {
+        0%    { opacity: 0; }
+        5%    { opacity: 1; }
+        20%   { opacity: 1; }
+        26.7% { opacity: 0; }
+        100%  { opacity: 0; }
+      }
+      @keyframes showMsg {
+        0%    { opacity: 0; }
+        20%   { opacity: 0; }
+        30%   { opacity: 1; }
+        75%   { opacity: 1; }
+        91.7% { opacity: 0; }
+        100%  { opacity: 0; }
+      }
+
+      .typing { animation: showTyping 6s ease-in-out infinite; opacity: 0; }
+      .msg    { animation: showMsg    6s ease-in-out infinite; opacity: 0; }
+    </style>
+  </defs>
+
+  <!-- 打字气泡（SVG） -->
+  <g class="typing">
+    <rect x="8.27" width="69.73" height="42" rx="21" class="svg-bubble"/>
+    <circle cx="13.59" cy="33.09" r="7.68" class="svg-bubble"/>
+    <circle cx="3.55"  cy="41.95" r="3.55" class="svg-bubble"/>
+    <circle class="dot1 dot-color" cx="27.48" cy="20.98" r="5.02"/>
+    <circle class="dot2 dot-color" cx="42.84" cy="20.98" r="5.02"/>
+    <circle class="dot3 dot-color" cx="58.21" cy="20.98" r="5.02"/>
+  </g>
+
+  <!-- 消息气泡（foreignObject） -->
+  <g class="msg">
+    <foreignObject x="0" y="0" width="300" height="52">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <span class="chat-bubble">Hi, I'm Shine 🖖🏻</span>
+      </div>
+    </foreignObject>
+  </g>
+
+</svg>
