@@ -3,6 +3,7 @@
 <img src="assets/香港科技大学（广州）-logo.svg"  align="right" width="3%">
 
 - ***HKUST GZ - Full Tuition Scholarship - Red Bird MPhil*** 
+- *Aspire to become a leading figure in the field of artificial intelligence.*
 - *Lang: English, Chinese.*
 - *Contact:*
 	- *Email: [tseyi.wk@icloud.com](mailto:tseyi.wk@icloud.com)*
