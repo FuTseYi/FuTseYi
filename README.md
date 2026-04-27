@@ -16,6 +16,6 @@
 
 <img src="assets/emoji-wink.png"  align="right" width="6%">
 
->  *Freiheit als Autonomie*
+- *Freiheit als Autonomie*
 
->  *People can retire, but the spirit cannot retire-Gundam*
+- *People can retire, but the spirit cannot retire - Gundam*
