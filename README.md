@@ -8,10 +8,9 @@
 - *Contact:*
 	- *Email: [tseyi.wk@icloud.com](mailto:tseyi.wk@icloud.com)*
 
-## *Website & Notes*
+## *Website*
 
-- *Website：[xieyi.org](https://xieyi.org)* | *Notes：[notes.xieyi.org](https://notes.xieyi.org)*
-
+- Read my Blog( *[futseyi.com](https://www.futseyi.com/)* ) to learn more about me
 ## *Motto*
 
 <img src="assets/emoji-wink.png"  align="right" width="6%">
