@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="52" viewBox="0 0 300 52" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="430" height="52" viewBox="0 0 430 52" fill="none">
   <defs>
     <style>
       /* 统一颜色变量 */
@@ -8,6 +8,7 @@
         --bubble-text: #1a1a1a;
         --dot-color: #999;
       }
+
       @media (prefers-color-scheme: dark) {
         :root {
           --bubble-bg: #3a3a3c;
@@ -75,9 +76,9 @@
 
   <!-- 消息气泡（foreignObject） -->
   <g class="msg">
-    <foreignObject x="0" y="0" width="300" height="52">
+    <foreignObject x="0" y="0" width="430" height="52">
       <div xmlns="http://www.w3.org/1999/xhtml">
-        <span class="chat-bubble">Hi, I'm Shine 🖖🏻</span>
+        <span class="chat-bubble">I’m 謝懿 “Shine”, online as FuTseYi. 🖖🏻</span>
       </div>
     </foreignObject>
   </g>
