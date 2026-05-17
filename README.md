@@ -18,3 +18,5 @@
 - *Freiheit als Autonomie — Freedom through autonomy.*
 
 - *People can retire, but the spirit cannot retire. - Gundam*
+
+[![https://github.com/FuTseYi](https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fgithub.com%2FFuTseYi)](https://visit.futseyi.com/status?path=https%3A%2F%2Fgithub.com%2FFuTseYi)
