@@ -11,6 +11,12 @@
 ## *Website*
 
 - Read my Blog( *[futseyi.com](https://www.futseyi.com/)* ) to learn more about me
+
+## Latest Posts
+ 
+<!-- BLOG-POST-LIST:START -->
+<!-- BLOG-POST-LIST:END -->
+
 ## *Motto*
 
 <img src="assets/emoji-wink.png"  align="right" width="6%">
