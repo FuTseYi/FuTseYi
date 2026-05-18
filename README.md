@@ -25,4 +25,5 @@
 
 - *People can retire, but the spirit cannot retire. - Gundam*
 
-[![https://github.com/FuTseYi](https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fgithub.com%2FFuTseYi)](https://visit.futseyi.com/status?path=https%3A%2F%2Fgithub.com%2FFuTseYi)
+<a href="https://visit.futseyi.com/status?path=https%3A%2F%2Fgithub.com%2FFuTseYi" target="_blank" rel="noopener noreferrer"><img src="https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fgithub.com%2FFuTseYi" alt="Visitor badge" /></a>  
+Powered by <a href="https://github.com/FuTseYi/Cloudflare-D1-Visit-Counter" target="_blank" rel="noopener noreferrer">Cloudflare-D1-Visit-Counter</a>
