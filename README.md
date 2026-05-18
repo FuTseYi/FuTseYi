@@ -15,6 +15,9 @@
 ## Latest Posts
  
 <!-- BLOG-POST-LIST:START -->
+- [2026 最新土耳其（外区）Apple ID 注册教程：低价订阅 ChatGPT Plus 完整指南（附开启跨区 Apple 家庭共享）](https://www.futseyi.com/blog/turkey-foreign-apple-id-chatgpt-plus-cross-region-family-sharing/)
+- [我们都还在路上：在不确定中攒出自己的选择权](https://www.futseyi.com/blog/on-the-road-accumulating-choices/)
+- [Claude Desktop 接入第三方模型 API：基于 ccswitch 的配置与踩坑](https://www.futseyi.com/blog/claude-desktop-third-party-api-ccswitch/)
 <!-- BLOG-POST-LIST:END -->
 
 ## *Motto*
