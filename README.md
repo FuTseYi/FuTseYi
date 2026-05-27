@@ -1,16 +1,14 @@
 ## *About* ![](assets/i-am-shine.svg)
 
-<img src="assets/香港科技大学（广州）-logo.svg"  align="right" width="3%">
-
-- ***HKUST - Canton - Full Tuition Scholarship - Red Bird MPhil*** 
-- *Exploring AI. Engineering the future.*
-- *Lang: English, Chinese.*
+- ***Currently exploring new things, occasionally pretending I know what I’m doing.*** 
+- *Interested in AI, engineering, and whatever keeps me curious.*
+- *Lang: English, Mandarin, Cantonese.*
 - *Contact:*
 	- *Email: [tseyi.wk@icloud.com](mailto:tseyi.wk@icloud.com)*
 
 ## *Website*
 
-- Read my Blog( *[futseyi.com](https://www.futseyi.com/)* ) to learn more about me
+- Visit *[futseyi.com](https://www.futseyi.com/)* to learn more about me.
 
 ## Latest Posts
  
@@ -28,5 +26,12 @@
 
 - *People can retire, but the spirit cannot retire. - Gundam*
 
-<a href="https://visit.futseyi.com/status?path=https%3A%2F%2Fgithub.com%2FFuTseYi" target="_blank" rel="noopener noreferrer"><img src="https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fgithub.com%2FFuTseYi" alt="Visitor badge" /></a>  
-Powered by <a href="https://github.com/FuTseYi/Cloudflare-D1-Visit-Counter" target="_blank" rel="noopener noreferrer">Cloudflare-D1-Visit-Counter</a>
+<a href="https://visit.futseyi.com/status?path=https%3A%2F%2Fgithub.com%2FFuTseYi" target="_blank" rel="noopener noreferrer">
+  <img src="https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fgithub.com%2FFuTseYi" alt="Visitor badge" />
+</a>
+
+<br>
+
+<sub>
+  Powered by <a href="https://github.com/FuTseYi/Cloudflare-D1-Visit-Counter" target="_blank" rel="noopener noreferrer">Cloudflare-D1-Visit-Counter</a>
+</sub>
