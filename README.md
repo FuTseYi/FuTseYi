@@ -8,7 +8,7 @@
 
 ## *Website*
 
-- Visit *[futseyi.com](https://www.futseyi.com/)* to learn more about me.
+- Visit 『*[futseyi.com](https://www.futseyi.com/)*』to learn more about me.
 
 ## Latest Posts
  
