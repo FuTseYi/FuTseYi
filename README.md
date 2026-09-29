@@ -4,7 +4,7 @@
 - *Interested in AI, engineering, and whatever keeps me curious.*
 - *Lang: English, Mandarin, Cantonese.*
 - *Contact:*
-	- *Email: [tseyihub@outlook.com](mailto:tseyihub@outlook.com)*
+	- *Email: [tseyi.connect@outlook.com](mailto:tseyi.connect@outlook.com)*
 
 ## *Website*
 
