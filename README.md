@@ -1,4 +1,4 @@
-## *About* ![](assets/i-am-ayee.svg)
+## *About* ![](assets/i-am-Shine.svg)
 
 - ***Currently exploring new things, occasionally pretending I know what I’m doing.*** 
 - *Interested in AI, engineering, and whatever keeps me curious.*
