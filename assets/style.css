@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=Outfit:wght@300;400;500;600;700&display=swap");
 
 /* FuTseYi academic homepage and Blog styles. */
 :root {
@@ -229,11 +229,18 @@ strong { font-weight: 600; }
 .hero h1 {
     margin-top: 10px;
     font-size: clamp(38px, 4.8vw, 56px);
-    font-weight: 400; line-height: 1.05; letter-spacing: -.035em;
+    font-family: 'Bodoni Moda', 'Bodoni MT', 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -.035em;
   }
 
 .hero h1 .alias {
-    font-size: .55em; font-weight: 300;
+    font-family: var(--font);
+    font-style: normal;
+    font-size: .46em; font-weight: 300;
+    white-space: nowrap;
     letter-spacing: .02em; color: var(--ink-faint);
   }
 
