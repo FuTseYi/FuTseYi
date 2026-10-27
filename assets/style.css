@@ -680,14 +680,14 @@ a:is(:hover,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45
 
 a:is(:hover,:focus-visible){color:var(--gold-ink)}
 
-/* Highlight the current section; pointer hover takes priority. */
-#main > section{background:var(--bg);transition:background-color .18s ease}
-#main > section.section.is-current,#main > section.section:focus-within{background:var(--bg-soft)}
+/* Highlight individual entries without coloring entire sections. */
+#main > section{background:var(--bg)}
+.education-item,.project-item,.latest-post-link{transition:background-color .16s ease}
+.education-item:focus-within,.project-item:focus-within,.latest-post-link:focus-visible{background:var(--bg-soft)}
 @media(hover:hover){
- #main:has(> section.section:hover) > section{background:var(--bg)}
- #main:has(> section.section:hover) > section.section:hover{background:var(--bg-soft)}
+ .education-list .education-item:hover,.project-item:hover,.latest-post-link:hover{background:var(--bg-soft)}
 }
-@media(prefers-reduced-motion:reduce){#main > section{transition:none}}
+@media(prefers-reduced-motion:reduce){.education-item,.project-item,.latest-post-link{transition:none}}
 .about-intro{margin-top:22px}
 .about-intro .bio{margin-top:18px;font-size:15px;line-height:1.8}
 .about-intro .profile-note{margin:0;font-weight:400;color:var(--ink-soft)}
