@@ -697,7 +697,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 }
 @media(prefers-reduced-motion:reduce){#main > section{transition:none}}
 
-.about-title{margin:18px 0 20px}
+.about-title{font-size:14px;font-weight:500;letter-spacing:.02em;margin:16px 0 14px}
 .about-intro .bio{margin-top:16px}
 .about-intro .profile-note{margin:0;font-weight:400;color:var(--ink-soft)}
 .bio-detail{margin-top:22px}
