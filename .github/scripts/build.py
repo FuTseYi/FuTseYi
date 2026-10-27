@@ -56,7 +56,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
   <a class="brand" href="/" aria-label="FuTseYi (Shine) homepage">FuTseYi (Shine)</a>
   <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
   <nav class="nav-links" id="primary-navigation" aria-label="Main navigation">
-    <a href="/#about">About</a><a href="/#education">Education</a><a href="/#focus">Current Focus</a><a class="is-active" href="/blog/" aria-current="page">Blog</a>
+    <a href="/#about">About</a><a href="/#education">Education</a><a href="/#community">Community</a><a href="/#contributions">Contributions</a><a class="is-active" href="/blog/" aria-current="page">Blog</a>
   </nav>
 </div></header>
 <main class="blog-container" id="main">{content}</main>
