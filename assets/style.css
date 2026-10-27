@@ -293,12 +293,23 @@ strong { font-weight: 600; }
 .bio strong { color: var(--ink); font-weight: 600; }
 
 .portrait {
+    position: relative;
+    isolation: isolate;
     grid-column: 2;
     grid-row: 1 / 6;
     display: flex;
     flex-direction: column;
     width: 100%;
     align-self: center;
+  }
+
+.portrait::before {
+    content: '';
+    position: absolute;
+    inset: -26% -35%;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse, rgba(103,154,185,.14), rgba(103,154,185,0) 68%);
   }
 
 .hero-links {
@@ -359,6 +370,25 @@ section.section.section-soft {
     background: var(--bg-soft);
     border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
+  }
+
+#education.section {
+    background: #f5f8fa;
+    border-color: var(--line-soft);
+  }
+
+#education .section-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+#education .section-title::before {
+    content: '';
+    width: 24px;
+    height: 2px;
+    flex: 0 0 auto;
+    background: var(--gold);
   }
 
 .section-heading {
