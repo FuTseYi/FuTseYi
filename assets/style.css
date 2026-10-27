@@ -714,7 +714,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
 .section-lead{font-size:14px;color:var(--ink-soft);max-width:730px;margin-bottom:20px}
 .education-content p{font-size:13px;color:var(--ink-soft)}
-.education-initial{font-size:18px;color:var(--ink-faint);letter-spacing:.06em}
 .interest-list,.project-list{border-top:1px solid var(--line)}
 .interest-item,.project-item{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid var(--line-soft)}
 .item-no{font-size:12px;color:var(--ink-faint);padding-top:3px}
