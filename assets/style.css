@@ -720,3 +720,11 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .about-intro .profile-note{text-align:left}
  .hero{padding-top:calc(var(--nav-h) + 20px)}
 }
+
+/* Let article hover surfaces breathe without moving the text or dates. */
+.about-blog .latest-post-link{position:relative;isolation:isolate}
+.about-blog .latest-post-link::before{content:"";position:absolute;inset:0 -12px;border-radius:6px;background:transparent;z-index:-1;pointer-events:none;transition:background-color .16s ease}
+.about-blog .latest-post-link:focus-visible{background:transparent}
+.about-blog .latest-post-link:focus-visible::before{background:var(--bg-soft)}
+@media(hover:hover){.about-blog .latest-post-link:hover{background:transparent}.about-blog .latest-post-link:hover::before{background:var(--bg-soft)}}
+@media(prefers-reduced-motion:reduce){.about-blog .latest-post-link::before{transition:none}}
