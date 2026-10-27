@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
 
-/* Adapted from TianxingChen/tianxingchen.github.io index.html with author permission.
-   Only the modules used by FuTseYi are retained; no framework or build dependency. */
+/* FuTseYi academic homepage and Writing styles. */
 :root {
     --bg: #ffffff;
     --bg-soft: #f8f9fc;
@@ -465,10 +464,13 @@ section.section.section-soft {
       transform: translateY(-50%);
       z-index: 40;
       padding: 10px 0;
-      opacity: 1;
-      pointer-events: auto;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
       transition: opacity .25s ease;
     }
+
+.page-toc.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 
 .page-toc a {
       display: block;

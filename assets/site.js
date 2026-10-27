@@ -25,10 +25,31 @@
     if (window.innerWidth > 860) setOpen(false);
   }, { passive: true });
 
-  const targets = ['about', 'education', 'interests', 'projects', 'writing', 'contact']
-    .map((id) => document.getElementById(id))
+  const toc = document.querySelector('.page-toc');
+  const targets = [...(nav?.querySelectorAll('a[href^="#"]') || [])]
+    .map((link) => document.getElementById(link.hash.slice(1)))
     .filter(Boolean);
   const links = [...document.querySelectorAll('.nav-links a[href^="#"], .page-toc a[href^="#"]')];
+  let clickedTarget = null;
+  const selectTarget = (id) => {
+    const target = document.getElementById(id);
+    if (!targets.includes(target)) {
+      clickedTarget = null;
+      schedule();
+      return;
+    }
+    const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    clickedTarget = { id, top: Math.max(0, Math.min(top, document.documentElement.scrollHeight - window.innerHeight)), settled: false };
+    schedule();
+  };
+  links.forEach((link) => link.addEventListener('click', () => selectTarget(link.hash.slice(1))));
+  const releaseTarget = () => { clickedTarget = null; schedule(); };
+  window.addEventListener('wheel', releaseTarget, { passive: true });
+  window.addEventListener('touchstart', releaseTarget, { passive: true });
+  document.addEventListener('keydown', (event) => {
+    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) releaseTarget();
+  });
   let scheduled = false;
   const sync = () => {
     scheduled = false;
@@ -37,10 +58,23 @@
     const navHeight = header.getBoundingClientRect().height;
     const probe = window.scrollY + navHeight + 28;
     let active = targets[0].id;
-    for (const el of targets) {
+    const ordered = [...targets].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+    for (const el of ordered) {
       if (el.getBoundingClientRect().top + window.scrollY <= probe) active = el.id;
     }
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 6) active = targets[targets.length - 1].id;
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 6) active = ordered[ordered.length - 1].id;
+    // Keep the clicked section selected through smooth scrolling and bottom clamping.
+    if (clickedTarget) {
+      if (Math.abs(window.scrollY - clickedTarget.top) <= 2) clickedTarget.settled = true;
+      else if (clickedTarget.settled) clickedTarget = null;
+      if (clickedTarget) active = clickedTarget.id;
+    }
+    if (toc) {
+      const visible = targets[0].getBoundingClientRect().bottom <= navHeight + 28;
+      toc.classList.toggle('is-visible', visible);
+      toc.setAttribute('aria-hidden', String(!visible));
+      toc.inert = !visible;
+    }
     links.forEach((link) => {
       const current = link.getAttribute('href') === '#' + active;
       link.classList.toggle('is-active', current);
@@ -55,7 +89,12 @@
     }
   };
   window.addEventListener('scroll', schedule, { passive: true });
-  window.addEventListener('resize', schedule, { passive: true });
-  window.addEventListener('hashchange', schedule);
+  window.addEventListener('resize', releaseTarget, { passive: true });
+  window.addEventListener('hashchange', () => selectTarget(location.hash.slice(1)));
+  window.addEventListener('load', () => {
+    if (location.hash) selectTarget(location.hash.slice(1));
+    else schedule();
+  });
+  document.querySelector('details')?.addEventListener('toggle', releaseTarget);
   schedule();
 })();
