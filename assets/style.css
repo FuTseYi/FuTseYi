@@ -730,3 +730,6 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 @media(prefers-reduced-motion:reduce){.education-list .education-item::before,.project-item::before,.about-blog .latest-post-link::before{transition:none}}
 
 .activity-note{font-size:11px;color:var(--ink-faint);margin-top:14px}
+
+#community .project-item{grid-template-columns:40px minmax(0,1fr);align-items:center}
+.community-icon{display:block;width:40px;height:40px;object-fit:contain;border-radius:8px}
