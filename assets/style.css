@@ -724,4 +724,4 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .about-blog{margin-top:20px}
 }
 
-.profile-motto-row{border-top:1px solid var(--line);padding-top:16px}
+.about-blog{border-top:1px solid var(--line);padding-top:16px}
