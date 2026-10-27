@@ -372,25 +372,6 @@ section.section.section-soft {
     border-bottom: 1px solid transparent;
   }
 
-#education.section {
-    background: #f5f8fa;
-    border-color: var(--line-soft);
-  }
-
-#education .section-title {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-#education .section-title::before {
-    content: '';
-    width: 24px;
-    height: 2px;
-    flex: 0 0 auto;
-    background: var(--gold);
-  }
-
 .section-heading {
     margin-bottom: 16px;
     display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
