@@ -53,7 +53,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="site-header"><div class="header-inner">
-  <a class="brand" href="/" aria-label="FuTseYi homepage">FuTseYi<span class="brand-dot">.</span></a>
+  <a class="brand" href="/" aria-label="FuTseYi (Shine) homepage">FuTseYi (Shine)</a>
   <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
   <nav class="nav-links" id="primary-navigation" aria-label="Main navigation">
     <a href="/#about">About</a><a href="/#education">Education</a><a href="/#interests">Research</a><a href="/#projects">Projects</a><a class="is-active" href="/blog/" aria-current="page">Writing</a><a href="/#contact">Contact</a>
