@@ -2,8 +2,8 @@
 
 /* FuTseYi academic homepage and Writing styles. */
 :root {
-    --bg: #f3f8fc;
-    --bg-soft: var(--bg);
+    --bg: #ffffff;
+    --bg-soft: #f6faff;
     --ink: #121317;
     --ink-soft: #45474d;
     --ink-faint: #7a7e87;
@@ -111,11 +111,11 @@ strong { font-weight: 600; }
     pointer-events: none;
     background: linear-gradient(
       to bottom,
-      rgba(243,248,252,.9) 0%,
-      rgba(243,248,252,.55) 28%,
-      rgba(243,248,252,.18) 52%,
-      rgba(243,248,252,0) 78%,
-      rgba(243,248,252,0) 100%
+      rgba(255,255,255,.9) 0%,
+      rgba(255,255,255,.55) 28%,
+      rgba(255,255,255,.18) 52%,
+      rgba(255,255,255,0) 78%,
+      rgba(255,255,255,0) 100%
     );
   }
 
@@ -713,7 +713,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .skip-link{position:fixed;top:-100px;left:16px;z-index:200;background:var(--bg);padding:10px 16px}
 .skip-link:focus{top:8px}
 .brand-dot{color:var(--accent)}
-.site-header:not(:has(.nav-blur)){background:rgba(243,248,252,.94);backdrop-filter:blur(16px)}
+.site-header:not(:has(.nav-blur)){background:rgba(255,255,255,.94);backdrop-filter:blur(16px)}
 .bio p+p{margin-top:12px}
 .portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
 .section-lead{font-size:14px;color:var(--ink-soft);max-width:730px;margin-bottom:20px}
