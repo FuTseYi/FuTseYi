@@ -45,7 +45,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffffff"><meta name="description" content="{description}">
+<meta name="theme-color" content="#fafcfd"><meta name="description" content="{description}">
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
 <link rel="icon" href="/assets/HKUST.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{CSS}"><script src="/assets/site.js" defer></script>
@@ -103,7 +103,7 @@ def main() -> None:
     entries = []
     for post in posts:
         entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h2><p>{escape(post["description"])}</p></div></a>')
-    index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">WRITING & NOTES</span><h1>Writing<span style="color:var(--blue)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
+    index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">WRITING & NOTES</span><h1>Writing<span style="color:var(--accent)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
     (OUTPUT / "index.html").write_text(layout("Writing", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     urls = [SITE + "/", SITE + "/blog/"] + [SITE + post["url"] for post in posts]
