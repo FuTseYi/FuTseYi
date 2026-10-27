@@ -1,4 +1,4 @@
-# FuTseYi / Shine
+# FuTseYi Shine
 
 ## *About* ![](https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/i-am-Shine.svg)
 
