@@ -689,8 +689,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .about-intro .bio{margin-top:18px;font-size:15px;line-height:1.8}
 .about-intro .profile-note{margin:0;font-weight:400;color:var(--ink-soft)}
 .bio-detail{margin-top:24px}
-.profile-languages{display:grid;grid-template-columns:60px minmax(0,1fr);gap:10px;align-items:baseline}
-.bio-detail .profile-languages{margin:0;font-size:13px}
+.about-intro .profile-languages{margin:10px 0 0;font-size:12px;color:var(--ink-faint)}
 .profile-languages span,.motto-heading{font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--ink-faint)}
 .motto-heading{border-top:1px solid var(--line);margin-top:22px;padding-top:16px;margin-bottom:8px}
 .bio-detail .profile-motto{border:0;padding-top:0;margin-top:0;font-size:12.5px;line-height:1.65}
