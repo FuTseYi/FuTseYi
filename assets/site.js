@@ -22,7 +22,7 @@
     if (header.classList.contains('menu-open') && !header.contains(event.target)) setOpen(false);
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 820) setOpen(false);
+    if (window.innerWidth > 860) setOpen(false);
   }, { passive: true });
 
   const targets = ['about', 'education', 'interests', 'projects', 'writing', 'contact']
@@ -34,7 +34,8 @@
     scheduled = false;
     header.classList.toggle('is-scrolled', window.scrollY > 6);
     if (!targets.length) return;
-    const probe = window.scrollY + 115;
+    const navHeight = header.getBoundingClientRect().height;
+    const probe = window.scrollY + navHeight + 28;
     let active = targets[0].id;
     for (const el of targets) {
       if (el.getBoundingClientRect().top + window.scrollY <= probe) active = el.id;
