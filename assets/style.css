@@ -221,10 +221,10 @@ strong { font-weight: 600; }
 
 .bio { grid-column: 1; grid-row: 2; }
 
-.hero-links { grid-column: 1; grid-row: 3; }
+.hero-links { grid-column: 1; grid-row: 4; }
 
 
-.bio-detail { grid-column: 1; grid-row: 4; }
+.bio-detail { grid-column: 1; grid-row: 3; }
 
 .hero h1 {
     margin-top: 10px;
@@ -249,7 +249,7 @@ strong { font-weight: 600; }
 
 .portrait {
     grid-column: 2;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     display: flex;
     flex-direction: column;
     width: 100%;
