@@ -2,8 +2,8 @@
 
 /* FuTseYi academic homepage and Writing styles. */
 :root {
-    --bg: #ffffff;
-    --bg-soft: #f8f9fc;
+    --bg: #f3f8fc;
+    --bg-soft: var(--bg);
     --ink: #121317;
     --ink-soft: #45474d;
     --ink-faint: #7a7e87;
@@ -111,11 +111,11 @@ strong { font-weight: 600; }
     pointer-events: none;
     background: linear-gradient(
       to bottom,
-      rgba(255,255,255,.9) 0%,
-      rgba(255,255,255,.55) 28%,
-      rgba(255,255,255,.18) 52%,
-      rgba(255,255,255,0) 78%,
-      rgba(255,255,255,0) 100%
+      rgba(243,248,252,.9) 0%,
+      rgba(243,248,252,.55) 28%,
+      rgba(243,248,252,.18) 52%,
+      rgba(243,248,252,0) 78%,
+      rgba(243,248,252,0) 100%
     );
   }
 
@@ -388,7 +388,7 @@ section.section.section-soft {
 
 .education-mark {
     width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; background: #fff; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; background: var(--bg); overflow: hidden;
   }
 
 .education-mark img { max-width: 78%; max-height: 78%; object-fit: contain; }
@@ -503,7 +503,7 @@ footer {
     padding: 36px 0 40px;
     border-top: 1px solid var(--line);
     margin-top: 20px;
-    background: linear-gradient(180deg, transparent, var(--bg-soft));
+    background: var(--bg);
   }
 
 .footer-inner {
@@ -713,7 +713,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .skip-link{position:fixed;top:-100px;left:16px;z-index:200;background:var(--bg);padding:10px 16px}
 .skip-link:focus{top:8px}
 .brand-dot{color:var(--accent)}
-.site-header:not(:has(.nav-blur)){background:rgba(255,255,255,.94);backdrop-filter:blur(16px)}
+.site-header:not(:has(.nav-blur)){background:rgba(243,248,252,.94);backdrop-filter:blur(16px)}
 .bio p+p{margin-top:12px}
 .portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
 .section-lead{font-size:14px;color:var(--ink-soft);max-width:730px;margin-bottom:20px}
