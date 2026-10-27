@@ -13,6 +13,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[2]
 USER = "FuTseYi"
 SITE = "https://futseyi.github.io"
+MAX_REPOSITORIES = 12
 API = "https://api.github.com"
 SNAPSHOT = ROOT / "_site/contributions.json"
 START = "<!-- CONTRIBUTIONS:START -->"
@@ -79,7 +80,7 @@ def collect():
             continue
         entries.append({**event, "description": repo.get("description") or "",
                         "language": repo.get("language") or ""})
-        if len(entries) == 3:
+        if len(entries) == MAX_REPOSITORIES:
             break
     return {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": entries}
 
@@ -92,18 +93,17 @@ def previous_snapshot():
 
 def render(snapshot):
     rows = []
-    for i, entry in enumerate(snapshot["entries"], 1):
+    for entry in snapshot["entries"]:
         name = entry["name"]
         if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
             raise ValueError("Invalid repository name")
         dt = datetime.fromisoformat(entry["date"].replace("Z", "+00:00"))
         description = f'<p>{escape(entry["description"])}</p>' if entry["description"] else ""
         tags = " · ".join(escape(value) for value in (entry["activity"], entry["language"]) if value)
-        rows.append(f'<article class="project-item"><span class="item-no">{i:02}</span><div>'
+        rows.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.date().isoformat()}">{dt:%Y.%m.%d}</time><div>'
                     f'<h3><a href="https://github.com/{name}" target="_blank" rel="noopener noreferrer">'
                     f'{escape(name)} <span class="link-arrow" aria-hidden="true"></span></a></h3>'
-                    f'{description}<div class="project-tags"><span>{tags}</span>'
-                    f'<time datetime="{dt.date().isoformat()}">{dt:%Y.%m.%d}</time></div></div></article>')
+                    f'{description}<div class="project-tags"><span>{tags}</span></div></div></article>')
     if not rows:
         rows.append('<p class="section-lead">No recent public code pushes or pull requests in the available activity window.</p>')
     updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
