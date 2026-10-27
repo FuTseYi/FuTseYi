@@ -4,7 +4,7 @@
 
 - ***Currently exploring new things, occasionally pretending I know what I’m doing.***
 - Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [The Hong Kong University of Science and Technology (Guangzhou)](https://www.hkust-gz.edu.cn/), with a background in automation.
-- **
+- Interested in AI, engineering, and whatever keeps me curious.
 - *Lang: English, Mandarin, Cantonese*
 - *Contact:*
   - *Email: [hello@futseyi.com](mailto:hello@futseyi.com)*

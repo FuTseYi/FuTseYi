@@ -707,4 +707,10 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .hero-links{margin-top:20px}
 }
 
-.profile-interests > span{font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--ink-faint);margin-right:8px}
+.about-intro .profile-interests,.about-intro .profile-languages{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;align-items:baseline;font-size:14px;line-height:1.75;color:var(--ink-soft)}
+.about-intro .profile-interests{margin-top:18px}
+.about-intro .profile-languages{margin-top:8px}
+.profile-interests > span,.profile-languages > span{font-size:13px;font-weight:500;letter-spacing:0;color:var(--ink-soft);margin-right:0}
+.motto-heading{font-size:13px;letter-spacing:0}
+.bio-detail .profile-motto{font-size:13.5px;line-height:1.8}
+@media(max-width:680px){.about-intro .profile-interests,.about-intro .profile-languages{grid-template-columns:74px minmax(0,1fr);gap:10px}}
