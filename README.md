@@ -1,22 +1,19 @@
-# FuTseYi / Shine
+# FuTseYi (Shine)
 
 ## *About* ![](https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/i-am-Shine.svg)
 
 - ***Currently exploring new things, occasionally pretending I know what I’m doing.***
 - Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [The Hong Kong University of Science and Technology (Guangzhou)](https://www.hkust-gz.edu.cn/), with a background in automation.
-- I enjoy connecting research with real-world engineering — from visual perception and on-device AI to intelligent systems that can operate beyond the lab.
-- *Lang: English · Mandarin · Cantonese*
-- *Contact: [hello@futseyi.com](mailto:hello@futseyi.com)*
-- **ACADEMIC:** Red Bird MPhil · HKUST(GZ)
-- **FOCUS:** AI · Robotics · Edge Intelligence
+- **
+- *Lang: English, Mandarin, Cantonese*
+- *Contact:*
+  - *Email: [hello@futseyi.com](mailto:hello@futseyi.com)*
 
 ## *Website*
 
-- Visit 『*[futseyi.github.io](https://futseyi.github.io/)*』 to learn more about me.
+- Visit 『*[futseyi.com](https://www.futseyi.com/)*』 to learn more about me.
 
 ## *Motto*
-
-<img src="https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/emoji-wink.png" align="right" width="6%" alt="Winking emoji">
 
 - *Freiheit als Autonomie — Freedom through autonomy.*
 - *People can retire, but the spirit cannot retire. - Gundam*
