@@ -21,7 +21,8 @@ def read_home():
     html=(ROOT/"index.html").read_text(encoding="utf-8")
     bio=re.search(r'<div\s+class="bio"\s*>(.*?)</div>',html,re.S)
     if not bio: raise ValueError("index.html: missing .bio")
-    paragraphs=[md(x) for x in re.findall(r"<p\b[^>]*>(.*?)</p>",bio[1],re.S)]
+    bio_text=re.sub(r'<p class="profile-interests"><span>.*?</span>\s*',"<p>",bio[1],flags=re.S)
+    paragraphs=[md(x) for x in re.findall(r"<p\b[^>]*>(.*?)</p>",bio_text,re.S)]
     email=re.search(r'href="mailto:([^"]+)"',html)
     website=re.search(r'<a class="profile-website" href="([^"]+)"',html)
     canonical=re.search(r'<link\s+rel="canonical"\s+href="([^"]+)"',html)

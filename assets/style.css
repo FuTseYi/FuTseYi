@@ -706,3 +706,5 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .bio-detail{margin-top:22px}
  .hero-links{margin-top:20px}
 }
+
+.profile-interests > span{font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--ink-faint);margin-right:8px}
