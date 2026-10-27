@@ -721,9 +721,9 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .hero{padding-top:calc(var(--nav-h) + 20px)}
 }
 
-/* Extend entry hover surfaces without shifting their content. */
+/* Rounded entry hover surfaces without shifting their content. */
 .education-list .education-item,.project-item,.about-blog .latest-post-link{position:relative;isolation:isolate}
-.education-list .education-item::before,.project-item::before,.about-blog .latest-post-link::before{content:"";position:absolute;inset:0 -12px;border-radius:6px;background:transparent;z-index:-1;pointer-events:none;transition:background-color .16s ease}
+.education-list .education-item::before,.project-item::before,.about-blog .latest-post-link::before{content:"";position:absolute;inset:0;border-radius:6px;background:transparent;z-index:-1;pointer-events:none;transition:background-color .16s ease}
 .education-list .education-item:focus-within,.project-item:focus-within,.about-blog .latest-post-link:focus-visible{background:transparent}
 .education-list .education-item:focus-within::before,.project-item:focus-within::before,.about-blog .latest-post-link:focus-visible::before{background:var(--bg-soft)}
 @media(hover:hover){.education-list .education-item:hover,.project-item:hover,.about-blog .latest-post-link:hover{background:transparent}.education-list .education-item:hover::before,.project-item:hover::before,.about-blog .latest-post-link:hover::before{background:var(--bg-soft)}}
