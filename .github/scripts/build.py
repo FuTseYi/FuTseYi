@@ -45,7 +45,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fafcfd"><meta name="description" content="{description}">
+<meta name="theme-color" content="#ffffff"><meta name="description" content="{description}">
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
 <link rel="icon" href="/assets/HKUST.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{CSS}"><script src="/assets/site.js" defer></script>
