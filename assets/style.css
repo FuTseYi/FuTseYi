@@ -696,8 +696,6 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  #main:has(> section.section:hover) > section.section:hover{background:var(--bg-soft)}
 }
 @media(prefers-reduced-motion:reduce){#main > section{transition:none}}
-
-.about-title{font-size:14px;font-weight:500;letter-spacing:.02em;margin:16px 0 14px}
 .about-intro .bio{margin-top:16px}
 .about-intro .profile-note{margin:0;font-weight:400;color:var(--ink-soft)}
 .bio-detail{margin-top:22px}
@@ -709,6 +707,5 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .motto-heading{border-top:1px solid var(--line);margin-top:22px;padding-top:16px;margin-bottom:8px}
 .bio-detail .profile-motto{border:0;padding-top:0;margin-top:0;font-size:12.5px;line-height:1.8}
 @media(max-width:680px){
- .about-title{margin-top:20px}
  .profile-languages,.profile-contact,.profile-website-row{grid-template-columns:68px minmax(0,1fr);gap:10px}
 }
