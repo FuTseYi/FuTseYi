@@ -234,8 +234,8 @@ strong { font-weight: 600; }
   }
 
 .hero h1 .alias {
-    font-family: var(--font);
-    font-size: .5em; font-weight: 300;
+    font-family: inherit;
+    font-size: .5em; font-weight: 500;
     white-space: nowrap;
     letter-spacing: .02em; color: var(--ink-faint);
   }
