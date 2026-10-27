@@ -269,10 +269,7 @@ strong { font-weight: 600; }
 
 .hero-links a:is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 
-.hero-links a img {
-    width: 18px; height: 18px;
-    object-fit: contain; display: block; flex-shrink: 0;
-  }
+.hero-links .link-icon{width:16px;height:16px;display:block;flex-shrink:0}
 
 
 
@@ -551,7 +548,7 @@ body { background-attachment: scroll; }
 
 .hero-links a { font-size: 12.5px; }
 
-.hero-links a img { width: 15px; height: 15px; }
+.hero-links .link-icon{width:15px;height:15px}
 
 
 .bio-detail { font-size: 13.5px; }
