@@ -312,12 +312,6 @@ strong { font-weight: 600; }
 
 section.section { padding: 38px 0; }
 
-section.section.section-soft {
-    background: var(--bg-soft);
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
-  }
-
 .section-heading {
     margin-bottom: 16px;
     display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
@@ -710,3 +704,12 @@ a:is(:hover,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45
 @media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:hover,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:hover,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}}
 
 a:is(:hover,:focus-visible){color:var(--gold-ink)}
+
+/* Highlight the current section; pointer hover takes priority. */
+#main > section{background:var(--bg);transition:background-color .18s ease}
+#main > section.is-current,#main > section:focus-within{background:var(--bg-soft)}
+@media(hover:hover){
+ #main:has(> section:hover) > section{background:var(--bg)}
+ #main:has(> section:hover) > section:hover{background:var(--bg-soft)}
+}
+@media(prefers-reduced-motion:reduce){#main > section{transition:none}}

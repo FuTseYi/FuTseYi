@@ -69,6 +69,7 @@
       else if (clickedTarget.settled) clickedTarget = null;
       if (clickedTarget) active = clickedTarget.id;
     }
+    targets.forEach((target) => target.classList.toggle('is-current', target.id === active));
     if (toc) {
       const visible = targets[0].getBoundingClientRect().bottom <= navHeight + 28;
       toc.classList.toggle('is-visible', visible);
