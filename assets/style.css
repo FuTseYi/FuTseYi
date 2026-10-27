@@ -715,7 +715,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .about-intro .profile-languages{margin-top:8px}
 .profile-interests > span,.profile-languages > span{font-size:13px;font-weight:500;letter-spacing:0;color:var(--ink-soft);margin-right:0}
 .motto-heading{font-size:13px;letter-spacing:0}
-.bio-detail .profile-motto{font-size:14px;line-height:1.75;font-style:normal}
+.bio-detail .profile-motto{font-size:14px;line-height:1.75;font-style:italic}
 @media(max-width:680px){
  .about-intro .profile-interests,.about-intro .profile-languages,.profile-motto-row{grid-template-columns:64px minmax(0,1fr);gap:10px;text-align:left}
  .about-intro .profile-note{text-align:left}
@@ -724,3 +724,5 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .about-blog{margin-top:20px}
 }
 .about-blog:has(.latest-posts:empty){display:none}
+
+.profile-motto-row{border-top:1px solid var(--line);padding-top:16px}
