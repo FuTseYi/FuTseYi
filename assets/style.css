@@ -629,9 +629,9 @@ html { scroll-behavior: auto; }
 .profile-motto{display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--line);padding-top:16px;margin-top:23px;font-size:12px;color:var(--ink-soft);font-style:italic}
 .profile-motto p+p{margin-top:4px}
 .latest-posts{border-top:1px solid var(--line);margin-bottom:18px}.latest-posts:empty{display:none}
-.latest-post-link{display:grid;grid-template-columns:minmax(0,1fr);gap:15px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;align-items:baseline}
-.latest-post-link time{color:var(--ink-faint);font-size:11px}.visitor-counter{display:inline-flex}.visitor-counter img{max-width:150px;height:auto}
-@media(max-width:620px){.latest-post-link{grid-template-columns:1fr;gap:0}}
+.latest-post-link{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:15px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;align-items:baseline}
+.latest-post-link time{color:var(--ink-faint);font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums}.visitor-counter{display:inline-flex}.visitor-counter img{max-width:150px;height:auto}
+@media(max-width:620px){.latest-post-link{gap:10px}}
 
 /* FuTseYi content and progressive-enhancement compatibility. */
 *,*::before,*::after{box-sizing:border-box}

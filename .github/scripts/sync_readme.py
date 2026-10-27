@@ -36,7 +36,7 @@ def read_home():
     quotes=[md(x) for x in re.findall(r"<p>(.*?)</p>",motto[1],re.S)]
     if len(quotes)<2: raise ValueError("Missing motto lines in homepage")
     return paragraphs,email[1],website[1].rstrip("/"),md(note[1]),md(languages[1]),quotes,md(name[1])
-def read_posts():
+def read_post_entries():
     found=[]
     for file in (ROOT/"posts").glob("*.md"):
         raw=file.read_text(encoding="utf-8")
@@ -53,7 +53,10 @@ def read_posts():
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",file.stem):raise ValueError(f"Invalid article slug: {file.stem}")
         found.append((dt,file.stem,fields["title"]))
     found.sort(reverse=True)
-    return [f"- [{title}]({SITE}/blog/{slug}/)" for _,slug,title in found[:3]]
+    return found[:3]
+
+def read_posts():
+    return [f"- [{title}]({SITE}/blog/{slug}/)" for _,slug,title in read_post_entries()]
 def render():
     paragraphs,email,website,note,languages,quotes,name=read_home()
     posts=read_posts()
@@ -90,17 +93,14 @@ def sync_profile(text,token):
 def update_site():
     """Inject the same latest-post list into the deployed homepage, not source HTML."""
     from html import escape as html_escape
-    from datetime import datetime
     output=ROOT/"_site"/"index.html"
     html=output.read_text(encoding="utf-8")
     if "<!-- LATEST-POSTS -->" not in html:
         raise ValueError("Missing homepage Latest Posts slot")
-    posts=read_posts()
     entries=[]
-    for line in posts:
-        match=re.fullmatch(r"- \[(.*?)\]\((https://[^)]+)\)",line)
-        if not match:continue
-        entries.append('<a class="latest-post-link" href="'+html_escape(match[2],quote=True)+'"><span>'+html_escape(match[1])+' <span class="link-arrow" aria-hidden="true"></span></span></a>')
+    for dt,slug,title in read_post_entries():
+        url=f"{SITE}/blog/{slug}/"
+        entries.append(f'<a class="latest-post-link" href="{html_escape(url,quote=True)}"><span>{html_escape(title)} <span class="link-arrow" aria-hidden="true"></span></span><time datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time></a>')
     html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: "".join(entries),html,flags=re.S)
     output.write_text(html,encoding="utf-8")
     print("Injected latest blog posts into deployed homepage.")
