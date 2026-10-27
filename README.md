@@ -1,7 +1,5 @@
 # FuTseYi / Shine
 
-<img src="https://avatars.githubusercontent.com/u/131243303?v=4" align="right" width="160" alt="Profile photo">
-
 ## *About* ![](https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/i-am-Shine.svg)
 
 - ***Currently exploring new things, occasionally pretending I know what I’m doing.***
