@@ -60,7 +60,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
   </nav>
 </div></header>
 <main class="blog-container" id="main">{content}</main>
-<footer class="site-footer"><div class="blog-footer"><span>© 2026 FuTseYi.</span><span>Made to be simple. Built to last.</span><a href="/">Home ↑</a></div></footer>
+<footer class="site-footer"><div class="blog-footer"><span>© 2026 FuTseYi.</span><span>Made to be simple. Built to last.</span><a href="/">Home <span class="link-arrow" aria-hidden="true"></span></a></div></footer>
 </body></html>
 """
 
@@ -102,7 +102,7 @@ def main() -> None:
     posts.sort(key=lambda post: (post["date"], post["slug"]), reverse=True)
     entries = []
     for post in posts:
-        entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} ↗</h2><p>{escape(post["description"])}</p></div></a>')
+        entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h2><p>{escape(post["description"])}</p></div></a>')
     index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">WRITING & NOTES</span><h1>Writing<span style="color:var(--blue)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
     (OUTPUT / "index.html").write_text(layout("Writing", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -727,7 +727,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .writing-cta strong,.writing-cta small{display:block}
 .writing-cta strong{font-size:16px;font-weight:500}
 .writing-cta small{font-size:13px;color:var(--ink-soft);margin-top:3px}
-.cta-arrow{font-size:22px;color:var(--accent)}
 .contact-grid{display:flex;align-items:center;justify-content:space-between;gap:28px}
 .contact-grid .section-lead{margin-bottom:0}
 .contact-email{font-size:16px;white-space:nowrap}
@@ -751,3 +750,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
  .blog-footer{padding:20px;flex-wrap:wrap}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* ELPA link chevrons: a short nudge on hover or keyboard focus. */
+.link-arrow{display:inline-block;flex:0 0 auto;width:7px;height:7px;margin-left:3px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .16s ease}
+a:is(:hover,:focus-visible) .link-arrow{transform:translateX(3px) rotate(45deg)}
+.link-arrow-up{transform:rotate(-45deg)}
+a:is(:hover,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45deg)}
+@media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:hover,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:hover,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}}
