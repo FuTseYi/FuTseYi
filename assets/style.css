@@ -214,9 +214,8 @@ strong { font-weight: 600; }
     align-items: start;
   }
 
-.hero-content, .hero details { display: contents; }
+.hero-content { display: contents; }
 
-.hero details:not([open]) > .bio-detail { display: none; }
 
 .hero h1 { grid-column: 1; grid-row: 1; }
 
@@ -224,9 +223,8 @@ strong { font-weight: 600; }
 
 .hero-links { grid-column: 1; grid-row: 3; }
 
-.hero summary { grid-column: 1; grid-row: 4; margin-top: 14px; }
 
-.bio-detail { grid-column: 1; grid-row: 5; }
+.bio-detail { grid-column: 1; grid-row: 4; }
 
 .hero h1 {
     margin-top: 10px;
@@ -251,7 +249,7 @@ strong { font-weight: 600; }
 
 .portrait {
     grid-column: 2;
-    grid-row: 1 / 5;
+    grid-row: 1 / 4;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -276,17 +274,9 @@ strong { font-weight: 600; }
     object-fit: contain; display: block; flex-shrink: 0;
   }
 
-.hero summary {
-    cursor: pointer; font-size: 11.5px; font-weight: 500;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
-    user-select: none; transition: color .2s; list-style: none;
-  }
 
-.hero summary::before { content: '+ '; color: var(--accent); }
 
-.hero details[open] summary::before { content: '– '; }
 
-.hero summary:hover { color: var(--ink); }
 
 .bio-detail { margin-top: 12px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
 
@@ -534,13 +524,10 @@ body { background-attachment: scroll; }
 
 .hero-content { display: flex; flex-direction: column; }
 
-.hero details { display: block; }
 
-.hero h1, .bio, .hero-links, .hero summary, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
+.hero h1, .bio, .hero-links, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
 
-.hero summary { margin-top: 0; }
 
-.hero details { margin-top: 14px; }
 
 .portrait {
       order: -1;
@@ -566,7 +553,6 @@ body { background-attachment: scroll; }
 
 .hero-links a img { width: 15px; height: 15px; }
 
-details summary { text-align: center; }
 
 .bio-detail { font-size: 13.5px; }
 
@@ -650,7 +636,7 @@ html { scroll-behavior: auto; }
 
 /* FuTseYi content and progressive-enhancement compatibility. */
 *,*::before,*::after{box-sizing:border-box}
-a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--gold-ink);outline-offset:4px;border-radius:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-offset:4px;border-radius:3px}
 .skip-link{position:fixed;top:-100px;left:16px;z-index:200;background:var(--bg);padding:10px 16px}
 .skip-link:focus{top:8px}
 .brand-dot{color:var(--accent)}

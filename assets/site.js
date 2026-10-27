@@ -96,6 +96,5 @@
     if (location.hash) selectTarget(location.hash.slice(1));
     else schedule();
   });
-  document.querySelector('details')?.addEventListener('toggle', releaseTarget);
   schedule();
 })();
