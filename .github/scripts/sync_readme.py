@@ -29,12 +29,11 @@ def read_home():
     roles=re.findall(r'<span class="role-label">(.*?)</span><span>(.*?)</span>',html,re.S)
     motto=re.search(r'<div class="profile-motto">(.*?)</div>\s*</div>',html,re.S)
     name=re.search(r'<h1 id="person-name">(.*?)</h1>',html,re.S)
-    avatar=re.search(r'<figure class="portrait">\s*<img src="([^"]+)"',html,re.S)
-    if not (note and languages and roles and motto and name and avatar):
+    if not (note and languages and roles and motto and name):
         raise ValueError("Missing shared profile elements in homepage")
     quotes=[md(x) for x in re.findall(r"<p>(.*?)</p>",motto[1],re.S)]
     if len(quotes)<2: raise ValueError("Missing motto lines in homepage")
-    return paragraphs,email[1],canonical[1].rstrip("/"),md(note[1]),md(languages[1]),roles,quotes,md(name[1]),avatar[1]
+    return paragraphs,email[1],canonical[1].rstrip("/"),md(note[1]),md(languages[1]),roles,quotes,md(name[1])
 def read_posts():
     found=[]
     for file in (ROOT/"posts").glob("*.md"):
@@ -54,12 +53,11 @@ def read_posts():
     found.sort(reverse=True)
     return [f"- [{title}]({SITE}/blog/{slug}/)" for _,slug,title in found[:3]]
 def render():
-    paragraphs,email,website,note,languages,roles,quotes,name,avatar=read_home()
+    paragraphs,email,website,note,languages,roles,quotes,name=read_home()
     posts=read_posts()
     role_rows="".join(f"- **{md(label)}:** {md(value)}\n" for label,value in roles)
     return (
       f'# {name}\n\n'
-      +f'<img src="{avatar}" align="right" width="160" alt="Profile photo">\n\n'
       +'## *About* ![](https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/i-am-Shine.svg)\n\n'
       +f'- ***{note}***\n'
       +''.join(f"- {paragraph}\n" for paragraph in paragraphs)
