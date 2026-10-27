@@ -700,7 +700,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .about-blog{margin-top:24px}
 .about-blog h3{font-size:13px;font-weight:500;margin-bottom:8px}
 .about-blog .latest-posts{margin-bottom:0}
-.about-blog .latest-post-link{font-size:12.5px;padding:7px 0;color:var(--ink-soft)}
+.about-blog .latest-post-link{font-size:12.5px;padding:7px 0;color:var(--accent)}
 .about-blog .latest-post-link:is(:hover,:focus-visible){color:var(--gold-ink)}
 
 @media(max-width:680px){
