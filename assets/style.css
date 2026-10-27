@@ -219,7 +219,7 @@ strong { font-weight: 600; }
 
 .hero h1 { grid-column: 1; grid-row: 1; }
 
-.bio { grid-column: 1; grid-row: 2; }
+.about-intro { grid-column: 1; grid-row: 2; }
 
 .hero-links { grid-column: 1; grid-row: 4; }
 
@@ -522,7 +522,7 @@ body { background-attachment: scroll; }
 .hero-content { display: flex; flex-direction: column; }
 
 
-.hero h1, .bio, .hero-links, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
+.hero h1, .about-intro, .hero-links, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
 
 
 
@@ -696,3 +696,11 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  #main:has(> section.section:hover) > section.section:hover{background:var(--bg-soft)}
 }
 @media(prefers-reduced-motion:reduce){#main > section{transition:none}}
+
+.about-heading{font-size:16px;font-weight:500;color:var(--ink);margin:20px 0 10px}
+.about-intro .bio{margin-top:12px}
+.about-intro .profile-note{margin:0;font-weight:600}
+.profile-contact{margin-top:14px}
+.profile-contact h3{font-size:13px;font-weight:500}
+.profile-contact ul{margin:4px 0 0;padding-left:20px}
+.bio-detail .profile-motto{border:0;padding-top:0;margin-top:0}

@@ -15,6 +15,7 @@ SITE="https://futseyi.github.io"
 def md(fragment):
     fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',lambda m:"["+re.sub(r"<[^>]*>","",m[2]).strip()+"]("+m[1]+")",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<strong>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
+    fragment=re.sub(r"<em>(.*?)</em>",r"**",fragment,flags=re.S|re.I)
     return unescape(" ".join(re.sub(r"<[^>]+>","",fragment).split()))
 def read_home():
     html=(ROOT/"index.html").read_text(encoding="utf-8")
@@ -22,8 +23,9 @@ def read_home():
     if not bio: raise ValueError("index.html: missing .bio")
     paragraphs=[md(x) for x in re.findall(r"<p\b[^>]*>(.*?)</p>",bio[1],re.S)]
     email=re.search(r'href="mailto:([^"]+)"',html)
+    website=re.search(r'<a class="profile-website" href="([^"]+)"',html)
     canonical=re.search(r'<link\s+rel="canonical"\s+href="([^"]+)"',html)
-    if not paragraphs or not email or not canonical: raise ValueError("index.html: missing bio, email or canonical")
+    if not paragraphs or not email or not canonical or not website: raise ValueError("index.html: missing bio, email, canonical or profile website")
     note=re.search(r'<p class="profile-note">(.*?)</p>',html,re.S)
     languages=re.search(r'<p class="profile-languages">.*?</span>(.*?)</p>',html,re.S)
     motto=re.search(r'<div class="profile-motto">(.*?)</div>\s*</div>',html,re.S)
@@ -32,7 +34,7 @@ def read_home():
         raise ValueError("Missing shared profile elements in homepage")
     quotes=[md(x) for x in re.findall(r"<p>(.*?)</p>",motto[1],re.S)]
     if len(quotes)<2: raise ValueError("Missing motto lines in homepage")
-    return paragraphs,email[1],canonical[1].rstrip("/"),md(note[1]),md(languages[1]),quotes,md(name[1])
+    return paragraphs,email[1],website[1].rstrip("/"),md(note[1]),md(languages[1]),quotes,md(name[1])
 def read_posts():
     found=[]
     for file in (ROOT/"posts").glob("*.md"):
@@ -60,10 +62,10 @@ def render():
       +f'- ***{note}***\n'
       +''.join(f"- {paragraph}\n" for paragraph in paragraphs)
       +f'- *Lang: {languages}*\n'
-      +f'- *Contact: [{email}](mailto:{email})*\n'
+      +f'- *Contact:*\n  - *Email: [{email}](mailto:{email})*\n'
       +'\n'
       +'## *Website*\n\n'
-      +f'- Visit 『*[{website.removeprefix("https://")}]({website}/)*』 to learn more about me.\n\n'
+      +f'- Visit 『*[{website.removeprefix("https://").removeprefix("www.")}]({website}/)*』 to learn more about me.\n\n'
       +'## *Motto*\n\n'
       +''.join(f'- *{quote}*\n' for quote in quotes)+'\n'
       +'## Latest Posts\n\n'
