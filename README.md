@@ -7,8 +7,6 @@
 - I enjoy connecting research with real-world engineering — from visual perception and on-device AI to intelligent systems that can operate beyond the lab.
 - *Lang: English · Mandarin · Cantonese*
 - *Contact: [hello@futseyi.com](mailto:hello@futseyi.com)*
-- **ACADEMIC:** Red Bird MPhil · HKUST(GZ)
-- **FOCUS:** AI · Robotics · Edge Intelligence
 
 ## *Website*
 

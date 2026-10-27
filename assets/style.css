@@ -220,15 +220,13 @@ strong { font-weight: 600; }
 
 .hero h1 { grid-column: 1; grid-row: 1; }
 
-.role-list { grid-column: 1; grid-row: 2; }
+.bio { grid-column: 1; grid-row: 2; }
 
-.bio { grid-column: 1; grid-row: 3; }
+.hero-links { grid-column: 1; grid-row: 3; }
 
-.hero-links { grid-column: 1; grid-row: 4; }
+.hero summary { grid-column: 1; grid-row: 4; margin-top: 14px; }
 
-.hero summary { grid-column: 1; grid-row: 5; margin-top: 14px; }
-
-.bio-detail { grid-column: 1; grid-row: 6; }
+.bio-detail { grid-column: 1; grid-row: 5; }
 
 .hero h1 {
     margin-top: 10px;
@@ -241,46 +239,6 @@ strong { font-weight: 600; }
     letter-spacing: .02em; color: var(--ink-faint);
   }
 
-.role-list {
-    margin-top: 18px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 0;
-  }
-
-.role-list .role {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 0 18px;
-    border-left: 1px solid var(--line);
-    min-width: 0;
-  }
-
-.role-list .role:first-child {
-    padding-left: 0;
-    border-left: none;
-  }
-
-.role-list .role-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    line-height: 1.3;
-  }
-
-.role-list .role > span:not(.role-label) {
-    font-size: 14.5px;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -.015em;
-    line-height: 1.3;
-  }
-
-.role-list .role a:is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 
 .bio {
     margin-top: 24px;
@@ -293,7 +251,7 @@ strong { font-weight: 600; }
 
 .portrait {
     grid-column: 2;
-    grid-row: 1 / 6;
+    grid-row: 1 / 5;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -450,7 +408,6 @@ section.section.section-soft {
 
 .education-school a:is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 
-
 .page-toc {
     display: none;
   }
@@ -585,7 +542,7 @@ body { background-attachment: scroll; }
 
 .hero details { display: block; }
 
-.hero h1, .role-list, .bio, .hero-links, .hero summary, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
+.hero h1, .bio, .hero-links, .hero summary, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
 
 .hero summary { margin-top: 0; }
 
@@ -602,15 +559,6 @@ body { background-attachment: scroll; }
 .intro-portrait { border-radius: 14px; }
 
 .hero h1 { font-size: clamp(30px, 9vw, 38px); margin-top: 8px; text-align: center; }
-
-.role-list { justify-content: center; margin-top: 14px; gap: 12px 0; }
-
-.role-list .role {
-      align-items: center;
-      padding: 0 14px;
-    }
-
-.role-list .role:first-child { padding-left: 14px; }
 
 .bio { margin-top: 20px; font-size: 13.5px; text-align: center; }
 
@@ -696,7 +644,6 @@ html { scroll-behavior: auto; }
 .article th,.article td{border:1px solid var(--line);padding:8px 11px}
 .article-footer{border-top:1px solid var(--line);margin-top:52px;padding-top:24px}
 .blog-footer{max-width:var(--max-width);padding:22px 32px;margin:0 auto;display:flex;gap:20px;align-items:center;justify-content:space-between}
-
 
 .profile-note{font-size:13px;font-style:italic;color:var(--ink-soft);margin:0 0 15px}
 .profile-languages{font-size:12px;color:var(--ink-soft);margin:15px 0 0}.profile-languages span{font-weight:700;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);margin-right:8px}

@@ -26,14 +26,13 @@ def read_home():
     if not paragraphs or not email or not canonical: raise ValueError("index.html: missing bio, email or canonical")
     note=re.search(r'<p class="profile-note">(.*?)</p>',html,re.S)
     languages=re.search(r'<p class="profile-languages">.*?</span>(.*?)</p>',html,re.S)
-    roles=re.findall(r'<span class="role-label">(.*?)</span><span>(.*?)</span>',html,re.S)
     motto=re.search(r'<div class="profile-motto">(.*?)</div>\s*</div>',html,re.S)
     name=re.search(r'<h1 id="person-name">(.*?)</h1>',html,re.S)
-    if not (note and languages and roles and motto and name):
+    if not (note and languages and motto and name):
         raise ValueError("Missing shared profile elements in homepage")
     quotes=[md(x) for x in re.findall(r"<p>(.*?)</p>",motto[1],re.S)]
     if len(quotes)<2: raise ValueError("Missing motto lines in homepage")
-    return paragraphs,email[1],canonical[1].rstrip("/"),md(note[1]),md(languages[1]),roles,quotes,md(name[1])
+    return paragraphs,email[1],canonical[1].rstrip("/"),md(note[1]),md(languages[1]),quotes,md(name[1])
 def read_posts():
     found=[]
     for file in (ROOT/"posts").glob("*.md"):
@@ -53,9 +52,8 @@ def read_posts():
     found.sort(reverse=True)
     return [f"- [{title}]({SITE}/blog/{slug}/)" for _,slug,title in found[:3]]
 def render():
-    paragraphs,email,website,note,languages,roles,quotes,name=read_home()
+    paragraphs,email,website,note,languages,quotes,name=read_home()
     posts=read_posts()
-    role_rows="".join(f"- **{md(label)}:** {md(value)}\n" for label,value in roles)
     return (
       f'# {name}\n\n'
       +'## *About* ![](https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/i-am-Shine.svg)\n\n'
@@ -63,7 +61,7 @@ def render():
       +''.join(f"- {paragraph}\n" for paragraph in paragraphs)
       +f'- *Lang: {languages}*\n'
       +f'- *Contact: [{email}](mailto:{email})*\n'
-      +role_rows+'\n'
+      +'\n'
       +'## *Website*\n\n'
       +f'- Visit 『*[{website.removeprefix("https://")}]({website}/)*』 to learn more about me.\n\n'
       +'## *Motto*\n\n'
