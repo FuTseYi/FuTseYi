@@ -99,10 +99,10 @@ def update_site():
     for line in posts:
         match=re.fullmatch(r"- \[(.*?)\]\((https://[^)]+)\)",line)
         if not match:continue
-        entries.append('<a class="latest-post-link" href="'+html_escape(match[2],quote=True)+'"><span>Latest article</span><span>'+html_escape(match[1])+' <span class="link-arrow" aria-hidden="true"></span></span></a>')
+        entries.append('<a class="latest-post-link" href="'+html_escape(match[2],quote=True)+'"><span>'+html_escape(match[1])+' <span class="link-arrow" aria-hidden="true"></span></span></a>')
     html=html.replace("<!-- LATEST-POSTS -->","".join(entries))
     output.write_text(html,encoding="utf-8")
-    print("Injected latest writing into deployed homepage.")
+    print("Injected latest blog posts into deployed homepage.")
 
 def main():
     arg=argparse.ArgumentParser()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a static Writing archive from posts/*.md.
+"""Generate a static Blog archive from posts/*.md.
 
 Dependencies: Python 3.12 + Python-Markdown 3.x (installed by GitHub Actions).
 No client-side JavaScript, CMS, Node.js, or frontend build framework.
@@ -56,7 +56,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
   <a class="brand" href="/" aria-label="FuTseYi (Shine) homepage">FuTseYi (Shine)</a>
   <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
   <nav class="nav-links" id="primary-navigation" aria-label="Main navigation">
-    <a href="/#about">About</a><a href="/#education">Education</a><a href="/#interests">Research</a><a href="/#projects">Projects</a><a class="is-active" href="/blog/" aria-current="page">Writing</a><a href="/#contact">Contact</a>
+    <a href="/#about">About</a><a href="/#education">Education</a><a href="/#focus">Current Focus</a><a class="is-active" href="/blog/" aria-current="page">Blog</a>
   </nav>
 </div></header>
 <main class="blog-container" id="main">{content}</main>
@@ -92,8 +92,8 @@ def main() -> None:
         item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], description=meta["description"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
         parser.reset()
         article = parser.convert(source)
-        header = f'<a class="back-link" href="/blog/">← All writing</a><div class="article-head"><span class="blog-kicker">WRITING & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><p class="blog-description">{escape(item["description"])}</p></div>'
-        content = header + '<article class="article">' + article + '</article><div class="article-footer"><a class="back-link" href="/blog/">← Back to writing</a></div>'
+        header = f'<a class="back-link" href="/blog/">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><p class="blog-description">{escape(item["description"])}</p></div>'
+        content = header + '<article class="article">' + article + '</article><div class="article-footer"><a class="back-link" href="/blog/">← Back to blog</a></div>'
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
         (destination / "index.html").write_text(layout(item["title"], item["description"], SITE + url, content), encoding="utf-8")
@@ -103,8 +103,8 @@ def main() -> None:
     entries = []
     for post in posts:
         entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h2><p>{escape(post["description"])}</p></div></a>')
-    index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">WRITING & NOTES</span><h1>Writing<span style="color:var(--accent)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
-    (OUTPUT / "index.html").write_text(layout("Writing", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
+    index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">BLOG & NOTES</span><h1>Blog<span style="color:var(--accent)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
+    (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     urls = [SITE + "/", SITE + "/blog/"] + [SITE + post["url"] for post in posts]
     sitemap = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{xml_escape(url)}</loc></url>\n" for url in urls) + "</urlset>\n"
@@ -112,7 +112,7 @@ def main() -> None:
     # Confirm that every published article has an HTML page and the index is sound.
     assert (OUTPUT / "index.html").is_file()
     assert all((OUTPUT / post["slug"] / "index.html").is_file() for post in posts)
-    print(f"Writing: generated {len(posts)} article(s)")
+    print(f"Blog: generated {len(posts)} article(s)")
 
 if __name__ == "__main__":
     main()
