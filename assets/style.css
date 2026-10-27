@@ -733,3 +733,16 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 
 #community .project-item{grid-template-columns:40px minmax(0,1fr);align-items:center}
 .community-icon{display:block;width:40px;height:40px;object-fit:contain;border-radius:8px}
+
+/* Consistent compact community and contribution lists. */
+#community .project-item,#contributions .project-item{padding:14px 0;gap:18px;align-items:start}
+#community .project-item{grid-template-columns:40px minmax(0,1fr)}
+#contributions .project-item{grid-template-columns:90px minmax(0,1fr)}
+#community .project-item h3,#contributions .project-item h3{font-size:15px;line-height:1.5}
+#community .project-item p,#contributions .project-item p{font-size:13px;line-height:1.65;margin-top:3px}
+.contribution-date{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
+#contributions .project-tags{margin-top:5px;gap:8px}
+.project-item[hidden]{display:none}
+.list-toggle{display:inline-flex;align-items:center;margin-top:18px;padding:9px 18px;border:1px solid var(--line);border-radius:999px;background:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
+.list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);border-color:var(--gold);background:var(--bg-soft)}
+@media(max-width:680px){#contributions .project-item{grid-template-columns:1fr;gap:4px}.contribution-date{padding-top:0}}

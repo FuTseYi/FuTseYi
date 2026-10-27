@@ -95,5 +95,24 @@
     if (location.hash) selectTarget(location.hash.slice(1));
     else schedule();
   });
+  document.querySelectorAll('[data-expandable]').forEach((list) => {
+    const extra = [...list.querySelectorAll(':scope > .project-item')].slice(3);
+    if (!extra.length) return;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'list-toggle';
+    button.setAttribute('aria-controls', list.id);
+    const setExpanded = (expanded) => {
+      extra.forEach((item) => { item.hidden = !expanded; });
+      button.setAttribute('aria-expanded', String(expanded));
+      button.textContent = expanded ? 'Show less ↑' : 'Show more ↓';
+    };
+    setExpanded(false);
+    button.addEventListener('click', () => {
+      setExpanded(button.getAttribute('aria-expanded') !== 'true');
+      releaseTarget();
+    });
+    list.after(button);
+  });
   schedule();
 })();
