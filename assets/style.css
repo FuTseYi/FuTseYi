@@ -628,7 +628,7 @@ html { scroll-behavior: auto; }
 .profile-note{font-size:13px;font-style:italic;color:var(--ink-soft);margin:0 0 15px}
 .profile-languages{font-size:12px;color:var(--ink-soft);margin:15px 0 0}.profile-languages span{font-weight:700;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);margin-right:8px}
 .profile-motto{display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--line);padding-top:16px;margin-top:23px;font-size:12px;color:var(--ink-soft);font-style:italic}
-.profile-motto img{width:42px;height:42px;object-fit:contain;flex-shrink:0}.profile-motto p+p{margin-top:4px}
+.profile-motto p+p{margin-top:4px}
 .latest-posts{border-top:1px solid var(--line);margin-bottom:18px}.latest-posts:empty{display:none}
 .latest-post-link{display:grid;grid-template-columns:100px minmax(0,1fr);gap:15px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;align-items:baseline}
 .latest-post-link time{color:var(--ink-faint);font-size:11px}.visitor-counter{display:inline-flex}.visitor-counter img{max-width:150px;height:auto}

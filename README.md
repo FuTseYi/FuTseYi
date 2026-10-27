@@ -14,8 +14,6 @@
 
 ## *Motto*
 
-<img src="https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/emoji-wink.png" align="right" width="6%" alt="Winking emoji">
-
 - *Freiheit als Autonomie — Freedom through autonomy.*
 - *People can retire, but the spirit cannot retire. - Gundam*
 

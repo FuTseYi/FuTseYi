@@ -65,7 +65,6 @@ def render():
       +'## *Website*\n\n'
       +f'- Visit 『*[{website.removeprefix("https://")}]({website}/)*』 to learn more about me.\n\n'
       +'## *Motto*\n\n'
-      +'<img src="https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/emoji-wink.png" align="right" width="6%" alt="Winking emoji">\n\n'
       +''.join(f'- *{quote}*\n' for quote in quotes)+'\n'
       +'## Latest Posts\n\n'
       +'\n'.join(posts or ["No published articles yet."])+'\n\n'
