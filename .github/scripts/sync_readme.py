@@ -101,7 +101,7 @@ def update_site():
         match=re.fullmatch(r"- \[(.*?)\]\((https://[^)]+)\)",line)
         if not match:continue
         entries.append('<a class="latest-post-link" href="'+html_escape(match[2],quote=True)+'"><span>'+html_escape(match[1])+' <span class="link-arrow" aria-hidden="true"></span></span></a>')
-    html=html.replace("<!-- LATEST-POSTS -->","".join(entries))
+    html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: "".join(entries),html,flags=re.S)
     output.write_text(html,encoding="utf-8")
     print("Injected latest blog posts into deployed homepage.")
 

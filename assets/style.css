@@ -723,6 +723,5 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .bio-detail{margin-top:16px}
  .about-blog{margin-top:20px}
 }
-.about-blog:has(.latest-posts:empty){display:none}
 
 .profile-motto-row{border-top:1px solid var(--line);padding-top:16px}
