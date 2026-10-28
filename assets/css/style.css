@@ -133,9 +133,10 @@ strong { font-weight: 600; }
   }
 
 .brand {
-    font-size: 14.5px; font-weight: 500; letter-spacing: -.01em; color: var(--ink);
-    line-height: 1.2;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
   }
+.brand img { width: 36px; height: 36px; }
 
 .brand:hover { text-decoration: none; opacity: .7; }
 
