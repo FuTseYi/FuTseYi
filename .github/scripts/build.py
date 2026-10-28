@@ -73,13 +73,14 @@ def pretty_date(value: str) -> str:
 
 def article_toc(tokens: list[dict]) -> str:
     entries = []
+    first_level = min((token["level"] for token in tokens), default=2)
     pending = list(reversed(tokens))
     while pending:
         token = pending.pop()
         pending.extend(reversed(token.get("children", [])))
-        if token["level"] in (2, 3):
+        if first_level <= token["level"] <= first_level + 1:
             label = re.sub(r"<[^>]+>", "", token["name"])
-            entries.append(f'<a href="#{escape(token["id"], quote=True)}" class="toc-level-{token["level"]}">{label}</a>')
+            entries.append(f'<a href="#{escape(token["id"], quote=True)}" class="toc-level-{token["level"] - first_level + 1}">{label}</a>')
     if len(entries) < 3:
         return ""
     return '<nav class="page-toc article-toc" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + "".join(entries) + '</nav>'

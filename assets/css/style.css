@@ -788,5 +788,5 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
   }
   .article-toc::-webkit-scrollbar { display: none; }
   .article-toc a { white-space: normal; overflow-wrap: anywhere; }
-  .article-toc .toc-level-3 { padding-left: 24px; font-size: 11px; }
+  .article-toc .toc-level-2 { padding-left: 24px; font-size: 11px; }
 }
