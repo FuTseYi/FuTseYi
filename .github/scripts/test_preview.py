@@ -5,6 +5,7 @@ import io
 from pathlib import Path
 import subprocess
 import tempfile
+from threading import Event, Thread
 import unittest
 from unittest.mock import patch
 
@@ -14,6 +15,59 @@ spec.loader.exec_module(preview)
 
 
 class PreviewTests(unittest.TestCase):
+    def preview_root(self, root):
+        for name in ("assets", "posts", ".github/scripts", "_site"):
+            (root / name).mkdir(parents=True)
+        (root / "index.html").write_text("source")
+        (root / "robots.txt").write_text("robots")
+        (root / "_site/index.html").write_text("last good build")
+
+    def test_failed_build_keeps_last_good_site(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview, "assemble", side_effect=ValueError("invalid post")):
+                with self.assertRaises(ValueError):
+                    preview.build()
+            self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+            self.assertEqual(list(root.glob(".preview-*")), [])
+
+    def test_publish_waits_for_readers_and_replaces_stale_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            (root / "_site/stale.txt").write_text("old resource")
+            ready = Event()
+            errors = []
+
+            def assemble(candidate):
+                (candidate / "_site").mkdir(exist_ok=True)
+                (candidate / "_site/index.html").write_text("new build")
+                ready.set()
+
+            def build():
+                try:
+                    preview.build()
+                except Exception as error:
+                    errors.append(error)
+
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview, "assemble", side_effect=assemble):
+                worker = Thread(target=build)
+                try:
+                    with preview.SERVING_LOCK:
+                        worker.start()
+                        self.assertTrue(ready.wait(2))
+                        self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+                finally:
+                    worker.join(3)
+                self.assertFalse(worker.is_alive())
+            self.assertEqual(errors, [])
+            self.assertEqual((root / "_site/index.html").read_text(), "new build")
+            self.assertFalse((root / "_site/stale.txt").exists())
+            self.assertEqual(list(root.glob(".preview-*")), [])
+
     def test_installed_renderer_needs_no_setup(self):
         with patch.object(preview, "version", return_value="3.10.3"), \
                 patch.object(preview.subprocess, "run") as install:

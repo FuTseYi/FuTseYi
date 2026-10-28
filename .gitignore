@@ -5,3 +5,5 @@ _site/
 sitemap.xml
 
 /blog/
+
+.preview-*/

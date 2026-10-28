@@ -10,14 +10,28 @@ import re
 import shutil
 import subprocess
 import sys
-from threading import Thread
+import tempfile
+from threading import RLock, Thread
 import time
 
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
+SERVING_LOCK = RLock()
+
+
+class PreviewServer(ThreadingHTTPServer):
+    allow_reuse_address = sys.platform != "win32"
 
 
 class PreviewHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        with SERVING_LOCK:
+            super().do_GET()
+
+    def do_HEAD(self):
+        with SERVING_LOCK:
+            super().do_HEAD()
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
@@ -29,32 +43,54 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         return super().send_head()
 
 
-def run(script, *args):
-    subprocess.run([sys.executable, str(ROOT / ".github/scripts" / script), *args],
-                   cwd=ROOT, check=True)
+def run(root, script, *args):
+    subprocess.run([sys.executable, str(root / ".github/scripts" / script), *args],
+                   cwd=root, check=True)
 
 
-def build():
-    run("build.py")
-    SITE.mkdir(exist_ok=True)
+def assemble(root):
+    """Reuse the deployment builders inside an isolated source copy."""
+    site = root / "_site"
+    run(root, "build.py")
+    site.mkdir(exist_ok=True)
     for name in ("index.html", "robots.txt", "sitemap.xml"):
-        shutil.copy2(ROOT / name, SITE / name)
+        shutil.copy2(root / name, site / name)
     for name in ("assets", "blog"):
-        target = SITE / name
-        if target.exists():
-            # Replace only these generated directories, avoiding stale files.
-            if target.is_symlink() or target.resolve().parent != SITE.resolve():
-                raise ValueError(f"Unsafe preview directory: {target}")
-            shutil.rmtree(target)
-        shutil.copytree(ROOT / name, target)
-    (SITE / ".nojekyll").touch()
-    run("sync_readme.py", "--update-site")
-    run("sync_activity.py")
-    for page in SITE.rglob("*.html"):
+        shutil.copytree(root / name, site / name)
+    (site / ".nojekyll").touch()
+    run(root, "sync_readme.py", "--update-site")
+    run(root, "sync_activity.py")
+    for page in site.rglob("*.html"):
         html = page.read_text(encoding="utf-8")
         html = re.sub(r'(<a\b[^>]*\bhref=[\'"])https://futseyi\.github\.io(?=/)', r'\1', html)
         page.write_text(html, encoding="utf-8")
-    run("verify.py")
+    run(root, "verify.py")
+
+
+def build():
+    # Same filesystem as _site, so publishing uses directory renames, not copies.
+    with tempfile.TemporaryDirectory(prefix=".preview-", dir=ROOT) as directory:
+        candidate = Path(directory)
+        for name in ("index.html", "robots.txt"):
+            shutil.copy2(ROOT / name, candidate / name)
+        for name in ("assets", "posts", ".github/scripts"):
+            shutil.copytree(ROOT / name, candidate / name,
+                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        snapshot = SITE / "contributions.json"
+        if snapshot.is_file():
+            (candidate / "_site").mkdir()
+            shutil.copy2(snapshot, candidate / "_site/contributions.json")
+        assemble(candidate)
+        with SERVING_LOCK:
+            previous = candidate / "previous"
+            if SITE.exists():
+                SITE.rename(previous)
+            try:
+                (candidate / "_site").rename(SITE)
+            except OSError:
+                if previous.exists():
+                    previous.rename(SITE)
+                raise
 
 
 def source_state():
@@ -126,15 +162,17 @@ def main():
         ensure_markdown()
     except (OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Dependency setup failed: {error}. Check network access and Python venv/pip support.\n")
-    previous = source_state()
-    if args.build_only:
-        build()
-    else:
-        rebuild()
-    if args.build_only:
-        return
     handler = partial(PreviewHandler, directory=str(SITE))
-    with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
+    try:
+        server = PreviewServer(("127.0.0.1", args.port), handler)
+    except OSError as error:
+        parser.exit(1, f"Cannot use port {args.port}: {error}. Stop the existing preview or use --port.\n")
+    with server:
+        previous = source_state()
+        if args.build_only:
+            build()
+            return
+        rebuild()
         print(f"Preview: http://127.0.0.1:{args.port}/", flush=True)
         print("Press Ctrl+C to stop. Watching source files; refresh the browser after rebuilding.", flush=True)
         worker = Thread(target=server.serve_forever, daemon=True)

@@ -30,9 +30,13 @@ build scripts every half second, and rebuilds after a quiet scan to combine
 consecutive saves. Added and deleted files are detected; generated files,
 Git files and virtual environments are excluded. Build errors are reported
 without stopping the watcher; fix the source and save again to retry.
-During rebuilding, the served files may be temporarily incomplete.
+The current preview stays available while a candidate is built and verified.
+Only a successful candidate replaces `_site/`; failed builds leave the last good
+preview intact. File serving and directory replacement are coordinated to avoid
+Windows file-sharing errors.
 
-The script builds the blog, stages the website in `_site/`, injects latest posts
+The script copies source files into an automatically cleaned temporary directory,
+builds the blog, stages the website, injects latest posts
 and public activity, and verifies local links before serving. Local preview reuses the existing snapshot,
 with the deployed JSON as a backup, and queries GitHub only if neither is valid.
 Deployments always request fresh activity.
@@ -44,8 +48,11 @@ Only navigation links in the preview copy are converted from the production
 origin to local paths. Source HTML and deployment behavior are unchanged.
 Generated files remain ignored by Git. No README is generated or published.
 
-Use `--port 8766` if the default port is occupied, or `--build-only` to build and
-verify without starting a server.
+Run one preview process per checkout. The port is checked before building, so a
+second process using the same port exits without changing the preview. Use
+`--port 8766` if another application occupies the default port, or `--build-only`
+to build and verify without starting a server (stop the preview first).
+Local responses disable browser caching; refresh manually after a successful build.
 
 ## Publishing articles
 
