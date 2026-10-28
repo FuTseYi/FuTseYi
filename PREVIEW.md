@@ -46,3 +46,23 @@ Generated files remain ignored by Git. No README is generated or published.
 
 Use `--port 8766` if the default port is occupied, or `--build-only` to build and
 verify without starting a server.
+
+## Publishing articles
+
+Create a file such as `posts/my-note.md`:
+
+```markdown
+---
+title: My note
+date: 2026-10-28
+tags: Notes, Website
+---
+
+Article text goes here.
+```
+
+Only `title` and `date` are required; `tags` is optional. There is no description,
+draft switch or date-based publication gate. All articles are published when you
+push to `main` and deployment succeeds. Dates control display and newest-first
+ordering; tags are metadata, not sorting rules. The same push triggers automatic
+updates of both READMEs (Profile updates require the existing `PROFILE_README_TOKEN`).

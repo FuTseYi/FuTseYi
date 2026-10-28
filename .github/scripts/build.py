@@ -33,7 +33,7 @@ def get_post(path: Path) -> tuple[dict[str, str], str]:
             raise ValueError(f"{path}: Invalid metadata line {line!r}")
         key, value = line.split(":", 1)
         meta[key.strip()] = value.strip().strip('"').strip("'")
-    for key in ("title", "date", "description"):
+    for key in ("title", "date"):
         if not meta.get(key):
             raise ValueError(f"{path}: Missing {key}")
     date.fromisoformat(meta["date"])
@@ -77,10 +77,7 @@ def main() -> None:
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
             raise ValueError(f"Post filename must be a lowercase URL slug: {path.name}")
         meta, source = get_post(path)
-        if meta.get("draft", "").lower() not in ("", "true", "false"):
-            raise ValueError(f"{path}: draft must be true or false")
-        if meta.get("draft", "").lower() != "true":
-            source_posts.append((slug, meta, source))
+        source_posts.append((slug, meta, source))
 
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
@@ -89,20 +86,20 @@ def main() -> None:
     parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc"])
     for slug, meta, source in source_posts:
         url = f"/blog/{slug}/"
-        item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], description=meta["description"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
+        item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
         parser.reset()
         article = parser.convert(source)
-        header = f'<a class="back-link" href="/blog/">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><p class="blog-description">{escape(item["description"])}</p></div>'
+        header = f'<a class="back-link" href="/blog/">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time></div>'
         content = header + '<article class="article">' + article + '</article><div class="article-footer"><a class="back-link" href="/blog/">← Back to blog</a></div>'
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
-        (destination / "index.html").write_text(layout(item["title"], item["description"], SITE + url, content), encoding="utf-8")
+        (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content), encoding="utf-8")
         posts.append(item)
 
     posts.sort(key=lambda post: (post["date"], post["slug"]), reverse=True)
     entries = []
     for post in posts:
-        entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h2><p>{escape(post["description"])}</p></div></a>')
+        entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h2></div></a>')
     index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">BLOG & NOTES</span><h1>Blog<span style="color:var(--accent)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
     (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

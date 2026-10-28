@@ -61,16 +61,16 @@ class ReadmeTests(unittest.TestCase):
             with patch.object(sync, "ROOT", root):
                 self.assertEqual(sync.site_url(), "https://another.github.io")
 
-    def test_recent_posts_limit_and_drafts(self):
+    def test_recent_posts_sort_by_date_without_publication_gates(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "posts").mkdir()
             for i in range(1, 6):
                 (root / "posts" / f"post-{i}.md").write_text(
-                    f"---\ntitle: Post {i}\ndate: 2020-01-0{i}\ndraft: {'true' if i == 5 else 'false'}\n---\nText", encoding="utf-8")
+                    f"---\ntitle: Post {i}\ndate: 2099-01-0{i}\ndraft: {'true' if i == 5 else 'false'}\n---\nText", encoding="utf-8")
             with patch.object(sync, "ROOT", root):
                 self.assertEqual([entry[1] for entry in sync.read_post_entries()],
-                                 ["post-4", "post-3", "post-2"])
+                                 ["post-5", "post-4", "post-3"])
 
 
 if __name__ == "__main__":

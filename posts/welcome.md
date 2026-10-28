@@ -1,7 +1,6 @@
 ---
 title: A simpler space to build and share
 date: 2026-10-26
-description: A short note on the thinking behind this new personal website.
 tags: Website, Notes
 ---
 

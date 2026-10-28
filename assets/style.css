@@ -617,10 +617,8 @@ html { scroll-behavior: auto; }
 .blog-entry:is(:hover,:focus-visible) h2{color:var(--gold-ink)}
 .blog-entry .post-date,.post-date{font-size:12px;color:var(--ink-faint)}
 .blog-entry h2{font-weight:630;letter-spacing:-.02em;font-size:17px;color:var(--ink);line-height:1.5;margin-bottom:5px}
-.blog-entry p{color:var(--ink-soft);font-size:13px}
 .article-head{margin:30px 0 38px}
 .article-head h1{margin:10px 0 13px}
-.article-head .blog-description{margin:12px 0 0}
 .article{font-size:15px;line-height:1.9;overflow-wrap:anywhere}
 .article p{margin:0 0 18px}
 .article h2{font-size:24px;font-weight:630;margin:38px 0 16px;letter-spacing:-.026em}

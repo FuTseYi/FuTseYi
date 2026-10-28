@@ -2,12 +2,6 @@ name: Synchronize profile README
 on:
   push:
     branches: [main]
-    paths:
-      - index.html
-      - posts/**
-      - .github/scripts/sync_readme.py
-      - .github/scripts/test_sync_readme.py
-      - .github/workflows/sync-readme.yml
   workflow_dispatch:
 permissions:
   contents: write
