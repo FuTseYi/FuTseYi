@@ -312,7 +312,7 @@ section.section { padding: 38px 0; }
     font-weight: 400; letter-spacing: -.035em; line-height: 1.08;
   }
 
-.education-list { list-style: none; border-top: 1px solid var(--line); }
+.education-list { --education-logo-width:200px; --education-logo-height:28px; list-style: none; border-top: 1px solid var(--line); }
 
 .education-item {
     display: grid; grid-template-columns: 110px 44px 1fr; gap: 16px;
@@ -343,7 +343,7 @@ section.section { padding: 38px 0; }
 
 .education-list .education-item {
     display: grid;
-    grid-template-columns: 200px minmax(0, 1fr) auto;
+    grid-template-columns: var(--education-logo-width) minmax(0, 1fr) auto;
     column-gap: 28px;
     align-items: center;
     padding: 10px 0;
@@ -352,14 +352,14 @@ section.section { padding: 38px 0; }
   }
 
 .education-list .education-mark {
-    width: 200px; height: 56px;
+    width: var(--education-logo-width); height: 56px;
     display: flex; align-items: center; justify-content: center;
     border: none; border-radius: 0; background: none;
     box-shadow: none; overflow: visible;
   }
 
 .education-list .education-mark img {
-    width: auto; max-width: 180px; max-height: 52px; height: auto;
+    width: auto; max-width: 100%; max-height: var(--education-logo-height); height: var(--education-logo-height);
     object-fit: contain; object-position: center; display: block;
   }
 
@@ -573,7 +573,6 @@ section.section { padding: 28px 0; }
       width: auto; height: 48px; justify-content: flex-start;
     }
 
-.education-list .education-mark img { max-width: 150px; max-height: 40px; }
 
 .footer-inner {
       flex-direction: row;
@@ -749,8 +748,8 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .section-heading{margin-bottom:18px}
  .education-list .education-item{padding:24px 0;row-gap:0}
  .education-list .education-date{justify-self:end;font-size:12px;letter-spacing:0;margin-bottom:20px}
- .education-list .education-mark{width:180px;height:48px;margin-bottom:16px;justify-content:flex-start}
- .education-list .education-mark img{max-width:180px;max-height:48px;object-position:left center}
+ .education-list .education-mark{width:var(--education-logo-width);height:48px;margin-bottom:16px;justify-content:flex-start}
+ .education-list .education-mark img{object-position:left center}
  .education-list .education-content{gap:6px}
  .education-list .education-school{font-size:16px;line-height:1.5;font-weight:500}
  .education-content p{line-height:1.65}
