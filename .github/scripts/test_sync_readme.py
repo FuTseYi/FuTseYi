@@ -9,6 +9,18 @@ import sync_readme as sync
 
 
 class ReadmeTests(unittest.TestCase):
+    def test_both_readme_commits_use_the_same_identity_and_message(self):
+        current={"content":sync.base64.b64encode(b"old README").decode("ascii"),"sha":"previous"}
+        with patch.object(sync,"request",side_effect=[current,{}]) as request:
+            sync.sync_profile("new README","test-token")
+        body=request.call_args.args[3]
+        workflow=(sync.ROOT/".github/workflows/sync-readme.yml").read_text(encoding="utf-8")
+        self.assertIn('git commit -m "'+body["message"]+'"',workflow)
+        self.assertIn('git config user.name "'+body["author"]["name"]+'"',workflow)
+        self.assertIn('git config user.email "'+body["author"]["email"]+'"',workflow)
+        self.assertEqual(body["author"],body["committer"])
+        self.assertEqual(sync.base64.b64decode(body["content"]),b"new README")
+
     def test_sections_and_profile_content_match_homepage(self):
         home = sync.read_home()
         result = sync.render()
