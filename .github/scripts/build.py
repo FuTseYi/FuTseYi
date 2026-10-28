@@ -59,6 +59,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
 <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="/assets/icons/site.webmanifest">
 <link rel="stylesheet" href="{css}"><script src="/assets/js/site.js" defer></script>
 </head>
 <body class="blog-page">
