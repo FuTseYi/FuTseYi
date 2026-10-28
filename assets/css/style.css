@@ -781,10 +781,12 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
     right: max(24px, calc((100vw - 790px) / 2 - 224px));
     max-height: calc(100vh - 2 * (var(--nav-h) + var(--nav-blur-tail) + 20px));
     overflow-y: auto;
+    scrollbar-width: none;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
   }
+  .article-toc::-webkit-scrollbar { display: none; }
   .article-toc a { white-space: normal; overflow-wrap: anywhere; }
   .article-toc .toc-level-3 { padding-left: 24px; font-size: 11px; }
 }
