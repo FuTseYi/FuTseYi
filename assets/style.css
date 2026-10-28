@@ -697,12 +697,6 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .motto-heading{margin:0;font-weight:500;color:var(--ink-soft)}
 .bio-detail .profile-motto{border:0;padding-top:0;margin-top:0;font-size:12.5px;line-height:1.65}
 
-.about-blog{margin-top:20px}
-.about-blog h3{font-size:13px;font-weight:500;margin-bottom:8px}
-.about-blog .latest-posts{margin-bottom:0}
-.about-blog .latest-post-link{font-size:12.5px;padding:7px 0;color:var(--accent)}
-.about-blog .latest-post-link:is(:hover,:focus-visible){color:var(--gold-ink)}
-
 @media(max-width:680px){
  .about-intro{margin-top:18px}
  .about-intro .bio{font-size:14px;line-height:1.75}
@@ -722,12 +716,12 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 }
 
 /* Rounded entry hover surfaces without shifting their content. */
-.education-list .education-item,.project-item,.about-blog .latest-post-link{position:relative;isolation:isolate}
-.education-list .education-item::before,.project-item::before,.about-blog .latest-post-link::before{content:"";position:absolute;inset:-2px -6px;border-radius:10px;background:transparent;z-index:-1;pointer-events:none;transition:background-color .16s ease}
-.education-list .education-item:focus-within,.project-item:focus-within,.about-blog .latest-post-link:focus-visible{background:transparent}
-.education-list .education-item:focus-within::before,.project-item:focus-within::before,.about-blog .latest-post-link:focus-visible::before{background:var(--bg-soft)}
-@media(hover:hover){.education-list .education-item:hover,.project-item:hover,.about-blog .latest-post-link:hover{background:transparent}.education-list .education-item:hover::before,.project-item:hover::before,.about-blog .latest-post-link:hover::before{background:var(--bg-soft)}}
-@media(prefers-reduced-motion:reduce){.education-list .education-item::before,.project-item::before,.about-blog .latest-post-link::before{transition:none}}
+.education-list .education-item,.project-item{position:relative;isolation:isolate}
+.education-list .education-item::before,.project-item::before{content:"";position:absolute;inset:-2px -6px;border-radius:10px;background:transparent;z-index:-1;pointer-events:none;transition:background-color .16s ease}
+.education-list .education-item:focus-within,.project-item:focus-within{background:transparent}
+.education-list .education-item:focus-within::before,.project-item:focus-within::before{background:var(--bg-soft)}
+@media(hover:hover){.education-list .education-item:hover,.project-item:hover{background:transparent}.education-list .education-item:hover::before,.project-item:hover::before{background:var(--bg-soft)}}
+@media(prefers-reduced-motion:reduce){.education-list .education-item::before,.project-item::before{transition:none}}
 
 .activity-note{font-size:11px;color:var(--ink-faint);margin-top:14px}
 
@@ -735,14 +729,17 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .community-icon{display:block;width:40px;height:40px;object-fit:contain;border-radius:8px}
 
 /* Consistent compact community and contribution lists. */
-#community .project-item,#contributions .project-item{padding:14px 0;gap:18px;align-items:start}
+#community .project-item,#recent-blog .project-item,#contributions .project-item{padding:14px 0;gap:18px;align-items:start}
 #community .project-item{grid-template-columns:40px minmax(0,1fr)}
 #contributions .project-item{grid-template-columns:90px minmax(0,1fr)}
-#community .project-item h3,#contributions .project-item h3{font-size:15px;line-height:1.5}
-#community .project-item p,#contributions .project-item p{font-size:13px;line-height:1.65;margin-top:3px}
+#recent-blog .project-item{grid-template-columns:minmax(0,1fr) auto;column-gap:32px}
+#recent-blog .contribution-date{grid-column:2;grid-row:1}
+#recent-blog .project-item > div{grid-column:1;grid-row:1}
+#community .project-item h3,#recent-blog .project-item h3,#contributions .project-item h3{font-size:15px;line-height:1.5}
+#community .project-item p,#recent-blog .project-item p,#contributions .project-item p{font-size:13px;line-height:1.65;margin-top:3px}
 .contribution-date{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
 #contributions .project-tags{margin-top:5px;gap:8px}
 .project-item[hidden]{display:none}
 .list-toggle{display:inline-flex;align-items:center;margin-top:18px;padding:9px 18px;border:1px solid var(--line);border-radius:999px;background:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
 .list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);border-color:var(--gold);background:var(--bg-soft)}
-@media(max-width:680px){#contributions .project-item{grid-template-columns:1fr;gap:4px}.contribution-date{padding-top:0}}
+@media(max-width:680px){#recent-blog .project-item,#contributions .project-item{grid-template-columns:1fr;gap:4px}#recent-blog .contribution-date{grid-column:1;grid-row:2}.contribution-date{padding-top:0}}

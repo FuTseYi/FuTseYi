@@ -36,7 +36,7 @@ def read_home():
     quotes=[md(x) for x in re.findall(r"<p>(.*?)</p>",motto[1],re.S)]
     if len(quotes)<2: raise ValueError("Missing motto lines in homepage")
     return paragraphs,email[1],website[1].rstrip("/"),md(note[1]),md(languages[1]),quotes,md(name[1])
-def read_post_entries():
+def read_post_entries(limit=3):
     found=[]
     for file in (ROOT/"posts").glob("*.md"):
         raw=file.read_text(encoding="utf-8")
@@ -53,7 +53,7 @@ def read_post_entries():
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",file.stem):raise ValueError(f"Invalid article slug: {file.stem}")
         found.append((dt,file.stem,fields["title"]))
     found.sort(reverse=True)
-    return found[:3]
+    return found[:limit]
 
 def read_posts():
     return [f"- [{title}]({SITE}/blog/{slug}/)" for _,slug,title in read_post_entries()]
@@ -98,9 +98,13 @@ def update_site():
     if "<!-- LATEST-POSTS -->" not in html:
         raise ValueError("Missing homepage Latest Posts slot")
     entries=[]
-    for dt,slug,title in read_post_entries():
+    posts=read_post_entries(limit=None)
+    for dt,slug,title in posts[:3]:
         url=f"{SITE}/blog/{slug}/"
-        entries.append(f'<a class="latest-post-link" href="{html_escape(url,quote=True)}"><span>{html_escape(title)} <span class="link-arrow" aria-hidden="true"></span></span><time datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time></a>')
+        entries.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time><div><h3><a href="{html_escape(url,quote=True)}">{html_escape(title)} <span class="link-arrow" aria-hidden="true"></span></a></h3></div></article>')
+    if len(posts)>3 or not posts:
+        label="View all articles" if posts else "Browse recent articles"
+        entries.append(f'<a class="list-toggle" href="{SITE}/blog/">{label} <span class="link-arrow" aria-hidden="true"></span></a>')
     html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: "".join(entries),html,flags=re.S)
     output.write_text(html,encoding="utf-8")
     print("Injected latest blog posts into deployed homepage.")
