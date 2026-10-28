@@ -24,7 +24,7 @@ def read_home():
     bio_text=re.sub(r'<p class="profile-interests"><span>.*?</span>\s*',"<p>",bio[1],flags=re.S)
     paragraphs=[md(x) for x in re.findall(r"<p\b[^>]*>(.*?)</p>",bio_text,re.S)]
     email=re.search(r'href="mailto:([^"]+)"',html)
-    website=re.search(r'<a class="profile-website" href="([^"]+)"',html)
+    website=re.search(r'<meta name="profile-website" content="([^"]+)"',html)
     canonical=re.search(r'<link\s+rel="canonical"\s+href="([^"]+)"',html)
     if not paragraphs or not email or not canonical or not website: raise ValueError("index.html: missing bio, email, canonical or profile website")
     note=re.search(r'<p class="profile-note">(.*?)</p>',html,re.S)
