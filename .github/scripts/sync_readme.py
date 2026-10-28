@@ -9,9 +9,18 @@ from datetime import date
 from html import escape, unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
+from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
-SITE="https://futseyi.github.io"
+
+def site_url():
+    repository=os.environ.get("GITHUB_REPOSITORY")
+    if repository:
+        return f"https://{repository.split('/')[0].lower()}.github.io"
+    html=(ROOT/"index.html").read_text(encoding="utf-8")
+    canonical=re.search(r'<link rel="canonical" href="([^"]+)"',html)
+    if not canonical:raise ValueError("index.html: missing canonical URL")
+    return canonical[1].rstrip("/")
 def md(fragment):
     fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',lambda m:"["+re.sub(r"<[^>]*>","",m[2]).strip()+"]("+m[1]+")",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<strong>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
@@ -34,11 +43,11 @@ def read_home():
     content={
         "paragraphs":[md(x) for x in re.findall(r'<p\b[^>]*>(.*?)</p>',bio,re.S)],
         "note":md(note), "languages":md(languages),
+        "motto_label":md(required(r'<h3 class="motto-heading">(.*?)</h3>',"motto label")[1]),
         "quotes":[md(x) for x in re.findall(r'<p>(.*?)</p>',motto,re.S)],
         "links":[md(x) for x in re.findall(r'<a\b[^>]*>.*?</a>',links,re.S)],
         "greeting":(greeting[1],unescape(greeting[2])),
-        "communities":[(md(title),md(description)) for title,description in
-                       re.findall(r'<h3>(.*?)</h3><p>(.*?)</p>',community,re.S)],
+        "communities":[md(title) for title in re.findall(r'<h3>(.*?)</h3>',community,re.S)],
         "badge":re.sub(r' loading="lazy"',"",badge),
     }
     for field in ("paragraphs","quotes","links","communities"):
@@ -66,8 +75,11 @@ def read_post_entries(limit=3):
 
 def render():
     home=read_home()
+    site=site_url()
     image_path,image_alt=home["greeting"]
-    image_url="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/"+image_path
+    owner=urlsplit(site).hostname.removesuffix(".github.io")
+    repository=os.environ.get("GITHUB_REPOSITORY",f"{owner}/{owner}.github.io")
+    image_url=f"https://raw.githubusercontent.com/{repository}/main/"+image_path
     posts=read_post_entries()
     return (
       '## About\n\n'
@@ -75,16 +87,17 @@ def render():
       +f'*{home["note"]}*\n\n'
       +'\n\n'.join(home["paragraphs"])+'\n\n'
       +home["languages"]+'\n\n'
-      +'**Motto**\n\n'
+      +home["motto_label"]+'\n\n'
       +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
       +'## Active In\n\n'
-      +'\n'.join(f'- {title} — {description}' for title,description in home["communities"])+'\n\n'
+      +'\n'.join(f'- {title}' for title in home["communities"])+'\n\n'
       +'## Recent Blog\n\n'
-      +('\n'.join(f'- [{title}]({SITE}/blog/{slug}/) · {dt:%Y.%m.%d}' for dt,slug,title in posts)
+      +('\n'.join(f'- [{title}]({site}/blog/{slug}/)' for _,slug,title in posts)
          if posts else 'No published articles yet.')+'\n\n'
-      +f'[View all articles]({SITE}/blog/)\n'
+      +f'[View all articles]({site}/blog/)\n\n'
+      +f'[Visit my website for more information]({site}/)\n'
     )
 
 def request(method,url,token,body=None):
@@ -101,6 +114,7 @@ def sync_profile(text,token):
 def update_site():
     """Inject the same latest-post list into the deployed homepage, not source HTML."""
     from html import escape as html_escape
+    SITE=site_url()
     output=ROOT/"_site"/"index.html"
     html=output.read_text(encoding="utf-8")
     if "<!-- LATEST-POSTS -->" not in html:

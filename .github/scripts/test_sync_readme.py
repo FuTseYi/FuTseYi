@@ -17,9 +17,12 @@ class ReadmeTests(unittest.TestCase):
         for text in [home["note"], *home["paragraphs"], home["languages"],
                      *home["quotes"], *home["links"]]:
             self.assertIn(text, result)
-        for title, description in home["communities"]:
+        for title in home["communities"]:
             self.assertIn(title, result)
-            self.assertIn(description, result)
+        for label in ("**Focus:**", "**Lang:**", "**Motto:**"):
+            self.assertIn(label, result)
+        for dt, _, _ in sync.read_post_entries():
+            self.assertNotIn(dt.strftime("%Y.%m.%d"), result)
         self.assertNotIn("assets/me.jpg", result)
         self.assertNotIn("## *Website*", result)
         self.assertNotIn("Powered by", result)
@@ -38,9 +41,24 @@ class ReadmeTests(unittest.TestCase):
             shutil.copytree(sync.ROOT / "posts", root / "posts")
             with patch.object(sync, "ROOT", root):
                 result = sync.render()
-            for text in ("A new profile note.", "Focus: A new focus.",
-                         "[Professional profile]", "A revised community description."):
+            for text in ("A new profile note.", "**Focus:** A new focus.",
+                         "[Professional profile]"):
                 self.assertIn(text, result)
+            self.assertNotIn("A revised community description.", result)
+
+    def test_website_and_image_urls_follow_repository_owner(self):
+        with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
+            result = sync.render()
+        self.assertIn("[Visit my website for more information](https://newowner.github.io/)", result)
+        self.assertIn("https://newowner.github.io/blog/", result)
+        self.assertIn("https://raw.githubusercontent.com/NewOwner/NewOwner.github.io/main/assets/i-am-Shine.svg", result)
+
+    def test_local_website_url_follows_canonical(self):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(sync.os.environ, {}, clear=True):
+            root = Path(directory)
+            (root / "index.html").write_text('<link rel="canonical" href="https://another.github.io/">')
+            with patch.object(sync, "ROOT", root):
+                self.assertEqual(sync.site_url(), "https://another.github.io")
 
     def test_recent_posts_limit_and_drafts(self):
         with tempfile.TemporaryDirectory() as directory:
