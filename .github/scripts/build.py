@@ -56,7 +56,9 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff"><meta name="description" content="{description}">
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
+<link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
 <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="{css}"><script src="/assets/js/site.js" defer></script>
 </head>
 <body class="blog-page">
