@@ -42,7 +42,6 @@ def layout(title: str, description: str, url: str, content: str) -> str:
     title, description, url = (escape(value, quote=True) for value in (title, description, url))
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
-    header = header.replace(' class="is-active"', '').replace(' aria-current="location"', '')
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
     header = header.replace('src="assets/icons/redbird.svg"', 'src="/assets/icons/redbird.svg"')

@@ -26,7 +26,8 @@
   }, { passive: true });
 
   const toc = document.querySelector('.page-toc');
-  const links = [...document.querySelectorAll('.nav-links a[href^="#"], .page-toc a[href^="#"]')];
+  const tocLinks = [...document.querySelectorAll('.page-toc a[href^="#"]')];
+  const links = [...document.querySelectorAll('.nav-links a[href^="#"]'), ...tocLinks];
   const targets = [...new Set(links
     .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
     .filter(Boolean))];
@@ -75,7 +76,7 @@
       toc.setAttribute('aria-hidden', String(!visible));
       toc.inert = !visible;
     }
-    links.forEach((link) => {
+    tocLinks.forEach((link) => {
       const current = decodeURIComponent(link.hash.slice(1)) === active;
       link.classList.toggle('is-active', current);
       if (current) link.setAttribute('aria-current', 'location');
