@@ -21,10 +21,18 @@
       .svg-bubble { fill: var(--bubble-bg); }
       .dot-color  { fill: var(--dot-color); }
 
+      /* HTML 消息气泡 */
       .chat-bubble {
-        fill: var(--bubble-text);
+        display: inline-block;
+        width: fit-content;
+        background: var(--bubble-bg);
+        color: var(--bubble-text);
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
         font-size: 15px;
+        line-height: 42px;
+        padding: 0 14px;
+        border-radius: 18px;
+        white-space: nowrap;
       }
 
       @keyframes bounce {
@@ -53,10 +61,6 @@
 
       .typing { animation: showTyping 6s ease-in-out infinite; opacity: 0; }
       .msg    { animation: showMsg    6s ease-in-out infinite; opacity: 0; }
-      @media (prefers-reduced-motion: reduce) {
-        .typing, .dot1, .dot2, .dot3 { animation: none; opacity: 0; }
-        .msg { animation: none; opacity: 1; }
-      }
     </style>
   </defs>
 
@@ -70,10 +74,13 @@
     <circle class="dot3 dot-color" cx="58.21" cy="20.98" r="5.02"/>
   </g>
 
-  <!-- 消息气泡（SVG） -->
+  <!-- 消息气泡（foreignObject） -->
   <g class="msg">
-    <rect width="420" height="42" rx="18" class="svg-bubble"/>
-    <text x="14" y="27" class="chat-bubble">I'm 謝懿 'Shine', online as FuTseYi. 🖖🏻</text>
+    <foreignObject x="0" y="0" width="430" height="52">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <span class="chat-bubble">I'm 謝懿 'Shine', online as FuTseYi. 🖖🏻</span>
+      </div>
+    </foreignObject>
   </g>
 
 </svg>
