@@ -777,5 +777,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .project-item > div{min-width:0;overflow-wrap:anywhere}
 }
 
-.profile-greeting{display:block;width:100%;max-width:430px;height:auto;margin-top:14px}
-@media(max-width:680px){.profile-greeting{margin:14px auto 0}}
+.profile-heading{position:relative;display:inline-block;margin-top:12px}
+.profile-greeting{position:absolute;left:calc(100% - 40px);bottom:calc(100% - 40px);width:360px;max-width:none;height:auto;pointer-events:none}
+@media(max-width:1199px){.profile-heading{margin-top:0}.profile-greeting{display:none}}
+@media(max-width:680px){.profile-heading{display:block;text-align:center}}
