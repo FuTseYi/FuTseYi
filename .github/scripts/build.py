@@ -71,6 +71,20 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 def pretty_date(value: str) -> str:
     return date.fromisoformat(value).strftime("%b %d, %Y").replace(" 0", " ")
 
+def article_toc(tokens: list[dict]) -> str:
+    entries = []
+    pending = list(reversed(tokens))
+    while pending:
+        token = pending.pop()
+        pending.extend(reversed(token.get("children", [])))
+        if token["level"] in (2, 3):
+            label = re.sub(r"<[^>]+>", "", token["name"])
+            entries.append(f'<a href="#{escape(token["id"], quote=True)}" class="toc-level-{token["level"]}">{label}</a>')
+    if len(entries) < 3:
+        return ""
+    return '<nav class="page-toc article-toc" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + "".join(entries) + '</nav>'
+
+
 def main() -> None:
     # Validate every source before replacing the generated website.
     # A malformed post must not erase an otherwise usable local preview.
@@ -93,7 +107,7 @@ def main() -> None:
         parser.reset()
         article = parser.convert(source)
         header = f'<a class="back-link" href="/blog/">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time></div>'
-        content = header + '<article class="article">' + article + '</article>'
+        content = header + '<article class="article">' + article + '</article>' + article_toc(parser.toc_tokens)
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
         assets = SOURCE / slug / "assets"

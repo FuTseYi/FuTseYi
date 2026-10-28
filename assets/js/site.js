@@ -44,7 +44,7 @@
   const toc = document.querySelector('.page-toc');
   const links = [...document.querySelectorAll('.nav-links a[href^="#"], .page-toc a[href^="#"]')];
   const targets = [...new Set(links
-    .map((link) => document.getElementById(link.hash.slice(1)))
+    .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
     .filter(Boolean))];
   let clickedTarget = null;
   const selectTarget = (id) => {
@@ -59,7 +59,7 @@
     clickedTarget = { id, top: Math.max(0, Math.min(top, document.documentElement.scrollHeight - window.innerHeight)), settled: false };
     schedule();
   };
-  links.forEach((link) => link.addEventListener('click', () => selectTarget(link.hash.slice(1))));
+  links.forEach((link) => link.addEventListener('click', () => selectTarget(decodeURIComponent(link.hash.slice(1)))));
   const releaseTarget = () => { clickedTarget = null; schedule(); };
   window.addEventListener('wheel', releaseTarget, { passive: true });
   window.addEventListener('touchstart', releaseTarget, { passive: true });
@@ -86,13 +86,13 @@
       if (clickedTarget) active = clickedTarget.id;
     }
     if (toc) {
-      const visible = targets[0].getBoundingClientRect().bottom <= navHeight + 28;
+      const visible = toc.classList.contains('article-toc') || targets[0].getBoundingClientRect().bottom <= navHeight + 28;
       toc.classList.toggle('is-visible', visible);
       toc.setAttribute('aria-hidden', String(!visible));
       toc.inert = !visible;
     }
     links.forEach((link) => {
-      const current = link.getAttribute('href') === '#' + active;
+      const current = decodeURIComponent(link.hash.slice(1)) === active;
       link.classList.toggle('is-active', current);
       if (current) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
@@ -106,9 +106,9 @@
   };
   window.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', releaseTarget, { passive: true });
-  window.addEventListener('hashchange', () => selectTarget(location.hash.slice(1)));
+  window.addEventListener('hashchange', () => selectTarget(decodeURIComponent(location.hash.slice(1))));
   window.addEventListener('load', () => {
-    if (location.hash) selectTarget(location.hash.slice(1));
+    if (location.hash) selectTarget(decodeURIComponent(location.hash.slice(1)));
     else schedule();
   });
   document.querySelectorAll('[data-expandable]').forEach((list) => {

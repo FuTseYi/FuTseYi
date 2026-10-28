@@ -774,3 +774,17 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .profile-greeting{visibility:hidden;position:absolute;left:calc(100% + var(--greeting-gap));bottom:calc(100% - 52px);width:360px;max-width:none;height:auto;pointer-events:none}
 .has-greeting .profile-greeting{visibility:visible}
 @media(max-width:680px){.profile-heading{display:block;text-align:center;margin-top:0}}
+
+@media (min-width: 1400px) {
+  .article-toc {
+    width: 200px;
+    right: max(24px, calc((100vw - 790px) / 2 - 224px));
+    max-height: calc(100vh - 2 * (var(--nav-h) + var(--nav-blur-tail) + 20px));
+    overflow-y: auto;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .article-toc a { white-space: normal; overflow-wrap: anywhere; }
+  .article-toc .toc-level-3 { padding-left: 24px; font-size: 11px; }
+}
