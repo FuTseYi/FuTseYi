@@ -122,10 +122,11 @@ def update_site():
     for dt,slug,title in posts[:3]:
         url=f"{SITE}/blog/{slug}/"
         entries.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time><div><h3><a href="{html_escape(url,quote=True)}">{html_escape(title)} <span class="link-arrow" aria-hidden="true"></span></a></h3></div></article>')
+    content='<div class="project-list" id="latest-posts">'+"".join(entries)+'</div>'
     if len(posts)>3 or not posts:
         label="View all articles" if posts else "Browse recent articles"
-        entries.append(f'<a class="list-toggle" href="{SITE}/blog/">{label} <span class="link-arrow" aria-hidden="true"></span></a>')
-    html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: "".join(entries),html,flags=re.S)
+        content+=f'<a class="list-toggle" href="{SITE}/blog/">{label} <span class="link-arrow" aria-hidden="true"></span></a>'
+    html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: content,html,flags=re.S)
     output.write_text(html,encoding="utf-8")
     print("Injected latest blog posts into deployed homepage.")
 
