@@ -6,7 +6,7 @@ import json
 import os
 import re
 from datetime import date
-from html import unescape
+from html import escape, unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -60,9 +60,14 @@ def read_posts():
 def render():
     paragraphs,email,website,note,languages,quotes,name=read_home()
     posts=read_posts()
+    home=(ROOT/"index.html").read_text(encoding="utf-8")
+    greeting=re.search(r'<img class="profile-greeting" src="([^"]+)" alt="([^"]+)"',home)
+    if not greeting:raise ValueError("Missing shared profile greeting image")
+    image_url="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/"+greeting[1]
     return (
       f'# {name}\n\n'
-      +'## *About* ![](https://raw.githubusercontent.com/FuTseYi/FuTseYi/main/assets/i-am-Shine.svg)\n\n'
+      +f'<img src="{escape(image_url,quote=True)}" alt="{escape(unescape(greeting[2]),quote=True)}" width="430" />\n\n'
+      +'## *About*\n\n'
       +f'- ***{note}***\n'
       +''.join(f"- {paragraph}\n" for paragraph in paragraphs)
       +f'- *Lang: {languages}*\n'
