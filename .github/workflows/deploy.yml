@@ -4,8 +4,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # First day of each month, 09:17 Asia/Shanghai (01:17 UTC).
-    - cron: '17 1 1 * *'
+    # Days 1 and 15 of each month, 09:17 Asia/Shanghai (01:17 UTC).
+    - cron: '17 1 1,15 * *'
 permissions:
   contents: read
   pages: write
@@ -42,12 +42,25 @@ jobs:
           test -s _site/sitemap.xml
       - name: Render latest posts on homepage
         run: python .github/scripts/sync_readme.py --update-site
+      - name: Restore public activity snapshot
+        id: activity-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: _site/contributions.json
+          key: contributions-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: contributions-v1-
       - name: Render public contributions
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python .github/scripts/sync_activity.py ${{ github.event_name != 'push' && '--refresh' || '' }}
       - name: Verify local links, blog pages and sitemap
         run: python .github/scripts/verify.py
+      - name: Save public activity snapshot
+        if: ${{ hashFiles('_site/contributions.json') != '' && steps.activity-cache.outputs.cache-matched-key != format('contributions-v1-{0}', hashFiles('_site/contributions.json')) }}
+        uses: actions/cache/save@v4
+        with:
+          path: _site/contributions.json
+          key: contributions-v1-${{ hashFiles('_site/contributions.json') }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

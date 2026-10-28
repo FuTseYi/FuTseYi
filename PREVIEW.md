@@ -23,9 +23,12 @@ Press Ctrl+C to stop. Re-run the preview command after changing articles, HTML,
 CSS or JavaScript; files are not watched automatically.
 
 The script builds the blog, stages the website in `_site/`, injects latest posts
-and the existing public activity snapshot (retrieving the deployed snapshot if
-none exists), and verifies local links before serving. If activity is unavailable,
-the static GitHub link remains available.
+and public activity, and verifies local links before serving. Activity snapshots
+less than 24 hours old are reused; missing or older snapshots trigger a GitHub
+query. The deployed snapshot is a backup when no valid local snapshot exists.
+If a query fails, the previous snapshot and its timestamp are preserved; without
+a valid snapshot, the static GitHub link remains available. Website and Profile
+repository activity is excluded.
 
 Only navigation links in the preview copy are converted from the production
 origin to local paths. Source HTML and deployment behavior are unchanged.
