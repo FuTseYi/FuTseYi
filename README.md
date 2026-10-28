@@ -1,6 +1,6 @@
 ## About
 
-<img src="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/assets/i-am-Shine.svg" alt="I&#x27;m 謝懿 &#x27;Shine&#x27;, online as FuTseYi." width="430" />
+<img src="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/assets/images/profile/i-am-Shine.svg" alt="I&#x27;m 謝懿 &#x27;Shine&#x27;, online as FuTseYi." width="430" />
 
 *Currently exploring new things, occasionally pretending I know what I’m doing.*
 

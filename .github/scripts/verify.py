@@ -59,7 +59,7 @@ def main():
     assert (ROOT / "index.html").is_file(), "Missing homepage"
     assert (ROOT / "blog/index.html").is_file(), "Missing Writing index"
     assert (ROOT / "blog/posts.json").is_file(), "Missing Writing feed"
-    assert (ROOT / "assets/favicon.svg").is_file(), "Missing favicon"
+    assert (ROOT / "assets/icons/favicon.svg").is_file(), "Missing favicon"
 
     pages = {}
     for file in ROOT.rglob("*.html"):

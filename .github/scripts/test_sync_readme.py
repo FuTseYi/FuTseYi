@@ -23,7 +23,7 @@ class ReadmeTests(unittest.TestCase):
             self.assertIn(label, result)
         for dt, _, _ in sync.read_post_entries():
             self.assertNotIn(dt.strftime("%Y.%m.%d"), result)
-        self.assertNotIn("assets/me.jpg", result)
+        self.assertNotIn("assets/images/profile/me.jpg", result)
         self.assertNotIn("## *Website*", result)
         self.assertNotIn("Powered by", result)
         self.assertLess(result.index("[Visit my website for more information]"), result.index("## Active In"))
@@ -52,7 +52,7 @@ class ReadmeTests(unittest.TestCase):
             result = sync.render()
         self.assertIn("[Visit my website for more information](https://newowner.github.io/)", result)
         self.assertIn("https://newowner.github.io/blog/", result)
-        self.assertIn("https://raw.githubusercontent.com/NewOwner/NewOwner.github.io/main/assets/i-am-Shine.svg", result)
+        self.assertIn("https://raw.githubusercontent.com/NewOwner/NewOwner.github.io/main/assets/images/profile/i-am-Shine.svg", result)
 
     def test_local_website_url_follows_canonical(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(sync.os.environ, {}, clear=True):
