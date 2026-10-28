@@ -376,10 +376,7 @@ section.section { padding: 38px 0; }
   }
 
 .section-title {
-    color: transparent;
-    background: linear-gradient(115deg, #c4b078 0%, #d8c899 14%, #c6b98e 30%, #a49a7e 46%, #77736b 68%);
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: #55534d;
     font-size: clamp(26px, 3vw, 36px);
     font-weight: 400; letter-spacing: -.035em; line-height: 1.25;
   }
