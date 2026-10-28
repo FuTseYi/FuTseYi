@@ -664,6 +664,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-o
 .site-header:not(:has(.nav-blur)){background:rgba(255,255,255,.94);backdrop-filter:blur(16px)}
 .bio p+p{margin-top:12px}
 .portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
+@media(min-width:681px){.portrait{position:relative}.portrait figcaption{position:absolute;top:100%;left:0;right:0}}
 .portrait .visitor-counter{display:flex;justify-content:center;margin-top:10px}
 .portrait .visitor-counter img{width:132px;max-width:100%;height:auto;min-height:18px}
 .section-lead{font-size:14px;color:var(--ink-soft);max-width:730px;margin-bottom:20px}
