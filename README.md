@@ -24,9 +24,9 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 
 ## Active In
 
-- [UEM Stu](https://uem-stu.github.io/)
-- [HAI-HKUST](https://github.com/HAI-HKUST/HAI-HKUST.github.io)
 - [Datawhale](https://github.com/datawhalechina)
+- [HAI-HKUST](https://hai-hkust.github.io/)
+- [UEM Stu](https://uem-stu.github.io/)
 
 ## Recent Blog
 
