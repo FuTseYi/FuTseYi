@@ -15,27 +15,36 @@ SITE="https://futseyi.github.io"
 def md(fragment):
     fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',lambda m:"["+re.sub(r"<[^>]*>","",m[2]).strip()+"]("+m[1]+")",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<strong>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
-    fragment=re.sub(r"<em>(.*?)</em>",r"**",fragment,flags=re.S|re.I)
+    fragment=re.sub(r"<em>(.*?)</em>",r"*\1*",fragment,flags=re.S|re.I)
     return unescape(" ".join(re.sub(r"<[^>]+>","",fragment).split()))
 def read_home():
     html=(ROOT/"index.html").read_text(encoding="utf-8")
-    bio=re.search(r'<div\s+class="bio"\s*>(.*?)</div>',html,re.S)
-    if not bio: raise ValueError("index.html: missing .bio")
-    bio_text=re.sub(r'<p class="profile-interests"><span>.*?</span>\s*',"<p>",bio[1],flags=re.S)
-    paragraphs=[md(x) for x in re.findall(r"<p\b[^>]*>(.*?)</p>",bio_text,re.S)]
-    email=re.search(r'href="mailto:([^"]+)"',html)
-    website=re.search(r'<meta name="profile-website" content="([^"]+)"',html)
-    canonical=re.search(r'<link\s+rel="canonical"\s+href="([^"]+)"',html)
-    if not paragraphs or not email or not canonical or not website: raise ValueError("index.html: missing bio, email, canonical or profile website")
-    note=re.search(r'<p class="profile-note">(.*?)</p>',html,re.S)
-    languages=re.search(r'<p class="profile-languages">.*?</span>(.*?)</p>',html,re.S)
-    motto=re.search(r'<div class="profile-motto">(.*?)</div>\s*</div>',html,re.S)
-    name=re.search(r'<h1 id="person-name">(.*?)</h1>',html,re.S)
-    if not (note and languages and motto and name):
-        raise ValueError("Missing shared profile elements in homepage")
-    quotes=[md(x) for x in re.findall(r"<p>(.*?)</p>",motto[1],re.S)]
-    if len(quotes)<2: raise ValueError("Missing motto lines in homepage")
-    return paragraphs,email[1],website[1].rstrip("/"),md(note[1]),md(languages[1]),quotes,md(name[1])
+    def required(pattern,label):
+        match=re.search(pattern,html,re.S)
+        if not match:raise ValueError(f"index.html: missing {label}")
+        return match
+    bio=required(r'<div\s+class="bio"\s*>(.*?)</div>',"bio")[1]
+    note=required(r'<p class="profile-note">(.*?)</p>',"profile note")[1]
+    languages=required(r'<p class="profile-languages">(.*?)</p>',"languages")[1]
+    motto=required(r'<div class="profile-motto">(.*?)</div>\s*</div>',"motto")[1]
+    links=required(r'<div class="hero-links">(.*?)</div>',"profile links")[1]
+    greeting=required(r'<img class="profile-greeting" src="([^"]+)" alt="([^"]+)"',"greeting")
+    community=required(r'<section[^>]*id="community"[^>]*>(.*?)</section>',"Active In")[1]
+    badge=required(r'<a class="visitor-counter"[^>]*>.*?</a>',"visitor badge")[0]
+    content={
+        "paragraphs":[md(x) for x in re.findall(r'<p\b[^>]*>(.*?)</p>',bio,re.S)],
+        "note":md(note), "languages":md(languages),
+        "quotes":[md(x) for x in re.findall(r'<p>(.*?)</p>',motto,re.S)],
+        "links":[md(x) for x in re.findall(r'<a\b[^>]*>.*?</a>',links,re.S)],
+        "greeting":(greeting[1],unescape(greeting[2])),
+        "communities":[(md(title),md(description)) for title,description in
+                       re.findall(r'<h3>(.*?)</h3><p>(.*?)</p>',community,re.S)],
+        "badge":re.sub(r' loading="lazy"',"",badge),
+    }
+    for field in ("paragraphs","quotes","links","communities"):
+        if not content[field]:raise ValueError(f"index.html: empty or unrecognized {field}")
+    return content
+
 def read_post_entries(limit=3):
     found=[]
     for file in (ROOT/"posts").glob("*.md"):
@@ -55,35 +64,29 @@ def read_post_entries(limit=3):
     found.sort(reverse=True)
     return found[:limit]
 
-def read_posts():
-    return [f"- [{title}]({SITE}/blog/{slug}/)" for _,slug,title in read_post_entries()]
 def render():
-    paragraphs,email,website,note,languages,quotes,name=read_home()
-    posts=read_posts()
-    home=(ROOT/"index.html").read_text(encoding="utf-8")
-    greeting=re.search(r'<img class="profile-greeting" src="([^"]+)" alt="([^"]+)"',home)
-    if not greeting:raise ValueError("Missing shared profile greeting image")
-    image_url="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/"+greeting[1]
+    home=read_home()
+    image_path,image_alt=home["greeting"]
+    image_url="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/"+image_path
+    posts=read_post_entries()
     return (
-      f'# {name}\n\n'
-      +f'<img src="{escape(image_url,quote=True)}" alt="{escape(unescape(greeting[2]),quote=True)}" width="430" />\n\n'
-      +'## *About*\n\n'
-      +f'- ***{note}***\n'
-      +''.join(f"- {paragraph}\n" for paragraph in paragraphs)
-      +f'- *Lang: {languages}*\n'
-      +f'- *Contact:*\n  - *Email: [{email}](mailto:{email})*\n'
-      +'\n'
-      +'## *Website*\n\n'
-      +f'- Visit 『*[{website.removeprefix("https://").removeprefix("www.")}]({website}/)*』 to learn more about me.\n\n'
-      +'## *Motto*\n\n'
-      +''.join(f'- *{quote}*\n' for quote in quotes)+'\n'
-      +'## Latest Posts\n\n'
-      +'\n'.join(posts or ["No published articles yet."])+'\n\n'
-      +'<a href="https://visit-counter.futseyi.workers.dev/status?path=https%3A%2F%2Fgithub.com%2FFuTseYi" target="_blank" rel="noopener noreferrer">\n'
-      +'  <img src="https://visit-counter.futseyi.workers.dev/api/combined?path=https%3A%2F%2Fgithub.com%2FFuTseYi" alt="Visitor badge" />\n'
-      +'</a>\n\n'
-      +'<sub>Powered by <a href="https://github.com/FuTseYi/Cloudflare-D1-Visit-Counter">Cloudflare-D1-Visit-Counter</a></sub>\n'
+      '## About\n\n'
+      +f'<img src="{escape(image_url,quote=True)}" alt="{escape(image_alt,quote=True)}" width="430" />\n\n'
+      +f'*{home["note"]}*\n\n'
+      +'\n\n'.join(home["paragraphs"])+'\n\n'
+      +home["languages"]+'\n\n'
+      +'**Motto**\n\n'
+      +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
+      +' · '.join(home["links"])+'\n\n'
+      +home["badge"]+'\n\n'
+      +'## Active In\n\n'
+      +'\n'.join(f'- {title} — {description}' for title,description in home["communities"])+'\n\n'
+      +'## Recent Blog\n\n'
+      +('\n'.join(f'- [{title}]({SITE}/blog/{slug}/) · {dt:%Y.%m.%d}' for dt,slug,title in posts)
+         if posts else 'No published articles yet.')+'\n\n'
+      +f'[View all articles]({SITE}/blog/)\n'
     )
+
 def request(method,url,token,body=None):
     req=Request(url,method=method,data=json.dumps(body).encode() if body is not None else None,headers={"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json","User-Agent":"FuTseYi-readme-sync"})
     with urlopen(req,timeout=30) as response:return json.load(response)

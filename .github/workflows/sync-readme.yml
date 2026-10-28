@@ -6,6 +6,7 @@ on:
       - index.html
       - posts/**
       - .github/scripts/sync_readme.py
+      - .github/scripts/test_sync_readme.py
       - .github/workflows/sync-readme.yml
   workflow_dispatch:
 permissions:
@@ -27,6 +28,8 @@ jobs:
           python-version: "3.12"
       - name: Generate README from homepage and posts
         run: python .github/scripts/sync_readme.py
+      - name: Verify shared homepage and README content
+        run: python -m unittest discover -s .github/scripts -p test_sync_readme.py -v
       - name: Commit website README if changed
         run: |
           if git diff --quiet -- README.md; then
