@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -15,7 +15,6 @@ USER = "FuTseYi"
 SITE = "https://futseyi.github.io"
 MAX_REPOSITORIES = 12
 EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
-MAX_AGE = timedelta(hours=24)
 SNAPSHOT_ERRORS = (URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError)
 API = "https://api.github.com"
 SNAPSHOT = ROOT / "_site/contributions.json"
@@ -101,19 +100,11 @@ def previous_snapshot():
                 raise ValueError("Invalid snapshot entries")
             snapshot["entries"] = [entry for entry in snapshot["entries"]
                                    if entry["name"].lower() not in EXCLUDED_REPOSITORIES][:MAX_REPOSITORIES]
-            render(snapshot)  # Validate before allowing a cached snapshot to replace the page.
+            render(snapshot)  # Validate before allowing a previous snapshot to replace the page.
             return snapshot
         except SNAPSHOT_ERRORS:
             continue
     return None
-
-
-def needs_refresh(snapshot, now=None):
-    if snapshot is None:
-        return True
-    updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
-    age = (now or datetime.now(timezone.utc)) - updated
-    return age < timedelta(0) or age >= MAX_AGE
 
 
 def render(snapshot):
@@ -144,16 +135,18 @@ def main():
     html = page.read_text(encoding="utf-8")
     if html.count(START) != 1 or html.count(END) != 1:
         raise ValueError("Missing or duplicate contributions slot")
-    snapshot = previous_snapshot()
-    if args.refresh or needs_refresh(snapshot):
+    snapshot = None if args.refresh else previous_snapshot()
+    if args.refresh or snapshot is None:
         try:
             fresh = collect()
             render(fresh)
             snapshot = fresh
         except SNAPSHOT_ERRORS as error:
+            if args.refresh:
+                snapshot = previous_snapshot()
             print(f"::warning::Public activity unavailable ({type(error).__name__}); retaining previous snapshot or source fallback.")
     if snapshot is None:
-        SNAPSHOT.unlink(missing_ok=True)  # Do not publish/cache an invalid restored file.
+        SNAPSHOT.unlink(missing_ok=True)  # Do not publish an invalid snapshot.
         return
     content = render(snapshot)
     html = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: START + "\n" + content + "\n" + END, html, flags=re.S)

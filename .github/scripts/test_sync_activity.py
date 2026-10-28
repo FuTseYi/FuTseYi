@@ -26,13 +26,6 @@ class ActivityTests(unittest.TestCase):
         items = [event(repo="FuTseYi/FuTseYi"), event(repo="FUTSEYI/futseyi.github.io"), event()]
         self.assertEqual([entry["name"] for entry in activity.select_events(items)], ["FuTseYi/example"])
 
-    def test_snapshot_expires_at_24_hours(self):
-        now = datetime(2026, 10, 28, tzinfo=timezone.utc)
-        for age, expected in ((23, False), (24, True), (25, True), (-1, True)):
-            snapshot = {"updated_at": (now - timedelta(hours=age)).isoformat(), "entries": []}
-            self.assertEqual(activity.needs_refresh(snapshot, now), expected)
-        self.assertTrue(activity.needs_refresh(None, now))
-
     def test_refresh_policy_and_failure_keeps_timestamp(self):
         for age, force, fail in ((1, False, False), (25, False, False),
                                  (1, True, False), (25, False, True), (1, True, True)):
@@ -53,8 +46,8 @@ class ActivityTests(unittest.TestCase):
                         contextlib.redirect_stdout(io.StringIO()):
                     activity.main()
                 fetch.assert_not_called()
-                self.assertEqual(collect.call_count, int(force or age >= 24))
-                expected = fresh if (force or age >= 24) and not fail else old
+                self.assertEqual(collect.call_count, int(force))
+                expected = fresh if force and not fail else old
                 self.assertEqual(json.loads(cache.read_text(encoding="utf-8")), expected)
 
     def test_missing_snapshot_bootstraps_from_api(self):
