@@ -17,6 +17,18 @@ ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
 
 
+class PreviewHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+    def send_head(self):
+        # Always serve the current build, including clients with old cached files.
+        if "If-Modified-Since" in self.headers:
+            del self.headers["If-Modified-Since"]
+        return super().send_head()
+
+
 def run(script, *args):
     subprocess.run([sys.executable, str(ROOT / ".github/scripts" / script), *args],
                    cwd=ROOT, check=True)
@@ -121,7 +133,7 @@ def main():
         rebuild()
     if args.build_only:
         return
-    handler = partial(SimpleHTTPRequestHandler, directory=str(SITE))
+    handler = partial(PreviewHandler, directory=str(SITE))
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"Preview: http://127.0.0.1:{args.port}/", flush=True)
         print("Press Ctrl+C to stop. Watching source files; refresh the browser after rebuilding.", flush=True)
