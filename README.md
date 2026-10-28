@@ -6,11 +6,11 @@
 
 Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [The Hong Kong University of Science and Technology (Guangzhou)](https://www.hkust-gz.edu.cn/), with a background in automation.
 
-Focus: Interested in AI, engineering, and whatever keeps me curious.
+**Focus:** Interested in AI, engineering, and whatever keeps me curious.
 
-Lang: English, Mandarin, Cantonese, Hokkien
+**Lang:** English, Mandarin, Cantonese, Hokkien
 
-**Motto**
+**Motto:**
 
 *Freiheit als Autonomie — Freedom through autonomy.*
 
@@ -22,12 +22,14 @@ Lang: English, Mandarin, Cantonese, Hokkien
 
 ## Active In
 
-- [UEM Stu](https://uem-stu.github.io/) — An independent student community at the University of Emergency Management.
-- [HAI-HKUST](https://github.com/HAI-HKUST/HAI-HKUST.github.io) — A community exploring artificial intelligence at HKUST(GZ).
-- [Datawhale](https://github.com/datawhalechina) — Open-source learning and knowledge sharing in AI and data science.
+- [UEM Stu](https://uem-stu.github.io/)
+- [HAI-HKUST](https://github.com/HAI-HKUST/HAI-HKUST.github.io)
+- [Datawhale](https://github.com/datawhalechina)
 
 ## Recent Blog
 
-- [A simpler space to build and share](https://futseyi.github.io/blog/welcome/) · 2026.10.26
+- [A simpler space to build and share](https://futseyi.github.io/blog/welcome/)
 
 [View all articles](https://futseyi.github.io/blog/)
+
+[Visit my website for more information](https://futseyi.github.io/)
