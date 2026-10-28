@@ -65,7 +65,7 @@
   </defs>
 
   <!-- 打字气泡（SVG） -->
-  <g class="typing" transform="translate(176 0)">
+  <g class="typing">
     <rect x="8.27" width="69.73" height="42" rx="21" class="svg-bubble"/>
     <circle cx="13.59" cy="33.09" r="7.68" class="svg-bubble"/>
     <circle cx="3.55"  cy="41.95" r="3.55" class="svg-bubble"/>
@@ -77,7 +77,7 @@
   <!-- 消息气泡（foreignObject） -->
   <g class="msg">
     <foreignObject x="0" y="0" width="430" height="52">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="text-align:center">
+      <div xmlns="http://www.w3.org/1999/xhtml">
         <span class="chat-bubble">I'm 謝懿 'Shine', online as FuTseYi. 🖖🏻</span>
       </div>
     </foreignObject>
