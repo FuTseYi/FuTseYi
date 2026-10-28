@@ -315,8 +315,8 @@ strong { font-weight: 600; }
   }
 
 .intro-portrait img {
-    display: block; width: 100%; height: auto; aspect-ratio: 1;
-    object-fit: cover; border: 1px solid #e5e7eb;
+    display: block; width: 100%; height: auto;
+    border: 1px solid #e5e7eb;
   }
 
 .portrait-note {
