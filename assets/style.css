@@ -741,3 +741,23 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .list-toggle{display:inline-flex;align-items:center;margin-top:18px;padding:9px 18px;border:1px solid var(--line);border-radius:999px;background:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
 .list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);border-color:var(--gold);background:var(--bg-soft)}
 @media(max-width:680px){#recent-blog .project-item,#contributions .project-item{grid-template-columns:1fr;gap:4px}#recent-blog .contribution-date{grid-column:1;grid-row:2}.contribution-date{padding-top:0}}
+
+/* Mobile sections share a consistent reading rhythm. */
+@media(max-width:680px){
+ section.section{padding:32px 0}
+ .section-title{font-size:24px;line-height:1.25}
+ .section-heading{margin-bottom:18px}
+ .education-list .education-item{padding:24px 0;row-gap:0}
+ .education-list .education-date{justify-self:end;font-size:12px;letter-spacing:0;margin-bottom:20px}
+ .education-list .education-mark{width:180px;height:48px;margin-bottom:16px;justify-content:flex-start}
+ .education-list .education-mark img{max-width:180px;max-height:48px;object-position:left center}
+ .education-list .education-content{gap:6px}
+ .education-list .education-school{font-size:16px;line-height:1.5;font-weight:500}
+ .education-content p{line-height:1.65}
+ #community .project-item,#recent-blog .project-item,#contributions .project-item{padding:20px 0}
+ #community .project-item{gap:16px}
+ #contributions .project-item{gap:12px}
+ #contributions .contribution-date{justify-self:end}
+ #recent-blog .project-item{gap:8px}
+ .project-item > div{min-width:0;overflow-wrap:anywhere}
+}
