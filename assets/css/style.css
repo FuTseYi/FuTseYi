@@ -356,10 +356,12 @@ section.section { padding: 38px 0; }
 .section-title::after {
     content: '';
     display: block;
-    width: 32px;
-    height: 2px;
+    width: 64px;
+    height: 6px;
     margin-top: 10px;
     background: var(--gold);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='6' viewBox='0 0 64 6'%3E%3Cpath d='M0 3 Q4 -1 8 3 T16 3 T24 3 T32 3 T40 3 T48 3 T56 3 T64 3' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='6' viewBox='0 0 64 6'%3E%3Cpath d='M0 3 Q4 -1 8 3 T16 3 T24 3 T32 3 T40 3 T48 3 T56 3 T64 3' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
     opacity: .65;
   }
 
