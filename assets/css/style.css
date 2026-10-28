@@ -755,7 +755,8 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .project-item > div{min-width:0;overflow-wrap:anywhere}
 }
 
-.profile-heading{position:relative;display:inline-block;margin-top:12px}
-.profile-greeting{position:absolute;left:calc(100% + 18px);bottom:calc(100% - 52px);width:360px;max-width:none;height:auto;pointer-events:none}
-@media(max-width:1199px){.profile-heading{margin-top:0}.profile-greeting{display:none}}
+.profile-heading{--greeting-gap:18px;position:relative;display:inline-block}
+.profile-heading.has-greeting{margin-top:12px}
+.profile-greeting{display:none;position:absolute;left:calc(100% + var(--greeting-gap));bottom:calc(100% - 52px);width:360px;max-width:none;height:auto;pointer-events:none}
+.has-greeting .profile-greeting{display:block}
 @media(max-width:680px){.profile-heading{display:block;text-align:center}}
