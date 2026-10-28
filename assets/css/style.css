@@ -731,18 +731,18 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 
 .activity-note{font-size:11px;color:var(--ink-faint);margin-top:14px}
 
-#community .project-item{grid-template-columns:40px minmax(0,1fr);align-items:center}
+#active-in .project-item{grid-template-columns:40px minmax(0,1fr);align-items:center}
 .community-icon{display:block;width:40px;height:40px;object-fit:contain;border-radius:8px}
 
 /* Consistent compact community and contribution lists. */
-#community .project-item,#recent-blog .project-item,#contributions .project-item{padding:14px 0;gap:18px;align-items:start}
-#community .project-item{grid-template-columns:40px minmax(0,1fr)}
+#active-in .project-item,#recent-blog .project-item,#contributions .project-item{padding:14px 0;gap:18px;align-items:start}
+#active-in .project-item{grid-template-columns:40px minmax(0,1fr)}
 #contributions .project-item{grid-template-columns:90px minmax(0,1fr)}
 #recent-blog .project-item{grid-template-columns:minmax(0,1fr) auto;column-gap:32px}
 #recent-blog .contribution-date{grid-column:2;grid-row:1}
 #recent-blog .project-item > div{grid-column:1;grid-row:1}
-#community .project-item h3,#recent-blog .project-item h3,#contributions .project-item h3{font-size:15px;line-height:1.5}
-#community .project-item p,#recent-blog .project-item p,#contributions .project-item p{font-size:13px;line-height:1.65;margin-top:3px}
+#active-in .project-item h3,#recent-blog .project-item h3,#contributions .project-item h3{font-size:15px;line-height:1.5}
+#active-in .project-item p,#recent-blog .project-item p,#contributions .project-item p{font-size:13px;line-height:1.65;margin-top:3px}
 .contribution-date{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
 #contributions .project-tags{margin-top:5px;gap:8px}
 .project-item[hidden]{display:none}
@@ -762,8 +762,8 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  .education-list .education-content{grid-column:1 / -1;grid-row:2;gap:6px}
  .education-list .education-school{font-size:16px;line-height:1.5;font-weight:500}
  .education-content p{line-height:1.65}
- #community .project-item,#recent-blog .project-item,#contributions .project-item{padding:20px 0}
- #community .project-item{gap:16px}
+ #active-in .project-item,#recent-blog .project-item,#contributions .project-item{padding:20px 0}
+ #active-in .project-item{gap:16px}
  #contributions .project-item{gap:12px}
  #contributions .contribution-date{justify-self:end}
  #recent-blog .project-item{gap:8px}

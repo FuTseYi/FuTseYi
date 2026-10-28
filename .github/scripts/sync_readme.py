@@ -38,7 +38,7 @@ def read_home():
     motto=required(r'<div class="profile-motto">(.*?)</div>\s*</div>',"motto")[1]
     links=required(r'<div class="hero-links">(.*?)</div>',"profile links")[1]
     greeting=required(r'<img class="profile-greeting" src="([^"]+)" alt="([^"]+)"',"greeting")
-    community=required(r'<section[^>]*id="community"[^>]*>(.*?)</section>',"Active In")[1]
+    community=required(r'<section[^>]*id="active-in"[^>]*>(.*?)</section>',"Active In")[1]
     badge=required(r'<a class="visitor-counter"[^>]*>.*?</a>',"visitor badge")[0]
     content={
         "paragraphs":[md(x) for x in re.findall(r'<p\b[^>]*>(.*?)</p>',bio,re.S)],
