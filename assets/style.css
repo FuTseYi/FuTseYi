@@ -746,11 +746,11 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  section.section{padding:32px 0}
  .section-title{font-size:24px;line-height:1.25}
  .section-heading{margin-bottom:18px}
- .education-list .education-item{padding:24px 0;row-gap:0}
- .education-list .education-date{justify-self:end;font-size:12px;letter-spacing:0;margin-bottom:20px}
- .education-list .education-mark{width:var(--education-logo-width);height:48px;margin-bottom:16px;justify-content:flex-start}
+ .education-list .education-item{grid-template-columns:minmax(0,1fr) auto;padding:24px 0;gap:16px;align-items:center}
+ .education-list .education-date{grid-column:2;grid-row:1;order:0;justify-self:end;font-size:12px;letter-spacing:0;margin:0}
+ .education-list .education-mark{grid-column:1;grid-row:1;width:100%;max-width:var(--education-logo-width);height:48px;justify-content:flex-start}
  .education-list .education-mark img{object-position:left center}
- .education-list .education-content{gap:6px}
+ .education-list .education-content{grid-column:1 / -1;grid-row:2;gap:6px}
  .education-list .education-school{font-size:16px;line-height:1.5;font-weight:500}
  .education-content p{line-height:1.65}
  #community .project-item,#recent-blog .project-item,#contributions .project-item{padding:20px 0}
