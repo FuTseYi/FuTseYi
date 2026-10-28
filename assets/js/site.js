@@ -3,22 +3,6 @@
   document.documentElement.classList.add('js');
   const header = document.getElementById('site-header');
   if (!header) return;
-  const heading = document.querySelector('.profile-heading');
-  const greeting = heading?.querySelector('.profile-greeting');
-  if (greeting) {
-    const content = heading.closest('.hero-content');
-    const grid = content.parentElement;
-    const syncGreeting = () => {
-      const bubble = greeting.getBoundingClientRect();
-      const boundary = grid.getBoundingClientRect().right - parseFloat(getComputedStyle(grid).paddingRight);
-      heading.classList.toggle('has-greeting', bubble.right <= boundary);
-    };
-    const observer = new ResizeObserver(syncGreeting);
-    observer.observe(content);
-    observer.observe(heading);
-    greeting.addEventListener('load', syncGreeting);
-    document.fonts.ready.then(syncGreeting);
-  }
   const toggle = header.querySelector('.nav-toggle');
   const nav = document.getElementById('primary-navigation');
   const setOpen = (open) => {

@@ -6,10 +6,9 @@ import json
 import os
 import re
 from datetime import date
-from html import escape, unescape
+from html import unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
-from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -37,7 +36,6 @@ def read_home():
     languages=required(r'<p class="profile-languages">(.*?)</p>',"languages")[1]
     motto=required(r'<div class="profile-motto">(.*?)</div>\s*</div>',"motto")[1]
     links=required(r'<div class="hero-links">(.*?)</div>',"profile links")[1]
-    greeting=required(r'<img class="profile-greeting" src="([^"]+)" alt="([^"]+)"',"greeting")
     community=required(r'<section[^>]*id="active-in"[^>]*>(.*?)</section>',"Active In")[1]
     badge=required(r'<a class="visitor-counter"[^>]*>.*?</a>',"visitor badge")[0]
     content={
@@ -46,7 +44,6 @@ def read_home():
         "motto_label":md(required(r'<h3 class="motto-heading">(.*?)</h3>',"motto label")[1]),
         "quotes":[md(x) for x in re.findall(r'<p>(.*?)</p>',motto,re.S)],
         "links":[md(x) for x in re.findall(r'<a\b[^>]*>.*?</a>',links,re.S)],
-        "greeting":(greeting[1],unescape(greeting[2])),
         "communities":[md(title) for title in re.findall(r'<h3>(.*?)</h3>',community,re.S)],
         "badge":re.sub(r' loading="lazy"',"",badge),
     }
@@ -74,14 +71,9 @@ def read_post_entries(limit=3):
 def render():
     home=read_home()
     site=site_url()
-    image_path,image_alt=home["greeting"]
-    owner=urlsplit(site).hostname.removesuffix(".github.io")
-    repository=os.environ.get("GITHUB_REPOSITORY",f"{owner}/{owner}.github.io")
-    image_url=f"https://raw.githubusercontent.com/{repository}/main/"+image_path
     posts=read_post_entries()
     return (
       '## About\n\n'
-      +f'<img src="{escape(image_url,quote=True)}" alt="{escape(image_alt,quote=True)}" width="430" />\n\n'
       +f'*{home["note"]}*\n\n'
       +'\n\n'.join(home["paragraphs"])+'\n\n'
       +home["languages"]+'\n\n'

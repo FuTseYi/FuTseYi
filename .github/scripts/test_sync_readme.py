@@ -59,12 +59,11 @@ class ReadmeTests(unittest.TestCase):
                 self.assertIn(text, result)
             self.assertNotIn("A revised community description.", result)
 
-    def test_website_and_image_urls_follow_repository_owner(self):
+    def test_website_urls_follow_repository_owner(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
             result = sync.render()
         self.assertIn("[Visit my website for more information](https://newowner.github.io/)", result)
         self.assertIn("https://newowner.github.io/blog/", result)
-        self.assertIn("https://raw.githubusercontent.com/NewOwner/NewOwner.github.io/main/assets/images/profile/i-am-Shine.svg", result)
 
     def test_local_website_url_follows_canonical(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(sync.os.environ, {}, clear=True):

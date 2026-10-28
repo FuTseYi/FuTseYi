@@ -255,10 +255,6 @@ strong { font-weight: 600; }
     letter-spacing: .02em; color: var(--ink-faint);
   }
 
-.profile-heading{--greeting-gap:18px;position:relative;display:inline-block;margin-top:12px}
-.profile-greeting{visibility:hidden;position:absolute;left:calc(100% + var(--greeting-gap));bottom:calc(100% - 52px);width:360px;max-width:none;height:auto;pointer-events:none}
-.has-greeting .profile-greeting{visibility:visible}
-@media(max-width:680px){.profile-heading{display:block;text-align:center;margin-top:0}}
 
 /* About text and aligned labels. */
 .about-intro { margin-top: 22px; }
