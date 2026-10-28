@@ -91,13 +91,13 @@ def render():
       +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
+      +f'[Visit my website for more information]({site}/)\n\n'
       +'## Active In\n\n'
       +'\n'.join(f'- {title}' for title in home["communities"])+'\n\n'
       +'## Recent Blog\n\n'
       +('\n'.join(f'- [{title}]({site}/blog/{slug}/)' for _,slug,title in posts)
          if posts else 'No published articles yet.')+'\n\n'
-      +f'[View all articles]({site}/blog/)\n\n'
-      +f'[Visit my website for more information]({site}/)\n'
+      +f'[View all articles]({site}/blog/)\n'
     )
 
 def request(method,url,token,body=None):

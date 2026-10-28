@@ -26,6 +26,7 @@ class ReadmeTests(unittest.TestCase):
         self.assertNotIn("assets/me.jpg", result)
         self.assertNotIn("## *Website*", result)
         self.assertNotIn("Powered by", result)
+        self.assertLess(result.index("[Visit my website for more information]"), result.index("## Active In"))
 
     def test_homepage_changes_propagate_without_generator_edits(self):
         with tempfile.TemporaryDirectory() as directory:

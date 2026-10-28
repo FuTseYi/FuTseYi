@@ -705,6 +705,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .about-intro .profile-languages{margin-top:12px}
 .profile-interests > span,.profile-languages > span{font-size:13px;font-weight:500;letter-spacing:0;color:var(--ink-soft);margin-right:0}
 .motto-heading{font-size:13px;letter-spacing:0}
+.profile-interests > span > strong,.profile-languages > span > strong,.motto-heading > strong{font:600 13px/1.75 var(--font);color:var(--ink)}
 .bio-detail .profile-motto{font-size:14px;line-height:1.75;font-style:italic}
 @media(max-width:680px){
  .about-intro .profile-interests,.about-intro .profile-languages,.profile-motto-row{grid-template-columns:64px minmax(0,1fr);gap:10px;text-align:left}
