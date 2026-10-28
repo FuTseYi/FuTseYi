@@ -349,20 +349,23 @@ section.section { padding: 38px 0; }
   }
 
 .section-title {
+    position: relative;
     font-size: clamp(26px, 3vw, 36px);
     font-weight: 400; letter-spacing: -.035em; line-height: 1.08;
   }
 
 .section-title::after {
     content: '';
-    display: block;
-    width: 48px;
-    height: 5px;
-    margin-top: 2px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 6px;
     background: var(--gold);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 5'%3E%3Cpath d='M0 2.5 Q6 -1 12 2.5 T24 2.5 T36 2.5 T48 2.5' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 5'%3E%3Cpath d='M0 2.5 Q6 -1 12 2.5 T24 2.5 T36 2.5 T48 2.5' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-    opacity: .65;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M2 7C45 1 110 11 198 3' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M2 7C45 1 110 11 198 3' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    opacity: .8;
+    pointer-events: none;
   }
 
 .education-list { --education-logo-width:200px; --education-logo-height:28px; list-style: none; border-top: 1px solid var(--line); }
