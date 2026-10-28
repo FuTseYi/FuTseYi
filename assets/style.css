@@ -235,16 +235,6 @@ strong { font-weight: 600; }
 
 .hero-content { min-width:0; }
 
-
-
-
-
-
-
-
-
-
-
 .hero h1 {
     margin-top: 10px;
     font-size: clamp(38px, 4.8vw, 56px);
@@ -258,7 +248,6 @@ strong { font-weight: 600; }
     white-space: nowrap;
     letter-spacing: .02em; color: var(--ink-faint);
   }
-
 
 .bio {
     margin-top: 24px;
@@ -294,10 +283,6 @@ strong { font-weight: 600; }
 
 .hero-links .link-icon{width:16px;height:16px;display:block;flex-shrink:0}
 
-
-
-
-
 .bio-detail { margin-top: 12px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
 
 .bio-detail p + p { margin-top: 8px; }
@@ -327,6 +312,32 @@ strong { font-weight: 600; }
 
 @media(hover:hover){
  .intro-portrait:hover{transform:rotate(3deg) scale(1.05);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+}
+
+.portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
+.portrait .visitor-counter{display:flex;justify-content:center;margin-top:10px}
+.portrait .visitor-counter img{width:132px;max-width:100%;height:auto;min-height:18px}
+
+/* Hero and portrait responsive layout. */
+@media (min-width: 681px) {
+ .portrait{position:relative}
+ .portrait figcaption{position:absolute;top:100%;left:0;right:0}
+}
+
+@media (max-width: 960px) {
+ .hero-grid{grid-template-columns:minmax(0,1fr) 200px;column-gap:28px}
+ .hero h1{font-size:clamp(32px,5.5vw,44px)}
+}
+
+@media (max-width: 680px) {
+ .hero{padding-bottom:max(36px,env(safe-area-inset-bottom))}
+ .hero-grid{display:flex;flex-direction:column;grid-template-columns:1fr;column-gap:0}
+ .hero-content{width:100%}
+ .hero h1{font-size:clamp(30px,9vw,38px);margin-top:8px;text-align:center}
+ .portrait{order:-1;align-self:auto;margin:0 auto}
+ .hero-links{justify-content:flex-start;gap:8px 14px;margin-top:20px}
+ .hero-links a{font-size:12.5px}
+ .hero-links .link-icon{width:15px;height:15px}
 }
 
 section.section { padding: 38px 0; }
@@ -489,9 +500,7 @@ footer {
 
 .header-inner { padding: 0 22px; }
 
-.hero-grid { grid-template-columns: minmax(0, 1fr) 200px; column-gap: 28px; }
 
-.hero h1 { font-size: clamp(32px, 5.5vw, 44px); }
 }
 
 @media (max-width: 860px) {
@@ -540,43 +549,7 @@ body { background-attachment: scroll; }
 
 .header-inner { padding: 0 16px; padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
 
-.hero {
-      padding: calc(var(--nav-h) + var(--nav-blur-tail) + 20px) 0 36px;
-      padding-bottom: max(36px, env(safe-area-inset-bottom));
-    }
-
-.hero-grid { grid-template-columns: 1fr; column-gap: 0; row-gap: 16px; }
-
-.hero-content { width:100%; }
-
-
-.hero h1, .about-intro, .hero-links, .bio-detail, .portrait { grid-column: auto; grid-row: auto; }
-
-
-
-.portrait {
-      order: -1;
-      align-self: auto;
-      max-width: 192px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-
-.hero h1 { font-size: clamp(30px, 9vw, 38px); margin-top: 8px; text-align: center; }
-
 .bio { margin-top: 20px; font-size: 13.5px; text-align: left; }
-
-.hero-links {
-      justify-content: flex-start;
-      gap: 8px 14px;
-      margin-top: 0;
-    }
-
-.hero-links a { font-size: 12.5px; }
-
-.hero-links .link-icon{width:15px;height:15px}
-
 
 .bio-detail { font-size: 13.5px; }
 
@@ -663,10 +636,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-o
 .brand-dot{color:var(--accent)}
 .site-header:not(:has(.nav-blur)){background:rgba(255,255,255,.94);backdrop-filter:blur(16px)}
 .bio p+p{margin-top:12px}
-.portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
-@media(min-width:681px){.portrait{position:relative}.portrait figcaption{position:absolute;top:100%;left:0;right:0}}
-.portrait .visitor-counter{display:flex;justify-content:center;margin-top:10px}
-.portrait .visitor-counter img{width:132px;max-width:100%;height:auto;min-height:18px}
 .section-lead{font-size:14px;color:var(--ink-soft);max-width:730px;margin-bottom:20px}
 .education-content p{font-size:13px;color:var(--ink-soft)}
 .project-list{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -687,7 +656,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-o
  html:not(.js) .hero{padding-top:150px}
 }
 @media(max-width:680px){
- .hero-grid{display:flex;flex-direction:column}
  .education-date{order:-1}
  .project-item{grid-template-columns:25px minmax(0,1fr);gap:12px}
  .blog-container{padding:calc(var(--nav-h) + var(--nav-blur-tail) + 20px) 20px 72px}
@@ -724,7 +692,6 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 @media(max-width:680px){
  .about-intro{margin-top:18px}
  .about-intro .bio{font-size:14px;line-height:1.75}
- .hero-links{margin-top:20px}
 }
 
 .about-intro .profile-interests,.about-intro .profile-languages,.profile-motto-row{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;align-items:baseline;font-size:14px;line-height:1.75;color:var(--ink-soft)}
