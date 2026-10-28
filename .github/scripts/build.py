@@ -62,7 +62,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <body class="blog-page">
 <a class="skip-link" href="#main">Skip to content</a>
 {header}
-<main class="blog-container" id="main">{content}</main>
+<main class="blog-container wrap" id="main">{content}</main>
 {footer}
 </body></html>
 """

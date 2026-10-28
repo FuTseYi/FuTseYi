@@ -125,8 +125,10 @@
     };
     setExpanded(false);
     button.addEventListener('click', () => {
-      setExpanded(button.getAttribute('aria-expanded') !== 'true');
+      const expanded = button.getAttribute('aria-expanded') !== 'true';
+      setExpanded(expanded);
       releaseTarget();
+      if (expanded) extra[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     list.after(button);
   });

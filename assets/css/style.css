@@ -607,7 +607,7 @@ html { scroll-behavior: auto; }
 /* Blog: shared page chrome with a narrower reading column. */
 .blog-page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
 .blog-page .blog-container{flex:1;width:100%}
-.blog-container{max-width:790px;margin:0 auto;padding:52px 26px 100px}
+.blog-container{padding-top:52px;padding-bottom:100px}
 .blog-container h1{font-weight:400;font-size:clamp(32px,4vw,43px);line-height:1.2;letter-spacing:-.045em;margin:10px 0 17px}
 .blog-kicker{display:block;color:var(--ink-faint);font-size:10px;font-weight:720;letter-spacing:.15em;margin:31px 0 8px}
 .blog-description{color:var(--ink-soft);font-size:14px;margin-bottom:31px}
@@ -673,7 +673,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-o
 @media(max-width:680px){
  .education-date{order:-1}
  .project-item{grid-template-columns:25px minmax(0,1fr);gap:12px}
- .blog-container{padding:calc(var(--nav-h) + var(--nav-blur-tail) + 20px) 20px 72px}
+ .blog-container{padding-top:calc(var(--nav-h) + var(--nav-blur-tail) + 20px);padding-bottom:72px}
  .blog-entry{grid-template-columns:1fr;gap:5px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
@@ -746,8 +746,8 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .contribution-date{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
 #contributions .project-tags{margin-top:5px;gap:8px}
 .project-item[hidden]{display:none}
-.list-toggle{display:inline-flex;align-items:center;margin-top:18px;padding:9px 18px;border:1px solid var(--line);border-radius:999px;background:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
-.list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);border-color:var(--gold);background:var(--bg-soft)}
+.list-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:9px 0;border:0;border-radius:0;background:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
+.list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);background:transparent;outline:none;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:680px){#recent-blog .project-item,#contributions .project-item{grid-template-columns:1fr;gap:4px}#recent-blog .contribution-date{grid-column:1;grid-row:2}.contribution-date{padding-top:0}}
 
 /* Mobile sections share a consistent reading rhythm. */
@@ -775,10 +775,12 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .has-greeting .profile-greeting{visibility:visible}
 @media(max-width:680px){.profile-heading{display:block;text-align:center;margin-top:0}}
 
-@media (min-width: 1400px) {
+.article-toc { display: none; }
+@media (min-width: 1600px) {
   .article-toc {
+    display: flex;
     width: 200px;
-    right: max(24px, calc((100vw - 790px) / 2 - 224px));
+    right: max(24px, calc((100vw - var(--max-width)) / 2 - 224px));
     max-height: calc(100vh - 2 * (var(--nav-h) + var(--nav-blur-tail) + 20px));
     overflow-y: auto;
     scrollbar-width: none;
