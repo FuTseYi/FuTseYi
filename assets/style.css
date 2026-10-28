@@ -454,8 +454,6 @@ footer {
 
 .footer-inner a:is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 
-.footer-inner img { height: 17px; }
-
 @media (max-width: 960px) {
 .wrap { padding: 0 22px; }
 
@@ -578,8 +576,8 @@ section.section { padding: 28px 0; }
 .education-list .education-mark img { max-width: 150px; max-height: 40px; }
 
 .footer-inner {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
       gap: 10px;
       font-size: 12.5px;
       padding-bottom: max(8px, env(safe-area-inset-bottom));
@@ -640,6 +638,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-o
 .site-header:not(:has(.nav-blur)){background:rgba(255,255,255,.94);backdrop-filter:blur(16px)}
 .bio p+p{margin-top:12px}
 .portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
+.portrait .visitor-counter{display:flex;justify-content:center;margin-top:10px}
+.portrait .visitor-counter img{width:132px;max-width:100%;height:auto;min-height:18px}
 .section-lead{font-size:14px;color:var(--ink-soft);max-width:730px;margin-bottom:20px}
 .education-content p{font-size:13px;color:var(--ink-soft)}
 .project-list{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
