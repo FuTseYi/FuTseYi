@@ -81,7 +81,7 @@ def render():
       +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
-      +f'[Visit my website for more information]({site}/)\n\n'
+      +f'**Homepage**: [{site.split("://",1)[-1]}]({site}/)\n\n'
       +'## Active In\n\n'
       +'\n'.join(f'- {title}' for title in home["communities"])+'\n\n'
       +'## Recent Blog\n\n'

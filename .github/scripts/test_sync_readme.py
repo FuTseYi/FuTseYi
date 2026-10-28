@@ -38,7 +38,7 @@ class ReadmeTests(unittest.TestCase):
         self.assertNotIn("assets/images/profile/me.jpg", result)
         self.assertNotIn("## *Website*", result)
         self.assertNotIn("Powered by", result)
-        self.assertLess(result.index("[Visit my website for more information]"), result.index("## Active In"))
+        self.assertLess(result.index("**Homepage**:"), result.index("## Active In"))
 
     def test_homepage_changes_propagate_without_generator_edits(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -62,7 +62,7 @@ class ReadmeTests(unittest.TestCase):
     def test_website_urls_follow_repository_owner(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
             result = sync.render()
-        self.assertIn("[Visit my website for more information](https://newowner.github.io/)", result)
+        self.assertIn("**Homepage**: [newowner.github.io](https://newowner.github.io/)", result)
         self.assertIn("https://newowner.github.io/blog/", result)
 
     def test_local_website_url_follows_canonical(self):
