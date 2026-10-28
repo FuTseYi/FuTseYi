@@ -8,20 +8,14 @@
   if (greeting) {
     const content = heading.closest('.hero-content');
     const grid = content.parentElement;
-    const portrait = grid.querySelector('.intro-portrait');
     const syncGreeting = () => {
-      const gap = parseFloat(getComputedStyle(heading).getPropertyValue('--greeting-gap'));
       const bubble = greeting.getBoundingClientRect();
-      const frame = portrait.getBoundingClientRect();
       const boundary = grid.getBoundingClientRect().right - parseFloat(getComputedStyle(grid).paddingRight);
-      const overlaps = bubble.left < frame.right + gap && bubble.right > frame.left - gap
-        && bubble.top < frame.bottom + gap && bubble.bottom > frame.top - gap;
-      heading.classList.toggle('has-greeting', bubble.right <= boundary && !overlaps);
+      heading.classList.toggle('has-greeting', bubble.right <= boundary);
     };
     const observer = new ResizeObserver(syncGreeting);
     observer.observe(content);
     observer.observe(heading);
-    observer.observe(portrait);
     greeting.addEventListener('load', syncGreeting);
     document.fonts.ready.then(syncGreeting);
   }
