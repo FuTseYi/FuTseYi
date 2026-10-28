@@ -3,6 +3,7 @@ import contextlib
 import copy
 import io
 import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import tempfile
 import unittest
@@ -21,6 +22,99 @@ def event(kind="PushEvent", repo="FuTseYi/example", day="27", **changes):
 
 
 class ActivityTests(unittest.TestCase):
+    def test_personal_repositories_are_excluded_case_insensitively(self):
+        items = [event(repo="FuTseYi/FuTseYi"), event(repo="FUTSEYI/futseyi.github.io"), event()]
+        self.assertEqual([entry["name"] for entry in activity.select_events(items)], ["FuTseYi/example"])
+
+    def test_snapshot_expires_at_24_hours(self):
+        now = datetime(2026, 10, 28, tzinfo=timezone.utc)
+        for age, expected in ((23, False), (24, True), (25, True), (-1, True)):
+            snapshot = {"updated_at": (now - timedelta(hours=age)).isoformat(), "entries": []}
+            self.assertEqual(activity.needs_refresh(snapshot, now), expected)
+        self.assertTrue(activity.needs_refresh(None, now))
+
+    def test_refresh_policy_and_failure_keeps_timestamp(self):
+        for age, force, fail in ((1, False, False), (25, False, False),
+                                 (1, True, False), (25, False, True), (1, True, True)):
+            with self.subTest(age=age, force=force, fail=fail), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                (root / "_site").mkdir()
+                page = root / "_site/index.html"
+                page.write_text(activity.START + "fallback" + activity.END, encoding="utf-8")
+                cache = root / "_site/contributions.json"
+                old = {"updated_at": (datetime.now(timezone.utc) - timedelta(hours=age)).isoformat(), "entries": []}
+                fresh = {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": []}
+                cache.write_text(json.dumps(old), encoding="utf-8")
+                with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", cache), \
+                        patch.object(activity, "fetch") as fetch, \
+                        patch.object(activity, "collect", side_effect=URLError("offline") if fail else None,
+                                     return_value=fresh) as collect, \
+                        patch("sys.argv", ["sync_activity.py"] + (["--refresh"] if force else [])), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    activity.main()
+                fetch.assert_not_called()
+                self.assertEqual(collect.call_count, int(force or age >= 24))
+                expected = fresh if (force or age >= 24) and not fail else old
+                self.assertEqual(json.loads(cache.read_text(encoding="utf-8")), expected)
+
+    def test_missing_snapshot_bootstraps_from_api(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "_site").mkdir()
+            page = root / "_site/index.html"
+            page.write_text(activity.START + "fallback" + activity.END, encoding="utf-8")
+            cache = root / "_site/contributions.json"
+            fresh = {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": []}
+            with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", cache), \
+                    patch.object(activity, "fetch", side_effect=URLError("404")), \
+                    patch.object(activity, "collect", return_value=fresh) as collect, \
+                    patch("sys.argv", ["sync_activity.py"]), contextlib.redirect_stdout(io.StringIO()):
+                activity.main()
+            collect.assert_called_once()
+            self.assertEqual(json.loads(cache.read_text(encoding="utf-8")), fresh)
+
+    def test_invalid_local_snapshot_uses_remote_and_filters_old_personal_entries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "contributions.json"
+            cache.write_text('{broken', encoding="utf-8")
+            snapshot = {"updated_at": "2026-01-01T00:00:00Z", "entries": [
+                {"name": "FuTseYi/FuTseYi"}, {"name": "FuTseYi/futseyi.github.io"}]}
+            with patch.object(activity, "SNAPSHOT", cache), patch.object(activity, "fetch", return_value=snapshot):
+                self.assertEqual(activity.previous_snapshot()["entries"], [])
+
+    def test_invalid_snapshot_is_not_published_when_all_sources_fail(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "_site").mkdir()
+            page = root / "_site/index.html"
+            source = activity.START + "fallback" + activity.END
+            page.write_text(source, encoding="utf-8")
+            cache = root / "_site/contributions.json"
+            cache.write_text('{broken', encoding="utf-8")
+            with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", cache), \
+                    patch.object(activity, "fetch", side_effect=URLError("offline")), \
+                    patch("sys.argv", ["sync_activity.py"]), contextlib.redirect_stdout(io.StringIO()):
+                activity.main()
+            self.assertFalse(cache.exists())
+            self.assertEqual(page.read_text(encoding="utf-8"), source)
+
+    def test_fresh_deployed_snapshot_seeds_local_without_api_refresh(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "_site").mkdir()
+            page = root / "_site/index.html"
+            page.write_text(activity.START + "fallback" + activity.END, encoding="utf-8")
+            cache = root / "_site/contributions.json"
+            snapshot = {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": []}
+            with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", cache), \
+                    patch.object(activity, "fetch", return_value=snapshot) as fetch, \
+                    patch.object(activity, "collect") as collect, \
+                    patch("sys.argv", ["sync_activity.py"]), contextlib.redirect_stdout(io.StringIO()):
+                activity.main()
+            fetch.assert_called_once_with(activity.SITE + "/contributions.json")
+            collect.assert_not_called()
+            self.assertEqual(json.loads(cache.read_text(encoding="utf-8")), snapshot)
+
     def test_selection_uses_actor_and_latest_event_not_input_order(self):
         items = [event(day="20"), event(repo="org/other", day="25"), event(),
                  event(repo="private/repo", public=False),

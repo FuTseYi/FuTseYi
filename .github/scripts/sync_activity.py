@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -14,6 +14,9 @@ ROOT = Path(__file__).resolve().parents[2]
 USER = "FuTseYi"
 SITE = "https://futseyi.github.io"
 MAX_REPOSITORIES = 12
+EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
+MAX_AGE = timedelta(hours=24)
+SNAPSHOT_ERRORS = (URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError)
 API = "https://api.github.com"
 SNAPSHOT = ROOT / "_site/contributions.json"
 START = "<!-- CONTRIBUTIONS:START -->"
@@ -54,7 +57,8 @@ def select_events(events):
         else:
             continue
         name = event.get("repo", {}).get("name", "")
-        if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
+        if (not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name)
+                or name.lower() in EXCLUDED_REPOSITORIES):
             continue
         if name not in repos:
             repos[name] = {"name": name, "date": event["created_at"], "activity": label}
@@ -86,9 +90,30 @@ def collect():
 
 
 def previous_snapshot():
-    if SNAPSHOT.exists():
-        return json.loads(SNAPSHOT.read_text(encoding="utf-8"))
-    return fetch(SITE + "/contributions.json")
+    for load in (lambda: json.loads(SNAPSHOT.read_text(encoding="utf-8")),
+                 lambda: fetch(SITE + "/contributions.json")):
+        try:
+            snapshot = load()
+            updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
+            if updated.tzinfo is None or updated > datetime.now(timezone.utc):
+                raise ValueError("Invalid snapshot timestamp")
+            if not isinstance(snapshot["entries"], list):
+                raise ValueError("Invalid snapshot entries")
+            snapshot["entries"] = [entry for entry in snapshot["entries"]
+                                   if entry["name"].lower() not in EXCLUDED_REPOSITORIES][:MAX_REPOSITORIES]
+            render(snapshot)  # Validate before allowing a cached snapshot to replace the page.
+            return snapshot
+        except SNAPSHOT_ERRORS:
+            continue
+    return None
+
+
+def needs_refresh(snapshot, now=None):
+    if snapshot is None:
+        return True
+    updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
+    age = (now or datetime.now(timezone.utc)) - updated
+    return age < timedelta(0) or age >= MAX_AGE
 
 
 def render(snapshot):
@@ -119,17 +144,16 @@ def main():
     html = page.read_text(encoding="utf-8")
     if html.count(START) != 1 or html.count(END) != 1:
         raise ValueError("Missing or duplicate contributions slot")
-    snapshot = None
-    try:
-        snapshot = collect() if args.refresh else previous_snapshot()
-    except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError) as error:
-        print(f"::warning::Public activity unavailable ({type(error).__name__}); retaining previous snapshot or source fallback.")
-        if args.refresh:
-            try:
-                snapshot = previous_snapshot()
-            except (HTTPError, URLError, TimeoutError, OSError, ValueError):
-                pass
+    snapshot = previous_snapshot()
+    if args.refresh or needs_refresh(snapshot):
+        try:
+            fresh = collect()
+            render(fresh)
+            snapshot = fresh
+        except SNAPSHOT_ERRORS as error:
+            print(f"::warning::Public activity unavailable ({type(error).__name__}); retaining previous snapshot or source fallback.")
     if snapshot is None:
+        SNAPSHOT.unlink(missing_ok=True)  # Do not publish/cache an invalid restored file.
         return
     content = render(snapshot)
     html = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: START + "\n" + content + "\n" + END, html, flags=re.S)
