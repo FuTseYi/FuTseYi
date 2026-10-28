@@ -49,7 +49,7 @@ verify without starting a server.
 
 ## Publishing articles
 
-Create a file such as `posts/my-note.md`:
+Create a file such as `posts/my-note/index.md`:
 
 ```markdown
 ---
@@ -66,3 +66,7 @@ draft switch or date-based publication gate. All articles are published when you
 push to `main` and deployment succeeds. Dates control display and newest-first
 ordering; tags are metadata, not sorting rules. The same push triggers automatic
 updates of both READMEs (Profile updates require the existing `PROFILE_README_TOKEN`).
+
+Keep article resources in `posts/my-note/assets/` and reference them with relative
+paths, for example `![Example](assets/example.webp)`. The directory name determines
+the article URL (`/blog/my-note/`); keep it stable after publishing.

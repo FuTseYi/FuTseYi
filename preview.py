@@ -47,7 +47,7 @@ def build():
 
 def source_state():
     files = [ROOT / "index.html", ROOT / "robots.txt"]
-    for folder, pattern in (("posts", "*.md"), ("assets", "*"), (".github/scripts", "*.py")):
+    for folder, pattern in (("posts", "*"), ("assets", "*"), (".github/scripts", "*.py")):
         files.extend((ROOT / folder).rglob(pattern))
     state = {}
     for path in files:

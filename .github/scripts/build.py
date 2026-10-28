@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a static Blog archive from posts/*.md.
+"""Generate a static Blog archive from posts/*/index.md.
 
 Dependencies: Python 3.12 + Python-Markdown 3.x (installed by GitHub Actions).
 No client-side JavaScript, CMS, Node.js, or frontend build framework.
@@ -75,10 +75,10 @@ def main() -> None:
     # Validate every source before replacing the generated website.
     # A malformed post must not erase an otherwise usable local preview.
     source_posts: list[tuple[str, dict[str, str], str]] = []
-    for path in sorted(SOURCE.glob("*.md")):
-        slug = path.stem
+    for path in sorted(SOURCE.glob("*/index.md")):
+        slug = path.parent.name
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
-            raise ValueError(f"Post filename must be a lowercase URL slug: {path.name}")
+            raise ValueError(f"Post directory must be a lowercase URL slug: {slug}")
         meta, source = get_post(path)
         source_posts.append((slug, meta, source))
 
@@ -96,6 +96,9 @@ def main() -> None:
         content = header + '<article class="article">' + article + '</article>'
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
+        assets = SOURCE / slug / "assets"
+        if assets.is_dir():
+            shutil.copytree(assets, destination / "assets")
         (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content), encoding="utf-8")
         posts.append(item)
 

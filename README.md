@@ -1,6 +1,6 @@
 ## About
 
-<img src="https://raw.githubusercontent.com/FuTseYi/futseyi.github.io/main/assets/images/profile/i-am-Shine.svg" alt="I&#x27;m 謝懿 &#x27;Shine&#x27;, online as FuTseYi." width="430" />
+<img src="https://raw.githubusercontent.com/futseyi/futseyi.github.io/main/assets/images/profile/i-am-Shine.svg" alt="I&#x27;m 謝懿 &#x27;Shine&#x27;, online as FuTseYi." width="430" />
 
 *Currently exploring new things, occasionally pretending I know what I’m doing.*
 
@@ -31,5 +31,7 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 ## Recent Blog
 
 - [A simpler space to build and share](https://futseyi.github.io/blog/welcome/)
+- [把 GitHub 变成内容后台：HKUST-ELPA 的 Serverless 架构实践](https://futseyi.github.io/blog/hkust-elpa-serverless-github-native-cms/)
+- [Cloudflare Email Routing 免费搭建自有域名邮箱：转发到 Outlook 的实战记录](https://futseyi.github.io/blog/cloudflare-email-routing-outlook-forwarding/)
 
 [View all articles](https://futseyi.github.io/blog/)

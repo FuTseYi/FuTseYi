@@ -56,7 +56,7 @@ def read_home():
 
 def read_post_entries(limit=3):
     found=[]
-    for file in (ROOT/"posts").glob("*.md"):
+    for file in (ROOT/"posts").glob("*/index.md"):
         raw=file.read_text(encoding="utf-8")
         fm=re.match(r"\A---\r?\n(.*?)\r?\n---\r?\n",raw,re.S)
         if not fm: raise ValueError(f"{file.name}: missing frontmatter")
@@ -66,8 +66,8 @@ def read_post_entries(limit=3):
                 k,v=line.split(":",1);fields[k.strip()]=v.strip().strip("'\"")
         if not fields.get("title") or not fields.get("date"):raise ValueError(f"{file.name}: missing title or date")
         dt=date.fromisoformat(fields["date"])
-        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",file.stem):raise ValueError(f"Invalid article slug: {file.stem}")
-        found.append((dt,file.stem,fields["title"]))
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",file.parent.name):raise ValueError(f"Invalid article slug: {file.parent.name}")
+        found.append((dt,file.parent.name,fields["title"]))
     found.sort(reverse=True)
     return found[:limit]
 

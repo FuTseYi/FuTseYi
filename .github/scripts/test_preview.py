@@ -50,7 +50,7 @@ class PreviewTests(unittest.TestCase):
             for filename in ("_site/index.html", "blog/index.html", "sitemap.xml", ".git/config", ".venv/test.py"):
                 (root / filename).write_text("generated")
             self.assertEqual(preview.source_state(), original)
-            for filename in ("posts/new.md", "assets/css/style.css", ".github/scripts/build.py", "robots.txt"):
+            for filename in ("posts/new/index.md", "posts/new/assets/image.png", "assets/css/style.css", ".github/scripts/build.py", "robots.txt"):
                 file = root / filename
                 file.parent.mkdir(parents=True, exist_ok=True)
                 file.write_text("source")
