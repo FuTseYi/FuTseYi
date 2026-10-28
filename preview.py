@@ -4,6 +4,8 @@ import argparse
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from importlib.metadata import PackageNotFoundError, version
+import venv
 import re
 import shutil
 import subprocess
@@ -79,45 +81,59 @@ def watch(previous):
             rebuild()
 
 
+def ensure_markdown():
+    try:
+        installed = tuple(int(part) for part in version("Markdown").split(".")[:2])
+        if (3, 7) <= installed < (4, 0):
+            return
+    except PackageNotFoundError:
+        pass
+    # Install into an active virtual environment, or create a project-local one.
+    if sys.prefix != sys.base_prefix:
+        interpreter = Path(sys.executable)
+    else:
+        environment = ROOT / ".venv"
+        interpreter = environment / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
+        if not interpreter.exists():
+            print("Creating .venv for preview dependencies...", flush=True)
+            venv.EnvBuilder(with_pip=True).create(environment)
+    print("Installing Markdown>=3.7,<4 for preview...", flush=True)
+    subprocess.run([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4"], check=True)
+    if interpreter != Path(sys.executable):
+        raise SystemExit(subprocess.call([str(interpreter), str(Path(__file__).resolve()), *sys.argv[1:]], cwd=ROOT))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--build-only", action="store_true", help="Build and verify without starting a server")
-    parser.add_argument("--watch", action="store_true", help="Rebuild after source changes; refresh the browser manually")
     args = parser.parse_args()
-    if args.watch and args.build_only:
-        parser.error("--watch cannot be combined with --build-only")
     if sys.version_info < (3, 10):
         parser.exit(1, "Python 3.10+ is required. On Windows, try: py -3 preview.py\n")
     try:
-        import markdown  # noqa: F401
-    except ImportError:
-        parser.exit(1, 'Install the dependency with your Python: -m pip install "Markdown>=3.7,<4"\n')
-    previous = source_state() if args.watch else None
-    if args.watch:
-        rebuild()
-    else:
+        ensure_markdown()
+    except (OSError, subprocess.CalledProcessError) as error:
+        parser.exit(1, f"Dependency setup failed: {error}. Check network access and Python venv/pip support.\n")
+    previous = source_state()
+    if args.build_only:
         build()
+    else:
+        rebuild()
     if args.build_only:
         return
     handler = partial(SimpleHTTPRequestHandler, directory=str(SITE))
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"Preview: http://127.0.0.1:{args.port}/", flush=True)
-        print("Press Ctrl+C to stop. " + ("Watching source files; refresh the browser after rebuilding."
-              if args.watch else "Re-run this command after editing files."), flush=True)
+        print("Press Ctrl+C to stop. Watching source files; refresh the browser after rebuilding.", flush=True)
+        worker = Thread(target=server.serve_forever, daemon=True)
+        worker.start()
         try:
-            if args.watch:
-                worker = Thread(target=server.serve_forever, daemon=True)
-                worker.start()
-                try:
-                    watch(previous)
-                finally:
-                    server.shutdown()
-                    worker.join()
-            else:
-                server.serve_forever()
+            watch(previous)
         except KeyboardInterrupt:
             pass
+        finally:
+            server.shutdown()
+            worker.join()
 
 
 if __name__ == "__main__":
