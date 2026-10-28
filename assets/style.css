@@ -760,3 +760,6 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
  #recent-blog .project-item{gap:8px}
  .project-item > div{min-width:0;overflow-wrap:anywhere}
 }
+
+.profile-greeting{display:block;width:100%;max-width:430px;height:auto;margin-top:14px}
+@media(max-width:680px){.profile-greeting{margin:14px auto 0}}
