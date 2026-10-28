@@ -18,7 +18,6 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
 SITE = "https://futseyi.github.io"
-CSS = "/assets/style.css"
 
 def get_post(path: Path) -> tuple[dict[str, str], str]:
     raw = path.read_text(encoding="utf-8")
@@ -41,6 +40,16 @@ def get_post(path: Path) -> tuple[dict[str, str], str]:
 
 def layout(title: str, description: str, url: str, content: str) -> str:
     title, description, url = (escape(value, quote=True) for value in (title, description, url))
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
+    header = header.replace(' class="is-active"', '').replace(' aria-current="location"', '')
+    header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
+    header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
+    header = header.replace(f'href="{SITE}/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
+    footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
+    footer = footer.replace('href="#about"', 'href="#main"')
+    css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -48,19 +57,13 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <meta name="theme-color" content="#ffffff"><meta name="description" content="{description}">
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="{CSS}"><script src="/assets/site.js" defer></script>
+<link rel="stylesheet" href="{css}"><script src="/assets/site.js" defer></script>
 </head>
-<body>
+<body class="blog-page">
 <a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header" id="site-header"><div class="header-inner">
-  <a class="brand" href="/" aria-label="FuTseYi (Shine) homepage">FuTseYi (Shine)</a>
-  <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
-  <nav class="nav-links" id="primary-navigation" aria-label="Main navigation">
-    <a href="/#about">About</a><a href="/#education">Education</a><a href="/#community">Active In</a><a href="/#contributions">Contributions</a><a class="is-active" href="/blog/" aria-current="page">Blog</a>
-  </nav>
-</div></header>
+{header}
 <main class="blog-container" id="main">{content}</main>
-<footer class="site-footer"><div class="blog-footer"><span>© 2026 FuTseYi.</span><span>Made to be simple. Built to last.</span><a href="/">Home <span class="link-arrow" aria-hidden="true"></span></a></div></footer>
+{footer}
 </body></html>
 """
 
@@ -90,7 +93,7 @@ def main() -> None:
         parser.reset()
         article = parser.convert(source)
         header = f'<a class="back-link" href="/blog/">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time></div>'
-        content = header + '<article class="article">' + article + '</article><div class="article-footer"><a class="back-link" href="/blog/">← Back to blog</a></div>'
+        content = header + '<article class="article">' + article + '</article>'
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
         (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content), encoding="utf-8")
@@ -100,7 +103,7 @@ def main() -> None:
     entries = []
     for post in posts:
         entries.append(f'<a class="blog-entry" href="{escape(post["url"], quote=True)}"><time class="post-date" datetime="{post["date"]}">{pretty_date(post["date"])}</time><div><h2>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h2></div></a>')
-    index = '<a class="back-link" href="/">← Back to homepage</a><span class="blog-kicker">BLOG & NOTES</span><h1>Blog<span style="color:var(--accent)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
+    index = '<span class="blog-kicker">BLOG & NOTES</span><h1>Blog<span style="color:var(--accent)">.</span></h1><p class="blog-description">Field notes on AI, software, projects, and the things I learn along the way. Written simply, shared occasionally.</p><div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>'
     (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     urls = [SITE + "/", SITE + "/blog/"] + [SITE + post["url"] for post in posts]

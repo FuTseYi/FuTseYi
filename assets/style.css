@@ -605,9 +605,11 @@ section.section { padding: 28px 0; }
 html { scroll-behavior: auto; }
 }
 
-/* Blog: same navigation, colors and typography */
+/* Blog: shared page chrome with a narrower reading column. */
+.blog-page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
+.blog-page .blog-container{flex:1;width:100%}
 .blog-container{max-width:790px;margin:0 auto;padding:52px 26px 100px}
-.blog-container h1{font-weight:620;font-size:clamp(32px,4vw,43px);line-height:1.2;letter-spacing:-.045em;margin:10px 0 17px}
+.blog-container h1{font-weight:400;font-size:clamp(32px,4vw,43px);line-height:1.2;letter-spacing:-.045em;margin:10px 0 17px}
 .blog-kicker{display:block;color:var(--ink-faint);font-size:10px;font-weight:720;letter-spacing:.15em;margin:31px 0 8px}
 .blog-description{color:var(--ink-soft);font-size:14px;margin-bottom:31px}
 .back-link{font-size:13px;font-weight:600}
@@ -632,8 +634,6 @@ html { scroll-behavior: auto; }
 .article blockquote{margin:22px 0;padding-left:17px;border-left:3px solid var(--line);color:var(--ink-soft)}
 .article table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse}
 .article th,.article td{border:1px solid var(--line);padding:8px 11px}
-.article-footer{border-top:1px solid var(--line);margin-top:52px;padding-top:24px}
-.blog-footer{max-width:var(--max-width);padding:22px 32px;margin:0 auto;display:flex;gap:20px;align-items:center;justify-content:space-between}
 
 .profile-note{font-size:13px;font-style:italic;color:var(--ink-soft);margin:0 0 15px}
 .profile-languages{font-size:12px;color:var(--ink-soft);margin:15px 0 0}.profile-languages span{font-weight:700;font-size:10px;letter-spacing:.1em;color:var(--ink-faint);margin-right:8px}
@@ -680,7 +680,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-o
  .project-item{grid-template-columns:25px minmax(0,1fr);gap:12px}
  .blog-container{padding:calc(var(--nav-h) + 28px) 20px 72px}
  .blog-entry{grid-template-columns:1fr;gap:5px}
- .blog-footer{padding:20px;flex-wrap:wrap}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 
