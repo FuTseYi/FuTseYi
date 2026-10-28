@@ -45,7 +45,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
     header = header.replace(' class="is-active"', '').replace(' aria-current="location"', '')
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
-    header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
+    header = header.replace('src="assets/icons/redbird.svg"', 'src="/assets/icons/redbird.svg"')
     header = header.replace(f'href="{SITE}/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
     footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
     footer = footer.replace('href="#about"', 'href="#main"')
