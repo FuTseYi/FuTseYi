@@ -377,7 +377,7 @@ section.section { padding: 38px 0; }
 
 .section-title {
     color: transparent;
-    background: linear-gradient(115deg, var(--gold) 0%, #b49b54 12%, var(--ink) 38%);
+    background: linear-gradient(115deg, #c4b078 0%, #d8c899 14%, #c6b98e 30%, #928a70 46%, var(--ink) 68%);
     -webkit-background-clip: text;
     background-clip: text;
     font-size: clamp(26px, 3vw, 36px);
