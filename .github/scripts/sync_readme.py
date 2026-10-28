@@ -74,14 +74,15 @@ def render():
     posts=read_post_entries()
     return (
       '## About\n\n'
+      +f'**Homepage**: [{site.split("://",1)[-1]}]({site}/)\n\n'
+      +home["paragraphs"][0]+'\n\n'
       +f'*{home["note"]}*\n\n'
-      +'\n\n'.join(home["paragraphs"])+'\n\n'
+      +'\n\n'.join(home["paragraphs"][1:])+'\n\n'
       +home["languages"]+'\n\n'
       +home["motto_label"]+'\n\n'
       +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
-      +f'**Homepage**: [{site.split("://",1)[-1]}]({site}/)\n\n'
       +'## Active In\n\n'
       +'\n'.join(f'- {title}' for title in home["communities"])+'\n\n'
       +'## Recent Blog\n\n'

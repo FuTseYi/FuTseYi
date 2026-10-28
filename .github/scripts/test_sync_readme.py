@@ -38,7 +38,11 @@ class ReadmeTests(unittest.TestCase):
         self.assertNotIn("assets/images/profile/me.jpg", result)
         self.assertNotIn("## *Website*", result)
         self.assertNotIn("Powered by", result)
-        self.assertLess(result.index("**Homepage**:"), result.index("## Active In"))
+        ordered=["**Homepage**:",home["paragraphs"][0],home["note"],
+                 *home["paragraphs"][1:],home["languages"],home["motto_label"],
+                 *home["quotes"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
+        positions=[result.index(text) for text in ordered]
+        self.assertEqual(positions,sorted(positions))
 
     def test_homepage_changes_propagate_without_generator_edits(self):
         with tempfile.TemporaryDirectory() as directory:
