@@ -273,10 +273,10 @@ strong { font-weight: 600; }
     display: flex;
     flex-direction: column;
     width: 100%;
-    align-self: start;
+    align-self: center;
     justify-self: end;
     max-width: 192px;
-    margin-top: 14px;
+    margin-top: 0;
   }
 
 .hero-links {
