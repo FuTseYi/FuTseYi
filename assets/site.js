@@ -26,10 +26,10 @@
   }, { passive: true });
 
   const toc = document.querySelector('.page-toc');
-  const targets = [...(nav?.querySelectorAll('a[href^="#"]') || [])]
-    .map((link) => document.getElementById(link.hash.slice(1)))
-    .filter(Boolean);
   const links = [...document.querySelectorAll('.nav-links a[href^="#"], .page-toc a[href^="#"]')];
+  const targets = [...new Set(links
+    .map((link) => document.getElementById(link.hash.slice(1)))
+    .filter(Boolean))];
   let clickedTarget = null;
   const selectTarget = (id) => {
     const target = document.getElementById(id);
