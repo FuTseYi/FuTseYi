@@ -62,8 +62,9 @@ strong { font-weight: 600; }
 
 .wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 28px; }
 
-#main { animation: page-enter .5s cubic-bezier(.22,1,.36,1) backwards; }
-@keyframes page-enter { from { opacity: 0; transform: translateY(12px); } }
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
 
 .site-header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;

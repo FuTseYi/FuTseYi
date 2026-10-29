@@ -46,6 +46,8 @@ def layout(title: str, description: str, url: str, content: str) -> str:
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
     header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
     header = header.replace(f'href="{SITE}/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
+    if url == f"{SITE}/blog/":
+        header = header.replace('href="/blog/" class="is-active"', 'href="#main" class="is-active"')
     footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
     footer = footer.replace('href="#about"', 'href="#main"')
     css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
