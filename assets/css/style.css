@@ -640,9 +640,10 @@ section.section { padding: 32px 0; }
 #search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px;color:var(--ink);font-weight:550}
 #search-results li a:is(:hover,:focus-visible){background:var(--bg);color:var(--gold-ink);box-shadow:0 4px 14px rgba(18,19,23,.08);text-decoration:none}
 html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
-.back-link,.all-tags-link{display:inline-flex;align-items:center;gap:8px;min-height:36px;color:var(--ink-soft);font-size:13px;font-weight:600;transition:color .16s}
-.back-link:is(:hover,:focus-visible),.all-tags-link:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
-.back-link .link-arrow,.all-tags-link .link-arrow{margin:0}
+.back-link,.all-tags-link{display:inline-flex}
+.back-link,.all-tags-link,.blog-tags-mobile{align-items:center;gap:8px;min-height:36px;color:var(--ink-soft);font-size:13px;font-weight:600;transition:color .16s}
+.back-link:is(:hover,:focus-visible),.all-tags-link:is(:hover,:focus-visible),.blog-tags-mobile:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
+.back-link .link-arrow,.all-tags-link .link-arrow,.blog-tags-mobile .link-arrow{margin:0}
 .blog-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:28px 40px;width:min(100%,1000px);margin:0 auto}
 .archive-toc{display:none}
 .blog-list{grid-column:1;min-width:0;display:flow-root}
@@ -727,7 +728,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
  .search-open{justify-content:center;width:44px;min-height:44px;padding:0;border-bottom:0;background:transparent}
  .search-open:is(:hover,:focus-visible){background:transparent}
  .search-open .search-label,.search-open kbd{display:none}
- .blog-tags-mobile{display:inline-flex;align-items:center;white-space:nowrap;font-size:13px;font-weight:600}
+ .blog-tags-mobile{display:inline-flex;white-space:nowrap}
  html:not(.js) .site-header{height:auto;background:var(--bg)}
  html:not(.js) .header-inner{height:auto;min-height:var(--nav-h);flex-wrap:wrap;padding-top:10px;padding-bottom:10px;gap:8px}
  html:not(.js) .nav-links{display:flex;width:100%;flex-wrap:wrap;gap:0 18px}
