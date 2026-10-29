@@ -68,7 +68,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/assets/icons/site.webmanifest">
-<link rel="preload" href="/assets/fonts/caveat-name.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{css}"><script src="{script}" defer></script>
 </head>
 <body class="{body_class}">

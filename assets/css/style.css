@@ -1,4 +1,4 @@
-@font-face{font-family:Caveat;src:url("../fonts/caveat-name.woff2") format("woff2");font-style:normal;font-weight:500 600;font-display:block}
+@font-face{font-family:Caveat;src:url("../fonts/caveat-handwriting.woff2") format("woff2");font-style:normal;font-weight:400 600;font-display:block}
 
 /* FuTseYi academic homepage and Blog styles. */
 :root {
@@ -301,7 +301,7 @@ strong { font-weight: 600; }
 
 .portrait-note {
     position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    font: 400 16px/1.5 var(--font);
+    font: 400 16px/1.5 Caveat, var(--font);
     color: #1f2937; white-space: nowrap;
   }
 
