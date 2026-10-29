@@ -525,7 +525,7 @@ section.section { padding: 38px 0; }
     top: calc(var(--nav-h) + 20px);
     right: auto;
     transform: none;
-    max-height: calc(100vh - 2 * (var(--nav-h) + 20px));
+    max-height: min(360px, 50vh, calc(100vh - 2 * (var(--nav-h) + 20px)));
     overflow-y: auto;
     scrollbar-width: none;
     opacity: 1;
