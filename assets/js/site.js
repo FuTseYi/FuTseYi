@@ -117,5 +117,31 @@
     });
     list.after(button);
   });
+  const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
+  if (images.length) {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'image-zoom';
+    dialog.innerHTML = '<button class="image-zoom-close" type="button" aria-label="Close image">×</button><img alt="">';
+    document.body.append(dialog);
+    const enlarged = dialog.querySelector('img');
+    images.forEach((img) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'image-zoom-trigger';
+      button.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
+      img.replaceWith(button);
+      button.append(img);
+      button.addEventListener('click', () => {
+        enlarged.src = img.currentSrc || img.src;
+        enlarged.alt = img.alt;
+        dialog.showModal();
+      });
+    });
+    dialog.querySelector('button').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog || event.target === enlarged) dialog.close();
+    });
+    dialog.addEventListener('close', () => enlarged.removeAttribute('src'));
+  }
   schedule();
 })();
