@@ -165,7 +165,7 @@ def main() -> None:
         article = size_article_images(parser.convert(source), SOURCE / slug)
         article = article.replace('<table>', '<div class="article-table" role="region" aria-label="Data table" tabindex="0"><table>').replace('</table>', '</table></div>')
         tags = ''.join(f'<a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)}</a>' for tag in item["tags"])
-        header = f'<a class="back-link" href="/blog/#post-{slug}">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><div class="article-meta"><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><a class="post-date" href="https://github.com/FuTseYi/futseyi.github.io/edit/main/posts/{slug}/index.md" target="_blank" rel="noopener noreferrer"><em>Edit on GitHub</em></a></div><div class="post-tags">{tags}</div></div>'
+        header = f'<a class="back-link" href="/blog/#post-{slug}"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><div class="article-meta"><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><a class="post-date" href="https://github.com/FuTseYi/futseyi.github.io/edit/main/posts/{slug}/index.md" target="_blank" rel="noopener noreferrer"><em>Edit on GitHub</em></a></div><div class="post-tags">{tags}</div></div>'
         neighbors = []
         for offset, css_class in ((1, "previous"), (-1, "next")):
             other = position + offset
@@ -202,7 +202,7 @@ def main() -> None:
             tag_posts.setdefault(tag, []).append(post)
     sorted_tags = sorted(tag_posts.items(), key=lambda pair: (-len(pair[1]), pair[0].casefold()))
     sidebar_tags = ''.join(f'<li><a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)} <span>({len(matches)})</span></a></li>' for tag, matches in sorted_tags[:30])
-    sidebar = '<aside class="blog-sidebar"><h2>Tags</h2><ul>' + sidebar_tags + '</ul><a class="all-tags-link" href="/blog/tags/">View all →</a></aside>'
+    sidebar = '<aside class="blog-sidebar"><h2>Tags</h2><ul>' + sidebar_tags + '</ul><a class="all-tags-link" href="/blog/tags/">View all<span class="link-arrow" aria-hidden="true"></span></a></aside>'
     archive_toc = '<nav class="page-toc archive-toc" aria-label="Archive by year and month"><span class="toc-title">ARCHIVE</span>' + ''.join(toc_entries) + '</nav>'
     search = '<dialog class="search-dialog" id="search-dialog" aria-label="Search articles"><div class="search-dialog-head"><label for="blog-search">Search articles</label><button type="button" class="search-close" aria-label="Close search">×</button></div><input id="blog-search" type="search" placeholder="Search in English or 中文" autocomplete="off" aria-controls="search-results"><div id="search-results" aria-live="polite"></div></dialog>'
     search_icon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>'
@@ -212,7 +212,7 @@ def main() -> None:
     for tag, matches in sorted_tags:
         links = ''.join(f'<li><a href="{escape(post["url"], quote=True)}">{escape(post["title"])}</a></li>' for post in matches)
         tag_groups.append(f'<details class="tag-group" id="{tag_id(tag)}" open><summary># {escape(tag)} <span>({len(matches)})</span></summary><ul>{links}</ul></details>')
-    tags_content = '<a class="back-link" href="/blog/">← All posts</a><h1>All Tags</h1><div class="tag-groups">' + ''.join(tag_groups) + '</div>'
+    tags_content = '<a class="back-link" href="/blog/"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><h1>All Tags</h1><div class="tag-groups">' + ''.join(tag_groups) + '</div>'
     tags_output = OUTPUT / "tags"
     tags_output.mkdir()
     (tags_output / "index.html").write_text(layout("All Tags", "Browse blog posts by tag", SITE + "/blog/tags/", tags_content), encoding="utf-8")

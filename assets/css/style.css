@@ -641,7 +641,9 @@ section.section { padding: 32px 0; }
 #search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px;color:var(--ink);font-weight:550}
 #search-results li a:is(:hover,:focus-visible){background:var(--bg);color:var(--gold-ink);box-shadow:0 4px 14px rgba(18,19,23,.08);text-decoration:none}
 html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
-.back-link{font-size:13px;font-weight:600}
+.back-link,.all-tags-link{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:6px 10px;margin-left:-10px;border-radius:6px;color:var(--ink-soft);font-size:13px;font-weight:600;transition:background-color .16s,color .16s}
+.back-link:is(:hover,:focus-visible),.all-tags-link:is(:hover,:focus-visible){background:var(--bg-soft);color:var(--gold-ink);text-decoration:none}
+.back-link .link-arrow,.all-tags-link .link-arrow{margin:0}
 .blog-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:32px;width:min(100%,1000px);margin:16px auto 0}
 .archive-toc{display:none}
 .blog-list{min-width:0;display:flow-root}
@@ -662,7 +664,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .blog-sidebar ul{display:flex;flex-direction:column;align-items:flex-start;gap:8px;list-style:none}
 .blog-sidebar .post-tag{display:inline-block;background:#f7f7f7}
 .blog-sidebar .post-tag span{color:var(--ink-faint)}
-.all-tags-link{display:block;margin-top:18px;font-size:13px}
+.all-tags-link{margin-top:18px}
 @media(min-width:1400px){
  .page-toc.archive-toc{display:flex;flex-direction:column;gap:2px;position:fixed;top:50%;left:max(16px,calc((100vw - var(--max-width)) / 2 - 132px));right:auto;transform:translateY(-50%);z-index:40;max-height:calc(100vh - 140px);overflow:auto;scrollbar-width:none;padding:10px 0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease}
  .page-toc.archive-toc.is-visible{opacity:1;visibility:visible;pointer-events:auto}
@@ -692,8 +694,6 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .post-neighbor-label{display:flex;align-items:center;gap:9px;color:var(--ink-faint);font-size:12px;margin-bottom:4px}
 .post-neighbor.next .post-neighbor-label{justify-content:flex-end}
 .post-neighbor .link-arrow{margin:0}
-.post-neighbor .link-arrow-left{transform:rotate(225deg)}
-.post-neighbor:is(:hover,:focus-visible) .link-arrow-left{transform:translateX(-3px) rotate(225deg)}
 .post-neighbor strong{font-size:15px;font-weight:600;line-height:1.5}
 .post-neighbor:is(:hover,:focus-visible){text-decoration:none}
 .post-neighbor:is(:hover,:focus-visible) strong{color:var(--gold-ink)}
@@ -746,8 +746,10 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 /* ELPA link chevrons: a short nudge on hover or keyboard focus. */
 .link-arrow{display:inline-block;flex:0 0 auto;width:7px;height:7px;margin-left:3px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .16s ease}
 a:is(:hover,:focus-visible) .link-arrow{transform:translateX(3px) rotate(45deg)}
+.link-arrow-left{transform:rotate(225deg)}
+a:is(:hover,:focus-visible) .link-arrow-left{transform:translateX(-3px) rotate(225deg)}
 .link-arrow-up{transform:rotate(-45deg)}
 a:is(:hover,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45deg)}
-@media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:hover,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:hover,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}}
+@media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:hover,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:hover,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}a:is(:hover,:focus-visible) .link-arrow-left{transform:rotate(225deg)}}
 
 a:is(:hover,:focus-visible){color:var(--gold-ink)}
