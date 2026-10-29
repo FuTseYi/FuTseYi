@@ -246,10 +246,9 @@
         rect.y += (rect.height - height) / 2 - transform.f;
         rect.width = width;
         rect.height = height;
-        const top = document.querySelector('.site-header')?.getBoundingClientRect().bottom || 0;
-        const scale = Math.min((innerWidth - 48) / rect.width, (innerHeight - top - 48) / rect.height);
+        const scale = Math.min((innerWidth - 48) / rect.width, (innerHeight - 48) / rect.height);
         const x = innerWidth / 2 - rect.left - rect.width / 2;
-        const y = (innerHeight + top) / 2 - rect.top - rect.height / 2;
+        const y = innerHeight / 2 - rect.top - rect.height / 2;
         const layer = document.createElement('div');
         layer.className = 'image-zoom-overlay';
         layer.setAttribute('aria-hidden', 'true');
@@ -258,8 +257,8 @@
         overlay = layer;
         activeImage = img;
         img.style.position = 'relative';
-        // Keep the image below the fixed header throughout both transitions.
-        img.style.zIndex = '90';
+        // Keep this layer until the return transition finishes.
+        img.style.zIndex = '1000';
         img.style.willChange = 'transform';
         img.classList.add('is-zoomed');
         requestAnimationFrame(() => {

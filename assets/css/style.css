@@ -699,7 +699,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article p>img:only-child{margin-inline:auto}
 .article img[data-zoom]{cursor:zoom-in;transform-origin:center;transition:transform .3s cubic-bezier(.2,0,.2,1)}
 .article img.is-zoomed{cursor:zoom-out}
-.image-zoom-overlay{position:fixed;inset:0;z-index:89;background:rgba(0,0,0,.8);opacity:0;transition:opacity .3s;will-change:opacity;cursor:zoom-out}
+.image-zoom-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.8);opacity:0;transition:opacity .3s;will-change:opacity;cursor:zoom-out}
 .image-zoom-overlay.is-open{opacity:1}
 .article pre{overflow:auto;padding:17px;background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;line-height:1.6}
 .article code{font:13px ui-monospace,SFMono-Regular,Consolas,monospace}
