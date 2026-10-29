@@ -115,7 +115,7 @@
       link.classList.toggle('is-active', current);
       if (current) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
-      if (changed && toc.classList.contains('article-toc')) {
+      if (changed && toc.clientHeight) {
         const item = link.getBoundingClientRect();
         const bounds = toc.getBoundingClientRect();
         if (item.top < bounds.top || item.bottom > bounds.bottom) {

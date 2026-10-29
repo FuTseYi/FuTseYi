@@ -138,7 +138,7 @@ def article_toc(tokens: list[dict]) -> str:
             entries.append(f'<a href="#{escape(token["id"], quote=True)}" class="toc-level-{token["level"] - first_level + 1}">{label}</a>')
     if len(entries) < 3:
         return ""
-    return '<nav class="page-toc article-toc" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + "".join(entries) + '</nav>'
+    return '<nav class="page-toc article-toc is-visible" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + "".join(entries) + '</nav>'
 
 
 def main() -> None:
