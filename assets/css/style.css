@@ -515,10 +515,16 @@ section.section { padding: 38px 0; }
 
 .article-toc { display: none; }
 @media (min-width: 1600px) {
+  .article-layout:has(.article-toc){display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:64px;width:calc(100% + 264px)}
+  .article-layout>[data-pagefind-body]{min-width:0}
   .article-toc {
     display: flex;
     width: 200px;
-    right: max(24px, calc((100vw - var(--max-width)) / 2 - 224px));
+    position: sticky;
+    align-self: start;
+    top: calc(var(--nav-h) + 20px);
+    right: auto;
+    transform: none;
     max-height: calc(100vh - 2 * (var(--nav-h) + 20px));
     overflow-y: auto;
     scrollbar-width: none;
