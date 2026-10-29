@@ -173,7 +173,8 @@
       const expanded = button.getAttribute('aria-expanded') !== 'true';
       setExpanded(expanded);
       releaseTarget();
-      if (expanded) extra[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const target = expanded ? extra[0] : list.closest('section');
+      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
     });
     list.after(button);
   });
