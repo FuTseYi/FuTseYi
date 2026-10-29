@@ -244,10 +244,10 @@ strong { font-weight: 600; }
     color: var(--ink-soft);
   }
 .about-intro .profile-interests { margin-top: 18px; }
-.about-intro .profile-languages { margin: 12px 0 0; }
+.about-intro .profile-languages,.about-intro .profile-blog { margin: 12px 0 0; }
 .profile-interests > span:first-child,.profile-languages > span:first-child { font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
 .motto-heading { margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
-.profile-interests > span > strong,.profile-languages > span > strong,.motto-heading > strong { font: 600 13px/1.75 var(--font); color: var(--ink); }
+.profile-interests > span > strong,.profile-languages > span > strong,.motto-heading > strong,.profile-blog a { font: 600 13px/1.75 var(--font); color: var(--ink); }
 .bio-detail .profile-motto { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.75; color: var(--ink-soft); font-style: italic; }
 .profile-motto p+p { margin-top: 4px; }
 
@@ -613,7 +613,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .back-link .link-arrow,.all-tags-link .link-arrow,.blog-tags-mobile .link-arrow{margin:0}
 .blog-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:28px 40px;width:min(100%,1000px);margin:0 auto}
 .blog-list{grid-column:1;min-width:0;display:flow-root}
-.archive-year{margin-top:46px}
+.archive-year{margin-top:24px}
 .archive-year:first-child{margin-top:8px}
 .archive-heading{position:relative;height:110px;margin-bottom:-10px;pointer-events:none}
 .archive-heading h2{position:absolute;top:0;left:0;color:transparent;-webkit-text-stroke:1px #cdbd91;opacity:.55;font:italic 500 clamp(88px,10vw,120px)/1 Georgia,serif}
