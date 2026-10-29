@@ -522,7 +522,7 @@ section.section { padding: 38px 0; }
     width: 200px;
     position: sticky;
     align-self: start;
-    top: calc(var(--nav-h) + 20px);
+    top: max(calc(var(--nav-h) + 20px), calc(50vh - var(--toc-height, 360px) / 2));
     right: auto;
     transform: none;
     max-height: min(360px, 50vh, calc(100vh - 2 * (var(--nav-h) + 20px)));

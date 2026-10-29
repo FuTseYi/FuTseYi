@@ -50,6 +50,9 @@
   }, { passive: true });
 
   const toc = document.querySelector('.page-toc');
+  if (toc?.classList.contains('article-toc')) {
+    new ResizeObserver(() => toc.style.setProperty('--toc-height', `${toc.offsetHeight}px`)).observe(toc);
+  }
   const tocLinks = [...document.querySelectorAll('.page-toc a[href^="#"]')];
   const links = toc?.classList.contains('archive-toc') ? tocLinks : [...document.querySelectorAll('.nav-links a[href^="#"]'), ...tocLinks];
   const targets = [...new Set(links
