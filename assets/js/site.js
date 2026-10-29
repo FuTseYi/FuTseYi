@@ -205,43 +205,26 @@
     let cleanupTimer = null;
     let pendingImage = null;
     let pendingOverlay = null;
-    let pendingClone = null;
     const finishPending = () => {
       clearTimeout(cleanupTimer);
       if (pendingImage) {
         pendingImage.style.position = '';
         pendingImage.style.zIndex = '';
         pendingImage.style.willChange = '';
-        pendingImage.style.visibility = '';
       }
-      pendingClone?.remove();
       pendingOverlay?.remove();
-      cleanupTimer = pendingImage = pendingOverlay = pendingClone = null;
+      cleanupTimer = pendingImage = pendingOverlay = null;
     };
     const closeZoom = () => {
       if (!activeImage) return;
       const image = activeImage;
       const layer = overlay;
-      const start = image.getBoundingClientRect();
       image.style.transform = '';
       image.classList.remove('is-zoomed');
-      const end = image.getBoundingClientRect();
-      const clone = image.cloneNode();
-      clone.removeAttribute('id');
-      clone.removeAttribute('tabindex');
-      clone.setAttribute('aria-hidden', 'true');
-      Object.assign(clone.style, { position: 'fixed', left: `${end.left}px`, top: `${end.top}px`, width: `${end.width}px`, height: `${end.height}px`, maxWidth: 'none', maxHeight: 'none', margin: '0', zIndex: '1000', pointerEvents: 'none', transition: 'none' });
-      document.body.append(clone);
-      image.style.visibility = 'hidden';
-      clone.animate([
-        { transform: `translate(${start.left - end.left}px, ${start.top - end.top}px) scale(${start.width / end.width}, ${start.height / end.height})` },
-        { transform: 'none' }
-      ], { duration: 300, easing: 'cubic-bezier(.2,0,.2,1)', fill: 'forwards' });
       layer.classList.remove('is-open');
       pendingImage = image;
       pendingOverlay = layer;
-      pendingClone = clone;
-      cleanupTimer = setTimeout(finishPending, 300);
+      cleanupTimer = setTimeout(finishPending, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300);
       activeImage = null;
       overlay = null;
     };
@@ -252,12 +235,21 @@
       img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
       img.addEventListener('click', () => {
         if (activeImage === img) { closeZoom(); return; }
+        closeZoom();
         finishPending();
         const rect = img.getBoundingClientRect();
-        const scale = Math.min((innerWidth - 48) / rect.width, (innerHeight - 48) / rect.height,
-          img.naturalWidth / rect.width, img.naturalHeight / rect.height);
+        // A quick reopen can interrupt the return transition; measure its layout box.
+        const transform = new DOMMatrix(getComputedStyle(img).transform);
+        const width = rect.width / transform.a;
+        const height = rect.height / transform.d;
+        rect.x += (rect.width - width) / 2 - transform.e;
+        rect.y += (rect.height - height) / 2 - transform.f;
+        rect.width = width;
+        rect.height = height;
+        const top = document.querySelector('.site-header')?.getBoundingClientRect().bottom || 0;
+        const scale = Math.min((innerWidth - 48) / rect.width, (innerHeight - top - 48) / rect.height);
         const x = innerWidth / 2 - rect.left - rect.width / 2;
-        const y = innerHeight / 2 - rect.top - rect.height / 2;
+        const y = (innerHeight + top) / 2 - rect.top - rect.height / 2;
         const layer = document.createElement('div');
         layer.className = 'image-zoom-overlay';
         layer.setAttribute('aria-hidden', 'true');
@@ -266,7 +258,8 @@
         overlay = layer;
         activeImage = img;
         img.style.position = 'relative';
-        img.style.zIndex = '1000';
+        // Keep the image below the fixed header throughout both transitions.
+        img.style.zIndex = '90';
         img.style.willChange = 'transform';
         img.classList.add('is-zoomed');
         requestAnimationFrame(() => {
