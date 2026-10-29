@@ -64,6 +64,7 @@ def assemble(root):
         html = page.read_text(encoding="utf-8")
         html = re.sub(r'(<a\b[^>]*\bhref=[\'"])https://futseyi\.github\.io(?=/)', r'\1', html)
         page.write_text(html, encoding="utf-8")
+    subprocess.run([sys.executable, "-m", "pagefind", "--site", str(site), "--force-language", "zh"], cwd=root, check=True)
     run(root, "verify.py")
 
 
@@ -129,10 +130,10 @@ def watch(previous):
             rebuild()
 
 
-def ensure_markdown():
+def ensure_dependencies():
     try:
         installed = tuple(int(part) for part in version("Markdown").split(".")[:2])
-        if (3, 7) <= installed < (4, 0):
+        if (3, 7) <= installed < (4, 0) and version("pagefind") == "1.5.2":
             return
     except PackageNotFoundError:
         pass
@@ -145,8 +146,8 @@ def ensure_markdown():
         if not interpreter.exists():
             print("Creating .venv for preview dependencies...", flush=True)
             venv.EnvBuilder(with_pip=True).create(environment)
-    print("Installing Markdown>=3.7,<4 for preview...", flush=True)
-    subprocess.run([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4"], check=True)
+    print("Installing preview build dependencies...", flush=True)
+    subprocess.run([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4", "pagefind[extended]==1.5.2"], check=True)
     if interpreter != Path(sys.executable):
         raise SystemExit(subprocess.call([str(interpreter), str(Path(__file__).resolve()), *sys.argv[1:]], cwd=ROOT))
 
@@ -159,7 +160,7 @@ def main():
     if sys.version_info < (3, 10):
         parser.exit(1, "Python 3.10+ is required. On Windows, try: py -3 preview.py\n")
     try:
-        ensure_markdown()
+        ensure_dependencies()
     except (OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Dependency setup failed: {error}. Check network access and Python venv/pip support.\n")
     handler = partial(PreviewHandler, directory=str(SITE))

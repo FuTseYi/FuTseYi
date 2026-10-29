@@ -18,8 +18,9 @@ Open <http://127.0.0.1:8765/> or <http://127.0.0.1:8765/blog/>.
 The same command builds, verifies, serves and watches the website. Refresh the
 browser manually after the terminal reports a successful build. Press Ctrl+C to stop.
 
-If a compatible Python-Markdown is missing, the script installs `Markdown>=3.7,<4`
-into the active virtual environment, or creates a project-local `.venv` and restarts
+If a compatible Python-Markdown or Pagefind is missing, the script installs
+`Markdown>=3.7,<4` and `pagefind[extended]==1.5.2` into the active virtual
+environment, or creates a project-local `.venv` and restarts
 itself there. Existing compatible installations require no download. First-time
 setup requires network access and Python venv/pip support. Some Linux installations
 need their distribution's `python3-venv` package installed first. System Python is
@@ -36,8 +37,8 @@ preview intact. File serving and directory replacement are coordinated to avoid
 Windows file-sharing errors.
 
 The script copies source files into an automatically cleaned temporary directory,
-builds the blog, stages the website, injects latest posts
-and public activity, and verifies local links before serving. Local preview reuses the existing snapshot,
+builds the blog, stages the website, injects latest posts and public activity,
+builds the search index, and verifies local links before serving. Local preview reuses the existing snapshot,
 with the deployed JSON as a backup, and queries GitHub only if neither is valid.
 Deployments always request fresh activity.
 If a query fails, the previous snapshot and its timestamp are preserved; without

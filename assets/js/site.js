@@ -51,7 +51,7 @@
 
   const toc = document.querySelector('.page-toc');
   const tocLinks = [...document.querySelectorAll('.page-toc a[href^="#"]')];
-  const links = [...document.querySelectorAll('.nav-links a[href^="#"]'), ...tocLinks];
+  const links = toc?.classList.contains('archive-toc') ? tocLinks : [...document.querySelectorAll('.nav-links a[href^="#"]'), ...tocLinks];
   const targets = [...new Set(links
     .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
     .filter(Boolean))];
@@ -99,7 +99,9 @@
       if (clickedTarget) active = clickedTarget.id;
     }
     if (toc) {
-      const visible = toc.classList.contains('article-toc') || targets[0].getBoundingClientRect().bottom <= navHeight + 28;
+      const visible = toc.classList.contains('article-toc') || (toc.classList.contains('archive-toc')
+        ? targets[0].getBoundingClientRect().top <= navHeight + 28
+        : targets[0].getBoundingClientRect().bottom <= navHeight + 28);
       toc.classList.toggle('is-visible', visible);
       toc.setAttribute('aria-hidden', String(!visible));
       toc.inert = !visible;
@@ -145,38 +147,110 @@
     });
     list.after(button);
   });
+  const searchInput = document.getElementById('blog-search');
+  if (searchInput) {
+    const dialog = document.getElementById('search-dialog');
+    const openButton = document.querySelector('.search-open');
+    const results = document.getElementById('search-results');
+    let engine;
+    let sequence = 0;
+    const loadSearch = () => engine ??= import('/pagefind/pagefind.js');
+    const openSearch = () => {
+      dialog.showModal();
+      searchInput.focus();
+      loadSearch();
+    };
+    openButton.addEventListener('click', openSearch);
+    dialog.querySelector('.search-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+    document.addEventListener('keydown', (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (dialog.open) dialog.close(); else openSearch();
+      }
+    });
+    searchInput.addEventListener('input', async () => {
+      const query = searchInput.value.trim();
+      const request = ++sequence;
+      results.replaceChildren();
+      if (!query) return;
+      results.textContent = 'Searching…';
+      try {
+        const pagefind = await loadSearch();
+        const found = await pagefind.debouncedSearch(query);
+        if (request !== sequence || !found) return;
+        results.replaceChildren();
+        if (!found.results.length) { results.textContent = 'No articles found.'; return; }
+        const items = await Promise.all(found.results.map((item) => item.data()));
+        if (request !== sequence) return;
+        const list = document.createElement('ul');
+        items.forEach((item) => {
+          const row = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.textContent = item.meta.title;
+          row.append(link);
+          list.append(row);
+        });
+        results.append(list);
+      } catch (error) {
+        if (request === sequence) results.textContent = 'Search is unavailable. Please refresh and try again.';
+      }
+    });
+  }
   const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
   if (images.length) {
     let activeImage = null;
     let overlay = null;
-    let pendingCleanup = null;
-    const finishPending = () => { pendingCleanup?.(); pendingCleanup = null; };
+    let cleanupTimer = null;
+    let pendingImage = null;
+    let pendingOverlay = null;
+    let pendingClone = null;
+    const finishPending = () => {
+      clearTimeout(cleanupTimer);
+      if (pendingImage) {
+        pendingImage.style.position = '';
+        pendingImage.style.zIndex = '';
+        pendingImage.style.willChange = '';
+        pendingImage.style.visibility = '';
+      }
+      pendingClone?.remove();
+      pendingOverlay?.remove();
+      cleanupTimer = pendingImage = pendingOverlay = pendingClone = null;
+    };
     const closeZoom = () => {
       if (!activeImage) return;
       const image = activeImage;
       const layer = overlay;
-      activeImage = null;
-      overlay = null;
+      const start = image.getBoundingClientRect();
       image.style.transform = '';
       image.classList.remove('is-zoomed');
+      const end = image.getBoundingClientRect();
+      const clone = image.cloneNode();
+      clone.removeAttribute('id');
+      clone.removeAttribute('tabindex');
+      clone.setAttribute('aria-hidden', 'true');
+      Object.assign(clone.style, { position: 'fixed', left: `${end.left}px`, top: `${end.top}px`, width: `${end.width}px`, height: `${end.height}px`, maxWidth: 'none', maxHeight: 'none', margin: '0', zIndex: '1000', pointerEvents: 'none', transition: 'none' });
+      document.body.append(clone);
+      image.style.visibility = 'hidden';
+      clone.animate([
+        { transform: `translate(${start.left - end.left}px, ${start.top - end.top}px) scale(${start.width / end.width}, ${start.height / end.height})` },
+        { transform: 'none' }
+      ], { duration: 300, easing: 'cubic-bezier(.2,0,.2,1)', fill: 'forwards' });
       layer.classList.remove('is-open');
-      const timer = setTimeout(finishPending, 360);
-      pendingCleanup = () => {
-        clearTimeout(timer);
-        image.style.position = '';
-        image.style.zIndex = '';
-        image.style.willChange = '';
-        layer.remove();
-      };
+      pendingImage = image;
+      pendingOverlay = layer;
+      pendingClone = clone;
+      cleanupTimer = setTimeout(finishPending, 300);
+      activeImage = null;
+      overlay = null;
     };
     images.forEach((img) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'image-zoom-trigger';
-      button.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
-      img.replaceWith(button);
-      button.append(img);
-      button.addEventListener('click', () => {
+      img.dataset.zoom = '';
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
+      img.addEventListener('click', () => {
         if (activeImage === img) { closeZoom(); return; }
         finishPending();
         const rect = img.getBoundingClientRect();
@@ -192,7 +266,7 @@
         overlay = layer;
         activeImage = img;
         img.style.position = 'relative';
-        img.style.zIndex = '1001';
+        img.style.zIndex = '1000';
         img.style.willChange = 'transform';
         img.classList.add('is-zoomed');
         requestAnimationFrame(() => {
@@ -201,12 +275,18 @@
           img.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
         });
       });
+      img.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          img.click();
+        }
+      });
     });
     document.addEventListener('keydown', (event) => {
-      if (['Escape', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) closeZoom();
+      if (event.key === 'Escape') closeZoom();
     });
-    window.addEventListener('wheel', closeZoom, { passive: true });
-    window.addEventListener('touchmove', closeZoom, { passive: true });
+    window.addEventListener('scroll', closeZoom, { passive: true });
+    window.addEventListener('resize', closeZoom, { passive: true });
   }
   schedule();
 })();
