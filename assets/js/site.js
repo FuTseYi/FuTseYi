@@ -111,9 +111,17 @@
     }
     tocLinks.forEach((link) => {
       const current = decodeURIComponent(link.hash.slice(1)) === active;
+      const changed = current && !link.classList.contains('is-active');
       link.classList.toggle('is-active', current);
       if (current) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
+      if (changed && toc.classList.contains('article-toc')) {
+        const item = link.getBoundingClientRect();
+        const bounds = toc.getBoundingClientRect();
+        if (item.top < bounds.top || item.bottom > bounds.bottom) {
+          toc.scrollTop += item.top - bounds.top - (toc.clientHeight - item.height) / 2;
+        }
+      }
     });
   };
   const schedule = () => {
