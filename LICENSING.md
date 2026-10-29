@@ -1,6 +1,6 @@
 # Licensing
 
-Copyright © 2026 FuTseYi (Shine). This repository separates website software from published content.
+Copyright © 2026 FuTseYi (Shine). This repository separates website software from published content. The copyright year records the initial publication year, not an expiration date; the website footer displays the current calendar year automatically.
 
 | Material | License |
 | --- | --- |

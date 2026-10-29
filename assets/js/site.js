@@ -1,6 +1,11 @@
 /* Minimal progressive enhancement: menu, active section, and scroll state. */
 (() => {
   document.documentElement.classList.add('js');
+  const currentYear = String(new Date().getFullYear());
+  document.querySelectorAll('[data-current-year]').forEach((element) => {
+    element.dateTime = currentYear;
+    element.textContent = currentYear;
+  });
   const header = document.getElementById('site-header');
   if (!header) return;
   header.classList.toggle('is-scrolled', window.scrollY > 6);
