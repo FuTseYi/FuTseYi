@@ -641,8 +641,8 @@ section.section { padding: 32px 0; }
 #search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px;color:var(--ink);font-weight:550}
 #search-results li a:is(:hover,:focus-visible){background:var(--bg);color:var(--gold-ink);box-shadow:0 4px 14px rgba(18,19,23,.08);text-decoration:none}
 html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
-.back-link,.all-tags-link{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:6px 10px;margin-left:-10px;border-radius:6px;color:var(--ink-soft);font-size:13px;font-weight:600;transition:background-color .16s,color .16s}
-.back-link:is(:hover,:focus-visible),.all-tags-link:is(:hover,:focus-visible){background:var(--bg-soft);color:var(--gold-ink);text-decoration:none}
+.back-link,.all-tags-link{display:inline-flex;align-items:center;gap:8px;min-height:36px;color:var(--ink-soft);font-size:13px;font-weight:600;transition:color .16s}
+.back-link:is(:hover,:focus-visible),.all-tags-link:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
 .back-link .link-arrow,.all-tags-link .link-arrow{margin:0}
 .blog-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:32px;width:min(100%,1000px);margin:16px auto 0}
 .archive-toc{display:none}
