@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Outfit:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Outfit:wght@300;400;500;600;700&display=optional");
 
 /* FuTseYi academic homepage and Blog styles. */
 :root {
@@ -103,7 +103,7 @@ strong { font-weight: 600; }
   }
 .brand img { width: 36px; height: 36px; transition: transform .3s ease; }
 .site-header.is-scrolled .brand img { transform: scale(.8333); }
-.js:not(.is-ready) .header-inner,.js:not(.is-ready) .brand img { transition: none; }
+.js:not(.is-ready) .header-inner,.js:not(.is-ready) .brand img,html:not(.is-ready) .page-toc { transition: none; }
 
 .brand:hover { text-decoration: none; opacity: .7; }
 
