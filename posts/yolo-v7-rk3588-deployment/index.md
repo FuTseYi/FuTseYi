@@ -6,16 +6,16 @@ tags: RKNN, YOLO
 
 ![](assets/rk3588s.jpg)
 
-|  多线程 YOLO7   |
-| :----------: |
-|   8 个并行线程    |
-|  8 个模型实例并行   |
-|   同时处理 8 帧   |
-|    实时视频流     |
-|   摄像头/视频文件   |
-| RTMP/RTSP 推流 |
-|  GPIO + 串口   |
-|   高帧率实时处理    |
+## 多线程 YOLO7
+
+- 8 个并行线程
+- 8 个模型实例并行
+- 同时处理 8 帧
+- 实时视频流
+- 摄像头/视频文件
+- RTMP/RTSP 推流
+- GPIO + 串口
+- 高帧率实时处理
 
 > 在此方案上修改 [GitHub - leafqycc/rknn-cpp-Multithreading](https://github.com/leafqycc/rknn-cpp-Multithreading)
 

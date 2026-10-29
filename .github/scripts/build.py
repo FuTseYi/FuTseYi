@@ -43,7 +43,7 @@ def get_post(path: Path) -> tuple[dict[str, str], str]:
     date.fromisoformat(meta["date"])
     return meta, raw[match.end():]
 
-def layout(title: str, description: str, url: str, content: str) -> str:
+def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page") -> str:
     title, description, url = (escape(value, quote=True) for value in (title, description, url))
     home = version_assets((ROOT / "index.html").read_text(encoding="utf-8"), ROOT)
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
@@ -70,7 +70,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <link rel="manifest" href="/assets/icons/site.webmanifest">
 <link rel="stylesheet" href="{css}"><script src="{script}" defer></script>
 </head>
-<body class="blog-page">
+<body class="{body_class}">
 <a class="skip-link" href="#main">Skip to content</a>
 {header}
 <main class="blog-container wrap" id="main">{content}</main>
@@ -163,6 +163,7 @@ def main() -> None:
         item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
         parser.reset()
         article = size_article_images(parser.convert(source), SOURCE / slug)
+        article = article.replace('<table>', '<div class="article-table" role="region" aria-label="Data table" tabindex="0"><table>').replace('</table>', '</table></div>')
         tags = ''.join(f'<a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)}</a>' for tag in item["tags"])
         header = f'<a class="back-link" href="/blog/#post-{slug}">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><div class="post-tags">{tags}</div></div>'
         neighbors = []
@@ -178,7 +179,7 @@ def main() -> None:
         assets = SOURCE / slug / "assets"
         if assets.is_dir():
             shutil.copytree(assets, destination / "assets")
-        (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content), encoding="utf-8")
+        (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content, body_class="blog-page article-page"), encoding="utf-8")
         posts.append(item)
 
     entries = []
@@ -210,7 +211,7 @@ def main() -> None:
     tag_groups = []
     for tag, matches in sorted_tags:
         links = ''.join(f'<li><a href="{escape(post["url"], quote=True)}">{escape(post["title"])}</a></li>' for post in matches)
-        tag_groups.append(f'<details class="tag-group" id="{tag_id(tag)}"><summary># {escape(tag)} <span>({len(matches)})</span></summary><ul>{links}</ul></details>')
+        tag_groups.append(f'<details class="tag-group" id="{tag_id(tag)}" open><summary># {escape(tag)} <span>({len(matches)})</span></summary><ul>{links}</ul></details>')
     tags_content = '<a class="back-link" href="/blog/">← All posts</a><h1>All Tags</h1><div class="tag-groups">' + ''.join(tag_groups) + '</div>'
     tags_output = OUTPUT / "tags"
     tags_output.mkdir()

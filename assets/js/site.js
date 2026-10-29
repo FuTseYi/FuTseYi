@@ -147,6 +147,19 @@
     });
     list.after(button);
   });
+  const tagGroups = [...document.querySelectorAll('.tag-group')];
+  if (tagGroups.length) {
+    tagGroups.forEach((group) => { group.open = false; });
+    const openTag = () => {
+      const group = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (!tagGroups.includes(group)) return;
+      group.open = true;
+      requestAnimationFrame(() => group.scrollIntoView({ behavior: 'instant', block: 'start' }));
+    };
+    window.addEventListener('hashchange', openTag);
+    window.addEventListener('pageshow', openTag);
+    openTag();
+  }
   const searchInput = document.getElementById('blog-search');
   if (searchInput) {
     const dialog = document.getElementById('search-dialog');
