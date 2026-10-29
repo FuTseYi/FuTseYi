@@ -2,9 +2,9 @@
 
 **Homepage**: [futseyi.github.io](https://futseyi.github.io/)
 
-Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [The Hong Kong University of Science and Technology (Guangzhou)](https://www.hkust-gz.edu.cn/), with a background in automation.
-
 *Currently exploring new things, occasionally pretending I know what I’m doing.*
+
+Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [The Hong Kong University of Science and Technology (Guangzhou)](https://www.hkust-gz.edu.cn/), with a background in automation.
 
 **Focus:** Interested in AI, engineering, and whatever keeps me curious.
 
@@ -16,7 +16,9 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 
 *People can retire, but the spirit cannot retire. - Gundam*
 
-[Email](mailto:hello@futseyi.com) · [GitHub](https://github.com/FuTseYi) · [LinkedIn](https://www.linkedin.com/in/futseyi) · [Recent Blog](#recent-blog)
+[Recent Blog](https://futseyi.github.io/#recent-blog)
+
+[Email](mailto:hello@futseyi.com) · [GitHub](https://github.com/FuTseYi) · [LinkedIn](https://www.linkedin.com/in/futseyi) · [X](https://x.com/FuTseYi)
 
 <a class="visitor-counter" href="https://visit-counter.futseyi.workers.dev/status?path=https%3A%2F%2Ffutseyi.github.io%2F" target="_blank" rel="noopener noreferrer"><img src="https://visit-counter.futseyi.workers.dev/api/combined?path=https%3A%2F%2Ffutseyi.github.io%2F" alt="Visitor badge"></a>
 
