@@ -681,7 +681,6 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .tag-group[open]{width:100%}
 .tag-group ul{padding:9px 0 5px 19px}
 .tag-group li+li{margin-top:4px}
-.tag-group:target{border-color:var(--gold)}
 .article-page .blog-container{max-width:836px}
 .article-meta{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .article-head{margin:30px 0 38px}
