@@ -465,7 +465,9 @@ section.section { padding: 38px 0; }
 /* Shared directory: homepage, archive and article. */
 .toc-title{font-size:9px;color:var(--ink-faint);letter-spacing:.12em;margin:0 0 8px 12px}
 .page-toc{display:none;flex-direction:column;gap:2px;width:160px;max-height:min(420px,60vh,calc(100vh - 2 * (var(--nav-h) + 20px)));overflow-y:auto;scrollbar-width:none;padding:10px 0;z-index:40;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease}
-.page-toc::-webkit-scrollbar{display:none}
+.page-toc::-webkit-scrollbar,.toc-content::-webkit-scrollbar{display:none}
+.js .page-toc{overflow:hidden}
+.toc-content{display:flex;flex-direction:column;gap:2px;min-height:0;overflow-y:auto;scrollbar-width:none}
 .page-toc.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 .page-toc a{display:block;padding:5px 10px 5px 12px;border-left:2px solid var(--line);color:var(--ink-faint);font-size:12px;font-weight:500;letter-spacing:.01em;line-height:1.3;text-decoration:none;white-space:normal;overflow-wrap:anywhere;transition:color .15s ease,border-color .15s ease}
 .page-toc .toc-level-2{padding-left:24px;font-size:11px}
@@ -588,11 +590,11 @@ section.section { padding: 32px 0; }
 .search-dialog input::-webkit-search-cancel-button{display:none}
 #search-results{min-height:0;overflow-y:auto;scrollbar-width:none}
 #search-results::-webkit-scrollbar{display:none}
-.search-scroll-hint{display:flex;justify-content:center;align-items:center;flex:none;height:20px;color:var(--ink-faint);visibility:hidden}
-.search-scroll-hint.is-visible{visibility:visible}
-.search-scroll-hint::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
-.search-scroll-hint.is-visible::before{animation:search-scroll-hint 1.4s ease-in-out infinite}
-@keyframes search-scroll-hint{50%{transform:translateY(3px) rotate(45deg)}}
+.scroll-hint{display:flex;justify-content:center;align-items:center;flex:none;height:20px;color:var(--ink-faint);visibility:hidden}
+.scroll-hint.is-visible{visibility:visible}
+.scroll-hint::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.scroll-hint.is-visible::before{animation:scroll-hint 1.4s ease-in-out infinite}
+@keyframes scroll-hint{50%{transform:translateY(3px) rotate(45deg)}}
 #search-results:not(:empty){padding:12px 0;color:var(--ink-faint);font-size:13px}
 #search-results ul{list-style:none}
 #search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px;color:var(--ink);font-weight:550}

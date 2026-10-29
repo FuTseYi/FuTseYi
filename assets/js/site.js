@@ -49,7 +49,26 @@
     if (window.innerWidth > 860) setOpen(false);
   }, { passive: true });
 
+  const addScrollHint = (content, container) => {
+    const hint = document.createElement('div');
+    hint.className = 'scroll-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    container.append(hint);
+    const syncHint = () => {
+      hint.classList.toggle('is-visible', content.scrollHeight - content.clientHeight - content.scrollTop > 2);
+    };
+    content.addEventListener('scroll', syncHint, { passive: true });
+    new ResizeObserver(syncHint).observe(content);
+    return syncHint;
+  };
   const toc = document.querySelector('.page-toc');
+  const tocContent = toc && document.createElement('div');
+  if (toc) {
+    tocContent.className = 'toc-content';
+    tocContent.append(...toc.childNodes);
+    toc.append(tocContent);
+    addScrollHint(tocContent, toc);
+  }
   if (toc?.classList.contains('article-toc')) {
     new ResizeObserver(() => toc.style.setProperty('--toc-height', `${toc.offsetHeight}px`)).observe(toc);
   }
@@ -115,11 +134,11 @@
       link.classList.toggle('is-active', current);
       if (current) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
-      if (changed && toc.clientHeight) {
+      if (changed && tocContent.clientHeight) {
         const item = link.getBoundingClientRect();
-        const bounds = toc.getBoundingClientRect();
+        const bounds = tocContent.getBoundingClientRect();
         if (item.top < bounds.top || item.bottom > bounds.bottom) {
-          toc.scrollTop += item.top - bounds.top - (toc.clientHeight - item.height) / 2;
+          tocContent.scrollTop += item.top - bounds.top - (tocContent.clientHeight - item.height) / 2;
         }
       }
     });
@@ -176,15 +195,7 @@
     const dialog = document.getElementById('search-dialog');
     const openButton = document.querySelector('.search-open');
     const results = document.getElementById('search-results');
-    const scrollHint = document.createElement('div');
-    scrollHint.className = 'search-scroll-hint';
-    scrollHint.setAttribute('aria-hidden', 'true');
-    dialog.append(scrollHint);
-    const syncScrollHint = () => {
-      scrollHint.classList.toggle('is-visible', results.scrollHeight - results.clientHeight - results.scrollTop > 2);
-    };
-    results.addEventListener('scroll', syncScrollHint, { passive: true });
-    new ResizeObserver(syncScrollHint).observe(results);
+    const syncScrollHint = addScrollHint(results, dialog);
     let engine;
     let sequence = 0;
     const loadSearch = () => engine ??= import('/pagefind/pagefind.js');
