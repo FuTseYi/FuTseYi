@@ -141,6 +141,8 @@
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog || event.target === enlarged) dialog.close();
     });
+    dialog.addEventListener('wheel', () => dialog.close(), { passive: true });
+    dialog.addEventListener('touchmove', () => dialog.close(), { passive: true });
     dialog.addEventListener('close', () => enlarged.removeAttribute('src'));
   }
   schedule();
