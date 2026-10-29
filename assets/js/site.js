@@ -208,12 +208,17 @@
     const finishPending = () => {
       clearTimeout(cleanupTimer);
       if (pendingImage) {
+        pendingImage.removeEventListener('transitionend', finishTransition);
         pendingImage.style.position = '';
         pendingImage.style.zIndex = '';
         pendingImage.style.willChange = '';
       }
       pendingOverlay?.remove();
+      document.documentElement.classList.remove('image-zoom-active');
       cleanupTimer = pendingImage = pendingOverlay = null;
+    };
+    const finishTransition = (event) => {
+      if (event.target === pendingImage && event.propertyName === 'transform') finishPending();
     };
     const closeZoom = () => {
       if (!activeImage) return;
@@ -224,7 +229,8 @@
       layer.classList.remove('is-open');
       pendingImage = image;
       pendingOverlay = layer;
-      cleanupTimer = setTimeout(finishPending, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300);
+      image.addEventListener('transitionend', finishTransition);
+      cleanupTimer = setTimeout(finishPending, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 350);
       activeImage = null;
       overlay = null;
     };
@@ -256,6 +262,7 @@
         document.body.append(layer);
         overlay = layer;
         activeImage = img;
+        document.documentElement.classList.add('image-zoom-active');
         img.style.position = 'relative';
         // Keep this layer until the return transition finishes.
         img.style.zIndex = '1000';

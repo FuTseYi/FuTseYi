@@ -77,8 +77,13 @@ strong { font-weight: 600; }
     height: var(--nav-h);
     background:var(--bg);
     isolation: isolate;
+    transition: opacity .15s ease;
   }
 .js:not(.is-ready) .site-header { visibility: hidden; }
+.site-header.is-scrolled{background:transparent;pointer-events:none}
+.site-header.is-scrolled .header-inner{pointer-events:auto}
+.image-zoom-active .site-header{opacity:0;pointer-events:none}
+.image-zoom-active .site-header .header-inner{pointer-events:none}
 
 .header-inner {
     position: relative; z-index: 1;
