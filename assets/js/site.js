@@ -165,12 +165,22 @@
     const dialog = document.getElementById('search-dialog');
     const openButton = document.querySelector('.search-open');
     const results = document.getElementById('search-results');
+    const scrollHint = document.createElement('div');
+    scrollHint.className = 'search-scroll-hint';
+    scrollHint.setAttribute('aria-hidden', 'true');
+    dialog.append(scrollHint);
+    const syncScrollHint = () => {
+      scrollHint.classList.toggle('is-visible', results.scrollHeight - results.clientHeight - results.scrollTop > 2);
+    };
+    results.addEventListener('scroll', syncScrollHint, { passive: true });
+    new ResizeObserver(syncScrollHint).observe(results);
     let engine;
     let sequence = 0;
     const loadSearch = () => engine ??= import('/pagefind/pagefind.js');
     const openSearch = () => {
       dialog.showModal();
       searchInput.focus();
+      syncScrollHint();
     };
     openButton.addEventListener('click', openSearch);
     dialog.querySelector('.search-close').addEventListener('click', () => dialog.close());
@@ -188,6 +198,8 @@
       const query = searchInput.value.trim();
       const request = ++sequence;
       results.replaceChildren();
+      results.scrollTop = 0;
+      syncScrollHint();
       if (!query) return;
       results.textContent = 'Searching…';
       try {
@@ -211,6 +223,7 @@
           list.append(row);
         });
         results.append(list);
+        syncScrollHint();
       } catch (error) {
         if (request === sequence) results.textContent = 'Search is unavailable. Please refresh and try again.';
       }
