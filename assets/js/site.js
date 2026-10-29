@@ -3,6 +3,23 @@
   document.documentElement.classList.add('js');
   const header = document.getElementById('site-header');
   if (!header) return;
+  const navigationProgress = document.createElement('div');
+  navigationProgress.className = 'navigation-progress';
+  navigationProgress.setAttribute('aria-hidden', 'true');
+  document.body.prepend(navigationProgress);
+  const article = document.querySelector('.article');
+  const readingProgress = article && document.createElement('div');
+  if (readingProgress) {
+    readingProgress.className = 'reading-progress';
+    readingProgress.setAttribute('aria-hidden', 'true');
+    document.body.prepend(readingProgress);
+  }
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (link.origin === location.origin && (link.pathname !== location.pathname || link.search !== location.search)) navigationProgress.classList.add('is-loading');
+  }, true);
+  window.addEventListener('pageshow', () => navigationProgress.classList.remove('is-loading'));
   const toggle = header.querySelector('.nav-toggle');
   const nav = document.getElementById('primary-navigation');
   const setOpen = (open) => {
@@ -54,6 +71,10 @@
   let scheduled = false;
   const sync = () => {
     scheduled = false;
+    if (readingProgress) {
+      const remaining = document.documentElement.scrollHeight - window.innerHeight;
+      readingProgress.style.transform = `scaleX(${remaining > 0 ? Math.max(0, Math.min(1, window.scrollY / remaining)) : 1})`;
+    }
     header.classList.toggle('is-scrolled', window.scrollY > 6);
     if (!targets.length) return;
     const navHeight = header.getBoundingClientRect().height;
