@@ -119,11 +119,28 @@
   });
   const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
   if (images.length) {
-    const dialog = document.createElement('dialog');
-    dialog.className = 'image-zoom';
-    dialog.innerHTML = '<button class="image-zoom-close" type="button" aria-label="Close image">×</button><img alt="">';
-    document.body.append(dialog);
-    const enlarged = dialog.querySelector('img');
+    let activeImage = null;
+    let overlay = null;
+    let pendingCleanup = null;
+    const finishPending = () => { pendingCleanup?.(); pendingCleanup = null; };
+    const closeZoom = () => {
+      if (!activeImage) return;
+      const image = activeImage;
+      const layer = overlay;
+      activeImage = null;
+      overlay = null;
+      image.style.transform = '';
+      image.classList.remove('is-zoomed');
+      layer.classList.remove('is-open');
+      const timer = setTimeout(finishPending, 360);
+      pendingCleanup = () => {
+        clearTimeout(timer);
+        image.style.position = '';
+        image.style.zIndex = '';
+        image.style.willChange = '';
+        layer.remove();
+      };
+    };
     images.forEach((img) => {
       const button = document.createElement('button');
       button.type = 'button';
@@ -132,18 +149,36 @@
       img.replaceWith(button);
       button.append(img);
       button.addEventListener('click', () => {
-        enlarged.src = img.currentSrc || img.src;
-        enlarged.alt = img.alt;
-        dialog.showModal();
+        if (activeImage === img) { closeZoom(); return; }
+        finishPending();
+        const rect = img.getBoundingClientRect();
+        const scale = Math.min((innerWidth - 48) / rect.width, (innerHeight - 48) / rect.height,
+          img.naturalWidth / rect.width, img.naturalHeight / rect.height);
+        const x = innerWidth / 2 - rect.left - rect.width / 2;
+        const y = innerHeight / 2 - rect.top - rect.height / 2;
+        const layer = document.createElement('div');
+        layer.className = 'image-zoom-overlay';
+        layer.setAttribute('aria-hidden', 'true');
+        layer.addEventListener('click', closeZoom);
+        document.body.append(layer);
+        overlay = layer;
+        activeImage = img;
+        img.style.position = 'relative';
+        img.style.zIndex = '1001';
+        img.style.willChange = 'transform';
+        img.classList.add('is-zoomed');
+        requestAnimationFrame(() => {
+          if (activeImage !== img) return;
+          layer.classList.add('is-open');
+          img.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+        });
       });
     });
-    dialog.querySelector('button').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', (event) => {
-      if (event.target === dialog || event.target === enlarged) dialog.close();
+    document.addEventListener('keydown', (event) => {
+      if (['Escape', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) closeZoom();
     });
-    dialog.addEventListener('wheel', () => dialog.close(), { passive: true });
-    dialog.addEventListener('touchmove', () => dialog.close(), { passive: true });
-    dialog.addEventListener('close', () => enlarged.removeAttribute('src'));
+    window.addEventListener('wheel', closeZoom, { passive: true });
+    window.addEventListener('touchmove', closeZoom, { passive: true });
   }
   schedule();
 })();
