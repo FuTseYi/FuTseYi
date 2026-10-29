@@ -13,7 +13,6 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[2]
 USER = "FuTseYi"
 SITE = "https://futseyi.github.io"
-MAX_REPOSITORIES = 12
 EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
 SNAPSHOT_ERRORS = (URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError)
 API = "https://api.github.com"
@@ -83,8 +82,6 @@ def collect():
             continue
         entries.append({**event, "description": repo.get("description") or "",
                         "language": repo.get("language") or ""})
-        if len(entries) == MAX_REPOSITORIES:
-            break
     return {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": entries}
 
 
@@ -99,7 +96,7 @@ def previous_snapshot():
             if not isinstance(snapshot["entries"], list):
                 raise ValueError("Invalid snapshot entries")
             snapshot["entries"] = [entry for entry in snapshot["entries"]
-                                   if entry["name"].lower() not in EXCLUDED_REPOSITORIES][:MAX_REPOSITORIES]
+                                   if entry["name"].lower() not in EXCLUDED_REPOSITORIES]
             render(snapshot)  # Validate before allowing a previous snapshot to replace the page.
             return snapshot
         except SNAPSHOT_ERRORS:

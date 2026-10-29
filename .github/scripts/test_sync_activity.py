@@ -141,7 +141,7 @@ class ActivityTests(unittest.TestCase):
                     "description": "A <project>", "language": "Python"}
         with patch.object(activity, "fetch", side_effect=fetch):
             result = activity.collect()
-        self.assertEqual(len(result["entries"]), activity.MAX_REPOSITORIES)
+        self.assertEqual(len(result["entries"]), 99)
         self.assertNotIn("org/newest", [item["name"] for item in result["entries"]])
         self.assertNotIn("org/repo0", [item["name"] for item in result["entries"]])
         self.assertIn("&lt;project&gt;", activity.render(result))
