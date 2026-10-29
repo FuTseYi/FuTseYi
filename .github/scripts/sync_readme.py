@@ -42,6 +42,7 @@ def read_home():
     content={
         "paragraphs":[md(x) for x in re.findall(r'<p\b[^>]*>(.*?)</p>',bio,re.S)],
         "note":md(note), "languages":md(languages),
+        "blog":md(required(r'<p class="profile-blog">(.*?)</p>',"recent blog link")[1]),
         "motto_label":md(required(r'<h3 class="motto-heading">(.*?)</h3>',"motto label")[1]),
         "quotes":[md(x) for x in re.findall(r'<p>(.*?)</p>',motto,re.S)],
         "links":[md(x) for x in re.findall(r'<a\b[^>]*>.*?</a>',links,re.S)],
@@ -76,12 +77,12 @@ def render():
     return (
       '## About\n\n'
       +f'**Homepage**: [{site.split("://",1)[-1]}]({site}/)\n\n'
-      +home["paragraphs"][0]+'\n\n'
       +f'*{home["note"]}*\n\n'
-      +'\n\n'.join(home["paragraphs"][1:])+'\n\n'
+      +'\n\n'.join(home["paragraphs"])+'\n\n'
       +home["languages"]+'\n\n'
       +home["motto_label"]+'\n\n'
       +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
+      +home["blog"]+'\n\n'
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
       +'## Active In\n\n'

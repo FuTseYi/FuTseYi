@@ -26,7 +26,7 @@ class ReadmeTests(unittest.TestCase):
         result = sync.render()
         self.assertEqual([line for line in result.splitlines() if line.startswith("#")],
                          ["## About", "## Active In", "## Recent Blog"])
-        for text in [home["note"], *home["paragraphs"], home["languages"],
+        for text in [home["note"], *home["paragraphs"], home["languages"], home["blog"],
                      *home["quotes"], *home["links"]]:
             self.assertIn(text, result)
         for title in home["communities"]:
@@ -38,9 +38,9 @@ class ReadmeTests(unittest.TestCase):
         self.assertNotIn("assets/images/profile/me.jpg", result)
         self.assertNotIn("## *Website*", result)
         self.assertNotIn("Powered by", result)
-        ordered=["**Homepage**:",home["paragraphs"][0],home["note"],
-                 *home["paragraphs"][1:],home["languages"],home["motto_label"],
-                 *home["quotes"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
+        ordered=["**Homepage**:",home["note"],*home["paragraphs"],
+                 home["languages"],home["motto_label"],
+                 *home["quotes"],home["blog"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
         positions=[result.index(text) for text in ordered]
         self.assertEqual(positions,sorted(positions))
 
