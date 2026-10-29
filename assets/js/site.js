@@ -3,6 +3,7 @@
   document.documentElement.classList.add('js');
   const header = document.getElementById('site-header');
   if (!header) return;
+  header.classList.toggle('is-scrolled', window.scrollY > 6);
   const navigationProgress = document.createElement('div');
   navigationProgress.className = 'navigation-progress';
   navigationProgress.setAttribute('aria-hidden', 'true');
@@ -19,7 +20,13 @@
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
     if (link.origin === location.origin && (link.pathname !== location.pathname || link.search !== location.search)) navigationProgress.classList.add('is-loading');
   }, true);
-  window.addEventListener('pageshow', () => navigationProgress.classList.remove('is-loading'));
+  window.addEventListener('pageshow', () => {
+    navigationProgress.classList.remove('is-loading');
+    requestAnimationFrame(() => {
+      header.classList.toggle('is-scrolled', window.scrollY > 6);
+      document.documentElement.classList.add('is-ready');
+    });
+  });
   const toggle = header.querySelector('.nav-toggle');
   const nav = document.getElementById('primary-navigation');
   const setOpen = (open) => {

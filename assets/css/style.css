@@ -22,9 +22,10 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     scroll-padding-top: calc(var(--nav-h) + 16px);
   }
+html.is-ready { scroll-behavior: smooth; }
 
 html { overflow-x: clip; }
 
@@ -156,6 +157,7 @@ strong { font-weight: 600; }
   }
 .brand img { width: 36px; height: 36px; transition: transform .3s ease; }
 .site-header.is-scrolled .brand img { transform: scale(.8333); }
+.js:not(.is-ready) .header-inner,.js:not(.is-ready) .brand img { transition: none; }
 
 .brand:hover { text-decoration: none; opacity: .7; }
 
@@ -714,7 +716,7 @@ section.section { padding: 32px 0; }
  .blog-container{padding-bottom:72px}
  .blog-entry{grid-template-columns:1fr;gap:5px}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+@media(prefers-reduced-motion:reduce){html.is-ready{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 
 /* ELPA link chevrons: a short nudge on hover or keyboard focus. */
 .link-arrow{display:inline-block;flex:0 0 auto;width:7px;height:7px;margin-left:3px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .16s ease}
