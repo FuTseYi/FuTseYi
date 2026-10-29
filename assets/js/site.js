@@ -198,6 +198,9 @@
         if (!found.results.length) { results.textContent = 'No articles found.'; return; }
         const items = await Promise.all(found.results.map((item) => item.data()));
         if (request !== sequence) return;
+        const titleQuery = query.normalize('NFKC').toLowerCase();
+        const titleMatch = (item) => item.meta.title.normalize('NFKC').toLowerCase().includes(titleQuery);
+        items.sort((a, b) => Number(titleMatch(b)) - Number(titleMatch(a)));
         const list = document.createElement('ul');
         items.forEach((item) => {
           const row = document.createElement('li');
