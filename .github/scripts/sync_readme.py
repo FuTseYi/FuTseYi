@@ -22,7 +22,7 @@ def site_url():
     if not canonical:raise ValueError("index.html: missing canonical URL")
     return canonical[1].rstrip("/")
 def md(fragment):
-    fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',lambda m:"["+re.sub(r"<[^>]*>","",m[2]).strip()+"]("+m[1]+")",fragment,flags=re.S|re.I)
+    fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',lambda m:"["+re.sub(r"<[^>]*>","",m[2]).strip()+"]("+(site_url()+"/"+m[1] if m[1].startswith("#") else m[1])+")",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<strong>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<em>(.*?)</em>",r"*\1*",fragment,flags=re.S|re.I)
     return unescape(" ".join(re.sub(r"<[^>]+>","",fragment).split()))

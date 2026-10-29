@@ -245,7 +245,7 @@ strong { font-weight: 600; }
   }
 .about-intro .profile-interests { margin-top: 18px; }
 .about-intro .profile-languages { margin: 12px 0 0; }
-.profile-interests > span,.profile-languages > span { font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
+.profile-interests > span:first-child,.profile-languages > span:first-child { font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
 .motto-heading { margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
 .profile-interests > span > strong,.profile-languages > span > strong,.motto-heading > strong { font: 600 13px/1.75 var(--font); color: var(--ink); }
 .bio-detail .profile-motto { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.75; color: var(--ink-soft); font-style: italic; }
