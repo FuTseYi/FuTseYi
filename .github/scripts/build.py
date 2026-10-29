@@ -165,7 +165,7 @@ def main() -> None:
         article = size_article_images(parser.convert(source), SOURCE / slug)
         article = article.replace('<table>', '<div class="article-table" role="region" aria-label="Data table" tabindex="0"><table>').replace('</table>', '</table></div>')
         tags = ''.join(f'<a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)}</a>' for tag in item["tags"])
-        header = f'<a class="back-link" href="/blog/#post-{slug}">← All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><div class="post-tags">{tags}</div></div>'
+        header = f'<div class="article-tools"><a class="back-link" href="/blog/#post-{slug}">← All posts</a><a class="post-date" href="https://github.com/FuTseYi/futseyi.github.io/edit/main/posts/{slug}/index.md"><em>Edit on GitHub</em></a></div><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><div class="post-tags">{tags}</div></div>'
         neighbors = []
         for offset, css_class in ((1, "previous"), (-1, "next")):
             other = position + offset
