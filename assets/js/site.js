@@ -158,13 +158,15 @@
     const openSearch = () => {
       dialog.showModal();
       searchInput.focus();
-      loadSearch();
     };
     openButton.addEventListener('click', openSearch);
     dialog.querySelector('.search-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
     document.addEventListener('keydown', (event) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if (event.key === 'Escape' && dialog.open) {
+        event.preventDefault();
+        dialog.close();
+      } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         if (dialog.open) dialog.close(); else openSearch();
       }

@@ -17,6 +17,7 @@ from html import escape, unescape
 from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 import markdown
+from asset_urls import version_assets
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "posts"
@@ -44,7 +45,7 @@ def get_post(path: Path) -> tuple[dict[str, str], str]:
 
 def layout(title: str, description: str, url: str, content: str) -> str:
     title, description, url = (escape(value, quote=True) for value in (title, description, url))
-    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    home = version_assets((ROOT / "index.html").read_text(encoding="utf-8"), ROOT)
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
@@ -55,6 +56,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
     footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
     footer = footer.replace('href="#about"', 'href="#main"')
     css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
+    script = '/' + re.search(r'<script src="([^"]+)"', home)[1]
 
     return f"""<!doctype html>
 <html lang="en">
@@ -66,7 +68,7 @@ def layout(title: str, description: str, url: str, content: str) -> str:
 <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/assets/icons/site.webmanifest">
-<link rel="stylesheet" href="{css}"><script src="/assets/js/site.js" defer></script>
+<link rel="stylesheet" href="{css}"><script src="{script}" defer></script>
 </head>
 <body class="blog-page">
 <a class="skip-link" href="#main">Skip to content</a>

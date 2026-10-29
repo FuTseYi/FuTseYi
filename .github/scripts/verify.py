@@ -6,6 +6,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree
+from asset_urls import version_assets
 
 ROOT = Path(__file__).resolve().parents[2] / "_site"
 ORIGIN = "https://futseyi.github.io"
@@ -65,7 +66,9 @@ def main():
     pages = {}
     for file in ROOT.rglob("*.html"):
         parsed = Page()
-        parsed.feed(file.read_text(encoding="utf-8"))
+        html = file.read_text(encoding="utf-8")
+        assert version_assets(html, ROOT) == html, f"Stale shared asset version: {file}"
+        parsed.feed(html)
         pages[file.resolve()] = parsed
 
     errors = []

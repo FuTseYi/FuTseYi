@@ -9,6 +9,7 @@ from datetime import date
 from html import unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
+from asset_urls import version_assets
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -121,7 +122,7 @@ def update_site():
         label="View all articles" if posts else "Browse recent articles"
         content+=f'<a class="list-toggle" href="{SITE}/blog/">{label} <span class="link-arrow" aria-hidden="true"></span></a>'
     html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: content,html,flags=re.S)
-    output.write_text(html,encoding="utf-8")
+    output.write_text(version_assets(html, ROOT),encoding="utf-8")
     print("Injected latest blog posts into deployed homepage.")
 
 def main():
