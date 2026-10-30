@@ -118,6 +118,7 @@ strong { font-weight: 600; }
     border-radius: 10px;
     color: var(--ink);
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
 .nav-toggle:hover { background: #f7f7f7; }
@@ -536,7 +537,8 @@ footer {
       -webkit-overflow-scrolling: touch;
     }
 
-.site-header.menu-open .nav-links { display: flex; }
+.site-header.menu-open .nav-links { display: flex; animation: nav-reveal .2s cubic-bezier(.2,.7,.3,1); }
+@keyframes nav-reveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .site-header.is-scrolled .nav-links { border: 1px solid var(--line); border-radius: 14px; }
 
 .nav-links a {
