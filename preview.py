@@ -38,6 +38,11 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         with SERVING_LOCK:
             super().do_HEAD()
 
+    def log_request(self, code="-", size="-"):
+        # Successful page loads are noise while previewing; failures still name the path.
+        if isinstance(code, int) and code >= 400:
+            super().log_request(code, size)
+
     def end_headers(self):
         versioned = re.fullmatch(r"/assets/(?:css/style\.css|js/site\.js)\?v=[0-9a-f]{12}", self.path)
         self.send_header("Cache-Control", "public, max-age=31536000, immutable" if versioned else "no-store")

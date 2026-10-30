@@ -57,7 +57,8 @@ second process using the same port exits without changing the preview. Use
 to build and verify without starting a server (stop the preview first).
 HTML and unversioned resources are not cached. Content-hashed CSS and JavaScript
 are cached across page transitions; a source change produces a new asset URL.
-Refresh manually after a successful build.
+Refresh manually after a successful build. The terminal stays quiet while pages
+load correctly and prints the path only when a request fails, such as a missing image.
 
 ## Publishing articles
 

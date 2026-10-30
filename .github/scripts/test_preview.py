@@ -2,6 +2,7 @@
 import contextlib
 import importlib.util
 import io
+from http import HTTPStatus
 from pathlib import Path
 import subprocess
 import tempfile
@@ -99,6 +100,19 @@ class PreviewTests(unittest.TestCase):
                                       capture_output=True)
         restart.assert_called_once()
         self.assertEqual(output.getvalue(), "")
+
+    def test_successful_requests_are_not_logged_but_failures_are(self):
+        handler = object.__new__(preview.PreviewHandler)
+        with patch.object(preview.SimpleHTTPRequestHandler, "log_request") as logged:
+            handler.log_request(200, "-")
+            handler.log_request(304, "-")
+            handler.log_request("-", "-")
+            logged.assert_not_called()
+            handler.log_request(404, "-")
+            handler.log_request(HTTPStatus.NOT_FOUND, "-")
+            handler.log_request(500, "-")
+        self.assertEqual([call.args[0] for call in logged.call_args_list],
+                         [404, HTTPStatus.NOT_FOUND, 500])
 
     def test_orphaned_build_directories_are_discarded(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(preview, "ROOT", Path(directory)):
