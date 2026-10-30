@@ -17,6 +17,12 @@ import time
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
 SERVING_LOCK = RLock()
+# Single source of truth: pip specs and the version probe are derived from these.
+MARKDOWN_MIN, MARKDOWN_MAX = (3, 7), (4, 0)
+PAGEFIND_VERSION = "1.5.2"
+REQUIREMENTS = (f"Markdown>={MARKDOWN_MIN[0]}.{MARKDOWN_MIN[1]},<{MARKDOWN_MAX[0]}.{MARKDOWN_MAX[1]}",
+                f"pagefind[extended]=={PAGEFIND_VERSION}")
+CHECK_FLAG = "--check-dependencies"
 
 
 class PreviewServer(ThreadingHTTPServer):
@@ -65,7 +71,12 @@ def assemble(root):
         html = page.read_text(encoding="utf-8")
         html = re.sub(r'(<a\b[^>]*\bhref=[\'"])https://futseyi\.github\.io(?=/)', r'\1', html)
         page.write_text(html, encoding="utf-8")
-    subprocess.run([sys.executable, "-m", "pagefind", "--site", str(site), "--force-language", "zh"], cwd=root, check=True)
+    # Pagefind's banner and progress lines are noise on success; surface them on failure.
+    result = subprocess.run([sys.executable, "-m", "pagefind", "--site", str(site), "--force-language", "zh"],
+                            cwd=root, capture_output=True, encoding="utf-8", errors="replace")
+    if result.returncode:
+        sys.stderr.write(result.stdout + result.stderr)
+        raise subprocess.CalledProcessError(result.returncode, "pagefind")
     run(root, "verify.py")
 
 
@@ -118,6 +129,12 @@ def rebuild():
         print(f"Build failed: {error}. Fix the source and save to retry.", flush=True)
 
 
+def discard_stale_builds():
+    """Remove candidates orphaned by a killed preview; the bound port proves none is live."""
+    for path in ROOT.glob(".preview-*"):
+        shutil.rmtree(path, ignore_errors=True)
+
+
 def watch(previous):
     pending = False
     while True:
@@ -131,25 +148,38 @@ def watch(previous):
             rebuild()
 
 
-def ensure_dependencies():
+def dependencies_valid():
     try:
-        installed = tuple(int(part) for part in version("Markdown").split(".")[:2])
-        if (3, 7) <= installed < (4, 0) and version("pagefind") == "1.5.2":
-            return
-    except PackageNotFoundError:
-        pass
-    # Install into an active virtual environment, or create a project-local one.
+        markdown = tuple(int(part) for part in version("Markdown").split(".")[:2])
+        return MARKDOWN_MIN <= markdown < MARKDOWN_MAX and version("pagefind") == PAGEFIND_VERSION
+    except (PackageNotFoundError, ValueError):
+        return False
+
+
+def dependencies_ready(interpreter):
+    """Report whether interpreter already provides what build.py and Pagefind need."""
+    if interpreter == Path(sys.executable):
+        return dependencies_valid()
+    # Probe the same script in the target environment, so the check lives in one place.
+    probe = subprocess.run([str(interpreter), str(Path(__file__).resolve()), CHECK_FLAG], capture_output=True)
+    return probe.returncode == 0
+
+
+def ensure_dependencies():
+    current = Path(sys.executable)
     if sys.prefix != sys.base_prefix:
-        interpreter = Path(sys.executable)
+        interpreter = current
     else:
         environment = ROOT / ".venv"
         interpreter = environment / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
         if not interpreter.exists():
             print("Creating .venv for preview dependencies...", flush=True)
             venv.EnvBuilder(with_pip=True).create(environment)
-    print("Installing preview build dependencies...", flush=True)
-    subprocess.run([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4", "pagefind[extended]==1.5.2"], check=True)
-    if interpreter != Path(sys.executable):
+    if not dependencies_ready(interpreter):
+        print("Installing preview build dependencies...", flush=True)
+        subprocess.run([str(interpreter), "-m", "pip", "install", *REQUIREMENTS], check=True)
+    if interpreter != current:
+        # Restart inside the environment that now has the build dependencies.
         raise SystemExit(subprocess.call([str(interpreter), str(Path(__file__).resolve()), *sys.argv[1:]], cwd=ROOT))
 
 
@@ -157,7 +187,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--build-only", action="store_true", help="Build and verify without starting a server")
+    parser.add_argument(CHECK_FLAG, action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.check_dependencies:
+        parser.exit(0 if dependencies_valid() else 1)
     if sys.version_info < (3, 10):
         parser.exit(1, "Python 3.10+ is required. On Windows, try: py -3 preview.py\n")
     try:
@@ -170,6 +203,7 @@ def main():
     except OSError as error:
         parser.exit(1, f"Cannot use port {args.port}: {error}. Stop the existing preview or use --port.\n")
     with server:
+        discard_stale_builds()
         previous = source_state()
         if args.build_only:
             build()
@@ -189,4 +223,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(130)

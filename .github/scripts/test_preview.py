@@ -69,10 +69,55 @@ class PreviewTests(unittest.TestCase):
             self.assertEqual(list(root.glob(".preview-*")), [])
 
     def test_installed_dependencies_need_no_setup(self):
-        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2"}.get), \
+        with patch.object(preview.sys, "prefix", "venv"), \
+                patch.object(preview.sys, "base_prefix", "system"), \
+                patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2"}.get), \
                 patch.object(preview.subprocess, "run") as install:
             preview.ensure_dependencies()
         install.assert_not_called()
+
+    def test_existing_environment_with_dependencies_skips_installation(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(preview, "ROOT", Path(directory)), \
+                patch.object(preview.sys, "platform", "win32"), \
+                patch.object(preview.sys, "prefix", "system"), \
+                patch.object(preview.sys, "base_prefix", "system"), \
+                patch.object(preview.sys, "argv", ["preview.py"]), \
+                patch.object(preview.venv, "EnvBuilder") as environment, \
+                patch.object(preview.subprocess, "run") as check, \
+                patch.object(preview.subprocess, "call", return_value=0) as restart, \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            interpreter = Path(directory) / ".venv" / "Scripts/python.exe"
+            interpreter.parent.mkdir(parents=True)
+            interpreter.touch()
+            check.return_value.returncode = 0
+            with self.assertRaises(SystemExit) as result:
+                preview.ensure_dependencies()
+        self.assertEqual(result.exception.code, 0)
+        environment.assert_not_called()
+        check.assert_called_once_with([str(interpreter), str(Path(preview.__file__).resolve()), preview.CHECK_FLAG],
+                                      capture_output=True)
+        restart.assert_called_once()
+        self.assertEqual(output.getvalue(), "")
+
+    def test_orphaned_build_directories_are_discarded(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(preview, "ROOT", Path(directory)):
+            root = Path(directory)
+            orphan = root / ".preview-orphan" / "_site"
+            orphan.mkdir(parents=True)
+            (orphan / "index.html").write_text("stale")
+            (root / ".previews-kept").mkdir()
+            preview.discard_stale_builds()
+            self.assertFalse((root / ".preview-orphan").exists())
+            self.assertTrue((root / ".previews-kept").exists())
+
+    def test_unusable_dependency_metadata_counts_as_missing(self):
+        with patch.object(preview, "version", side_effect={"Markdown": "not-a-version", "pagefind": "1.5.2"}.get):
+            self.assertFalse(preview.dependencies_valid())
+        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.4.0"}.get):
+            self.assertFalse(preview.dependencies_valid())
+        with patch.object(preview, "version", side_effect={"Markdown": "4.0.0", "pagefind": "1.5.2"}.get):
+            self.assertFalse(preview.dependencies_valid())
 
     def test_missing_dependencies_bootstrap_platform_specific_environment(self):
         for platform, executable in (("win32", "Scripts/python.exe"), ("darwin", "bin/python"), ("linux", "bin/python")):
@@ -91,7 +136,11 @@ class PreviewTests(unittest.TestCase):
                 self.assertEqual(result.exception.code, 0)
                 interpreter = Path(directory) / ".venv" / executable
                 environment.return_value.create.assert_called_once_with(Path(directory) / ".venv")
-                install.assert_called_once_with([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4", "pagefind[extended]==1.5.2"], check=True)
+                self.assertEqual(install.call_args_list[0].args[0],
+                                 [str(interpreter), str(Path(preview.__file__).resolve()), preview.CHECK_FLAG])
+                pip_calls = [call for call in install.call_args_list if "pip" in call.args[0]]
+                self.assertEqual(len(pip_calls), 1)
+                self.assertEqual(pip_calls[0].args[0], [str(interpreter), "-m", "pip", "install", *preview.REQUIREMENTS])
                 self.assertEqual(restart.call_args.args[0][-2:], ["--port", "8766"])
 
     def test_source_changes_include_additions_deletions_but_not_outputs(self):

@@ -38,7 +38,9 @@ Windows file-sharing errors.
 
 The script copies source files into an automatically cleaned temporary directory,
 builds the blog, stages the website, injects latest posts and public activity,
-builds the search index, and verifies local links before serving. Local preview reuses the existing snapshot,
+builds the search index, and verifies local links before serving. A killed preview
+can leave a `.preview-*` directory behind; the next start deletes such leftovers
+once it has bound the port, so they cannot accumulate. Local preview reuses the existing snapshot,
 with the deployed JSON as a backup, and queries GitHub only if neither is valid.
 Deployments always request fresh activity.
 If a query fails, the previous snapshot and its timestamp are preserved; without
