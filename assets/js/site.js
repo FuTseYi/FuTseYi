@@ -134,9 +134,9 @@
       toc.inert = !visible;
     }
     if (toc?.classList.contains('archive-toc')) {
-      const period = active.replace(/^(year|month)-/, '');
+      const period = clickedTarget?.id.replace(/^(year|month)-/, '');
       document.querySelectorAll('.blog-entry .post-date').forEach((date) => {
-        date.classList.toggle('is-active', date.dateTime.startsWith(`${period}-`));
+        date.classList.toggle('is-active', Boolean(period && date.dateTime.startsWith(`${period}-`)));
       });
     }
     tocLinks.forEach((link) => {
