@@ -26,7 +26,8 @@
     --archive-year-ink: rgba(120,99,38,.65);
     --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --nav-h: 56px;
-    --page-start: calc(var(--nav-h) + 40px);
+    --nav-offset: 0px;
+    --page-start: calc(var(--nav-h) + var(--nav-offset) + 40px);
     --max-width: 1120px;
   }
 
@@ -81,7 +82,7 @@
 
 html {
     scroll-behavior: auto;
-    scroll-padding-top: calc(var(--nav-h) + 16px);
+    scroll-padding-top: calc(var(--nav-h) + var(--nav-offset) + 16px);
   }
 html.is-ready { scroll-behavior: smooth; }
 
@@ -152,7 +153,7 @@ strong { font-weight: 600; }
 @keyframes navigation-progress{to{transform:scaleX(.9)}}
 
 .site-header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    position: fixed; top: var(--nav-offset); left: 0; right: 0; z-index: 100;
     height: var(--nav-h);
     background:transparent;
     isolation: isolate;
@@ -586,8 +587,8 @@ footer {
 }
 
 @media (max-width: 860px) {
-/* Keep the floating header clear of Safari's top-edge chrome sampling. */
-.site-header { top: 12px; }
+/* Keep the floating header and page spacing in sync. */
+:root { --nav-offset: 12px; }
 .js .nav-toggle { display: inline-flex; }
 
 /* Keep one layout while opening and closing; avoid display/auto-height jumps. */
