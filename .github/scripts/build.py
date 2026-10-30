@@ -49,6 +49,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
+    header = header.replace('href="/#about"', 'href="/"')
     header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
     header = header.replace(f'href="{SITE}/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
     if url == f"{SITE}/blog/":
