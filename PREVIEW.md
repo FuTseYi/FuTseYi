@@ -39,7 +39,7 @@ tags: Notes, Website
 Article text goes here.
 ```
 
-`title` and `date` are required; `tags` is optional. Every post is published when its changes reach `main`; dates control display order, not publication scheduling.
+`title` and `date` are required; `tags` and `lang` (`zh-CN` or `en`) are optional. The frontmatter title is the sole page H1; body headings render one level lower without changing their source anchors. Every post is published when its changes reach `main`; dates control display order, not publication scheduling.
 
 Put images and other files in `posts/my-note/assets/`, referencing them as `assets/example.webp`. The folder name is the public URL slug (`/blog/my-note/`); keep it stable after publication.
 
