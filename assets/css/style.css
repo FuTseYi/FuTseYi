@@ -11,8 +11,8 @@
     --glass-fill: rgba(255,255,255,.78);
     --glass-border: rgba(0,0,0,.1);
     --row-shadow: 0 4px 14px rgba(18,19,23,.08);
-    --glow-blue: rgba(105, 165, 235, .17);
-    --glow-mist: rgba(207, 231, 255, .29);
+    --glow-blue: rgba(81, 111, 142, .10);
+    --glow-mist: rgba(183, 199, 215, .18);
     --bg-soft: #f6faff;
     --ink: #121317;
     --ink-soft: #45474d;
@@ -274,8 +274,8 @@ strong { font-weight: 600; }
     inset: var(--nav-h) 0 0;
     pointer-events: none;
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
+      linear-gradient(to right, color-mix(in srgb, var(--ink) 3%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 3%, transparent) 1px, transparent 1px);
     background-size: 24px 24px;
     -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
