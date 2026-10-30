@@ -110,31 +110,28 @@
       p+=vec2(-slope.y,slope.x)*.036;
       float flow=field(p);
       float cloud=noise(vec3(p*.8+flow*1.5,0.)+travel(4200.,.00595,false))*.5+.5;
-      float value=flow*.5+.5;
-      float blue=smoothstep(.2,.5,value);
-      float highlight=smoothstep(.35,.65,value+cloud*.25);
-      float mist=smoothstep(.6,.85,cloud)*.55;
-      vec3 deep=mix(vec3(9.,19.,33.)/255.,vec3(26.,56.,112.)/255.,blue);
-      deep=mix(deep,vec3(53.,108.,155.)/255.,highlight);
-      deep=mix(deep,vec3(226.,213.,191.)/255.,mist*.4);
-      float luminance=dot(deep,vec3(.299,.587,.114));
-      deep+=(deep*.85+vec3(.15,.145,.13))*smoothstep(.35,.7,luminance)*.32;
+      float depth=flow*.5+.5;
+      vec3 col=mix(vec3(0.),vec3(26.,56.,112.)/255.,smoothstep(.2,.5,depth));
+      col=mix(col,vec3(32.,74.,126.)/255.,smoothstep(.35,.65,depth+cloud*.25));
+      col=mix(col,vec3(238.,216.,170.)/255.,smoothstep(.6,.85,cloud)*.55);
+      col*=1.-smoothstep(.5,.8,depth*cloud)*.35;
+      float brightness=dot(col,vec3(.299,.587,.114));
+      col+=(col*.85+vec3(.15,.145,.13))*smoothstep(.43,.79,brightness)*.4;
       float distanceToLight=length((uv-vec2(.89,.46))*vec2(aspect,1.));
-      float core=exp(-distanceToLight*distanceToLight*4.5);
-      float halo=exp(-distanceToLight*1.8);
-      deep+=vec3(1.,.97,.9)*core*.1+vec3(.72,.8,1.)*halo*.15;
-      deep*=1.-.17*smoothstep(.35,.75,length(uv-.5));
+      col+=(vec3(1.,.97,.9)*exp(-distanceToLight*distanceToLight*4.5)*.14+
+        vec3(.72,.8,1.)*exp(-distanceToLight*1.8)*.2);
+      col*=1.-.38*smoothstep(.35,.75,length(uv-.5));
       vec2 grainCell=floor((uv*resolution+(p-(vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)))*resolution.y)/5.);
       vec3 seed=fract(vec3(grainCell.xyx)*.1031);
       seed+=dot(seed,seed.yzx+33.33);
       float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
-      // Both palettes use the same moving field.
-      vec3 pale=mix(vec3(1.),vec3(241.,248.,255.)/255.,smoothstep(.2,.65,value));
-      pale=mix(pale,vec3(180.,214.,242.)/255.,highlight*.45);
-      pale=mix(pale,vec3(143.,188.,226.)/255.,mist*.16);
-      pale+=vec3(.04,.035,.025)*core*.35;
-      pale=mix(pale,vec3(1.),smoothstep(.4,.8,length(uv-.5))*.2);
-      pixel=vec4(clamp(mix(pale+grain*.0025,deep+grain*.004,dark),0.,1.),1.);
+      // Both themes share the same moving field; only the color mapping differs.
+      float ribbon=smoothstep(.32,.78,cloud);
+      float left=exp(-pow((uv.x-.17)*2.4,2.))*(.25+.75*ribbon);
+      float right=exp(-pow((uv.x-.81)*2.1,2.))*(.3+.7*smoothstep(.25,.75,flow*.5+.5));
+      float tint=clamp((left*.38+right*.48)*smoothstep(0.,.55,uv.y),0.,.58);
+      vec3 paper=mix(vec3(1.),vec3(.65,.83,1.),tint);
+      pixel=vec4(mix(paper,col+grain*.005,dark),1.);
     }`);
   const program = gl.createProgram();
   const buffer = gl.createBuffer();
