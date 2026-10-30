@@ -71,15 +71,13 @@
   };
   setOpen(false);
   toggle?.addEventListener('click', () => setOpen(!header.classList.contains('menu-open')));
-  nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', (event) => {
-    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (link.target && link.target !== '_self')) return;
-    if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search) {
-      setOpen(false);
-    } else {
-      header.classList.add('nav-reset');
-      setOpen(false);
-    }
-  }));
+  header.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (link.target && link.target !== '_self')) return;
+    const samePage = link.origin === location.origin && link.pathname === location.pathname && link.search === location.search;
+    if (!samePage || !link.hash) header.classList.add('nav-reset');
+    setOpen(false);
+  });
   window.addEventListener('pagehide', () => {
     header.classList.add('nav-reset');
     setOpen(false);
