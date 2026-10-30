@@ -29,11 +29,17 @@ def check(page, name, width):
         img = images.first
         img.scroll_into_view_if_needed()
         img.evaluate("(e) => e.decode()")
-        img.click()
-        page.locator(".image-zoom-overlay.is-open").wait_for(timeout=3000)
-        page.keyboard.press("Escape")
-        page.locator(".image-zoom-overlay.is-open").wait_for(state="detached", timeout=3000)
-        assert img.evaluate("(el) => document.activeElement === el")
+        original_box = img.bounding_box()
+        for _ in range(3):
+            img.click()
+            dialog = page.locator("dialog.image-lightbox")
+            assert dialog.evaluate("(el) => el.open")
+            page.mouse.wheel(0, 200)
+            assert dialog.evaluate("(el) => el.open"), "Scrolling must not close preview"
+            page.keyboard.press("Escape")
+            assert not dialog.evaluate("(el) => el.open")
+            assert img.evaluate("(el) => document.activeElement === el")
+        assert img.bounding_box() == original_box, "Opening preview must not shift article image"
     tables = page.locator(".article-table")
     if tables.count():
         assert tables.first.evaluate("(e) => getComputedStyle(e).overflowX === 'auto'")
