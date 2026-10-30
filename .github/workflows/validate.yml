@@ -16,3 +16,5 @@ jobs:
           python-version: "3.12"
       - name: Check preview, README, and activity helpers
         run: python -m unittest discover -s .github/scripts -p 'test_*.py' -v
+      - name: Build and verify complete website
+        run: python preview.py --build-only
