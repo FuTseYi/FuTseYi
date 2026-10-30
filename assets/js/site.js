@@ -379,6 +379,9 @@
       dialog.showModal();
       close.focus();
     };
+    // The preview must never scroll the article underneath it.
+    dialog.addEventListener('wheel', (event) => event.preventDefault(), { passive: false });
+    dialog.addEventListener('touchmove', (event) => event.preventDefault(), { passive: false });
     close.addEventListener('click', dismiss);
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog) dismiss();
