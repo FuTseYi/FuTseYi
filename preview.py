@@ -33,7 +33,8 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             super().do_HEAD()
 
     def end_headers(self):
-        self.send_header("Cache-Control", "no-store")
+        versioned = re.fullmatch(r"/assets/(?:css/style\.css|js/site\.js)\?v=[0-9a-f]{12}", self.path)
+        self.send_header("Cache-Control", "public, max-age=31536000, immutable" if versioned else "no-store")
         super().end_headers()
 
     def send_head(self):

@@ -53,7 +53,9 @@ Run one preview process per checkout. The port is checked before building, so a
 second process using the same port exits without changing the preview. Use
 `--port 8766` if another application occupies the default port, or `--build-only`
 to build and verify without starting a server (stop the preview first).
-Local responses disable browser caching; refresh manually after a successful build.
+HTML and unversioned resources are not cached. Content-hashed CSS and JavaScript
+are cached across page transitions; a source change produces a new asset URL.
+Refresh manually after a successful build.
 
 ## Publishing articles
 
