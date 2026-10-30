@@ -5,13 +5,15 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from importlib.metadata import PackageNotFoundError, version
+import itertools
+import os
 import venv
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
-from threading import RLock, Thread
+from threading import Event, RLock, Thread
 import time
 
 ROOT = Path(__file__).resolve().parent
@@ -23,6 +25,17 @@ PAGEFIND_VERSION = "1.5.2"
 REQUIREMENTS = (f"Markdown>={MARKDOWN_MIN[0]}.{MARKDOWN_MIN[1]},<{MARKDOWN_MAX[0]}.{MARKDOWN_MAX[1]}",
                 f"pagefind[extended]=={PAGEFIND_VERSION}")
 CHECK_FLAG = "--check-dependencies"
+# Build output is condensed to one line: these messages become counts, the rest is
+# noise while previewing. Anything unlisted is still shown, so warnings survive.
+SUMMARY_RULES = (
+    (re.compile(r"^Blog: generated (\d+) article", re.MULTILINE), r"\1 articles"),
+    (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 pages verified"),
+    (re.compile(r"^Rendered (\d+) public contribution repositories", re.MULTILINE), r"\1 repositories"),
+)
+ROUTINE_MESSAGES = re.compile(r"^(?:Injected latest blog posts|Website README unchanged|Generated website README"
+                              r"|Profile README already matches)")
+GREEN, RED, DIM, CYAN = "32", "31", "2", "36"
+ANSI_READY = None
 
 
 class PreviewServer(ThreadingHTTPServer):
@@ -55,23 +68,110 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         return super().send_head()
 
 
+def enable_windows_ansi():
+    """Enable VT sequences on classic Windows consoles; modern terminals already accept them."""
+    if sys.platform != "win32":
+        return True
+    try:
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        mode = ctypes.c_uint32()
+        handle = kernel32.GetStdHandle(-11)
+        if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except (AttributeError, OSError, ValueError):
+        return False
+
+
+def color_enabled():
+    global ANSI_READY
+    if os.environ.get("NO_COLOR") or os.environ.get("TERM") == "dumb" or not sys.stdout.isatty():
+        return False
+    if ANSI_READY is None:
+        ANSI_READY = enable_windows_ansi()
+    return ANSI_READY
+
+
+def paint(text, code):
+    return f"\033[{code}m{text}\033[0m" if color_enabled() else text
+
+
+def mark(preferred, fallback):
+    """Use the typographic glyph only when the console encoding can print it."""
+    try:
+        preferred.encode(sys.stdout.encoding or "ascii")
+    except (UnicodeEncodeError, LookupError):
+        return fallback
+    return preferred
+
+
+def summarize(log):
+    """Condense build output into counts, returning those parts plus anything unrecognized."""
+    parts = [match.expand(template) for pattern, template in SUMMARY_RULES
+             if (match := pattern.search(log))]
+    unexpected = [line.strip() for line in log.splitlines()
+                  if line.strip() and not ROUTINE_MESSAGES.match(line.strip())
+                  and not any(pattern.search(line) for pattern, _ in SUMMARY_RULES)]
+    return parts, unexpected
+
+
+class Progress:
+    """A single rewritable line so a build never looks frozen; silent when output is redirected."""
+
+    FRAMES = "|/-\\"
+    INTERVAL = 0.12
+
+    def __init__(self, label="Building"):
+        self.label = label
+        self.active = sys.stdout.isatty()
+        self.stopping = Event()
+        self.frames = itertools.cycle(self.FRAMES)
+        self.worker = None
+
+    def __enter__(self):
+        if self.active:
+            self.worker = Thread(target=self.spin, daemon=True)
+            self.worker.start()
+        return self
+
+    def __exit__(self, *error):
+        self.stopping.set()
+        if self.worker:
+            self.worker.join(timeout=1)
+            sys.stdout.write("\r" + " " * (len(self.label) + 4) + "\r")
+            sys.stdout.flush()
+        return False
+
+    def spin(self):
+        while not self.stopping.is_set():
+            sys.stdout.write(f"\r  {next(self.frames)} {self.label}")
+            sys.stdout.flush()
+            self.stopping.wait(self.INTERVAL)
+
+
 def run(root, script, *args):
-    subprocess.run([sys.executable, str(root / ".github/scripts" / script), *args],
-                   cwd=root, check=True)
+    """Run a shared build step, hiding its routine chatter but never its failures."""
+    result = subprocess.run([sys.executable, str(root / ".github/scripts" / script), *args],
+                            cwd=root, capture_output=True, encoding="utf-8", errors="replace")
+    if result.returncode:
+        sys.stderr.write(result.stdout + result.stderr)
+        raise subprocess.CalledProcessError(result.returncode, script)
+    return result.stdout
 
 
 def assemble(root):
-    """Reuse the deployment builders inside an isolated source copy."""
+    """Reuse the deployment builders inside an isolated source copy, returning a one-line summary."""
     site = root / "_site"
-    run(root, "build.py")
+    log = run(root, "build.py")
     site.mkdir(exist_ok=True)
     for name in ("index.html", "robots.txt", "sitemap.xml"):
         shutil.copy2(root / name, site / name)
     for name in ("assets", "blog"):
         shutil.copytree(root / name, site / name)
     (site / ".nojekyll").touch()
-    run(root, "sync_readme.py", "--update-site")
-    run(root, "sync_activity.py")
+    log += run(root, "sync_readme.py", "--update-site")
+    log += run(root, "sync_activity.py")
     for page in site.rglob("*.html"):
         html = page.read_text(encoding="utf-8")
         html = re.sub(r'(<a\b[^>]*\bhref=[\'"])https://futseyi\.github\.io(?=/)', r'\1', html)
@@ -82,7 +182,7 @@ def assemble(root):
     if result.returncode:
         sys.stderr.write(result.stdout + result.stderr)
         raise subprocess.CalledProcessError(result.returncode, "pagefind")
-    run(root, "verify.py")
+    return summarize(log + run(root, "verify.py"))
 
 
 def build():
@@ -98,7 +198,7 @@ def build():
         if snapshot.is_file():
             (candidate / "_site").mkdir()
             shutil.copy2(snapshot, candidate / "_site/contributions.json")
-        assemble(candidate)
+        summary = assemble(candidate)
         with SERVING_LOCK:
             previous = candidate / "previous"
             if SITE.exists():
@@ -109,6 +209,7 @@ def build():
                 if previous.exists():
                     previous.rename(SITE)
                 raise
+        return summary
 
 
 def source_state():
@@ -126,12 +227,24 @@ def source_state():
     return state
 
 
-def rebuild():
+def rebuild(initial=False):
+    """Build and report one line; returns False when the last good preview was kept."""
     try:
-        build()
-        print("Build complete. Refresh your browser.", flush=True)
+        with Progress(mark("Building preview…", "Building preview...")):
+            parts, notes = build()
     except (subprocess.CalledProcessError, OSError, ValueError) as error:
-        print(f"Build failed: {error}. Fix the source and save to retry.", flush=True)
+        print(paint(f"{mark('✗', 'x')} Build failed: {error}", RED), flush=True)
+        print(paint("  The previous preview is still served. Fix the source and save to retry.", DIM), flush=True)
+        return False
+    separator = mark(" · ", " - ")
+    details = separator.join(parts)
+    headline = paint(f"{mark('✓', 'OK')} Build complete", GREEN)
+    print(headline + (f"{separator}{details}" if details else ""), flush=True)
+    for note in notes:
+        print(paint(f"  {note}", DIM), flush=True)
+    if not initial:
+        print(paint("  Refresh your browser.", DIM), flush=True)
+    return True
 
 
 def discard_stale_builds():
@@ -211,11 +324,12 @@ def main():
         discard_stale_builds()
         previous = source_state()
         if args.build_only:
-            build()
+            if not rebuild(initial=True):
+                sys.exit(1)
             return
-        rebuild()
-        print(f"Preview: http://127.0.0.1:{args.port}/", flush=True)
-        print("Press Ctrl+C to stop. Watching source files; refresh the browser after rebuilding.", flush=True)
+        rebuild(initial=True)
+        print(paint(f"{mark('→', '->')} http://127.0.0.1:{args.port}/", CYAN), flush=True)
+        print(paint("  Ctrl+C to stop. Saving a file rebuilds; refresh the browser to see it.", DIM), flush=True)
         worker = Thread(target=server.serve_forever, daemon=True)
         worker.start()
         try:

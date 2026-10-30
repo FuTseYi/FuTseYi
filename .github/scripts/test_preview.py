@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 from threading import Event, Thread
+import time
 import unittest
 from unittest.mock import patch
 
@@ -190,13 +191,90 @@ class PreviewTests(unittest.TestCase):
     def test_failed_build_does_not_stop_next_rebuild(self):
         with patch.object(preview, "source_state", side_effect=[{1: 1}, {1: 1}, {1: 2}, {1: 2}]), \
                 patch.object(preview.time, "sleep", side_effect=[None] * 4 + [KeyboardInterrupt]), \
-                patch.object(preview, "build", side_effect=[subprocess.CalledProcessError(1, "build"), None]) as build, \
+                patch.object(preview, "build", side_effect=[subprocess.CalledProcessError(1, "build"), (["2 articles"], [])]) as build, \
                 contextlib.redirect_stdout(io.StringIO()) as output:
             with self.assertRaises(KeyboardInterrupt):
                 preview.watch({})
         self.assertEqual(build.call_count, 2)
         self.assertIn("Build failed", output.getvalue())
         self.assertIn("Build complete", output.getvalue())
+        self.assertIn("2 articles", output.getvalue())
+        self.assertIn("Refresh your browser", output.getvalue())
+
+    def test_build_output_is_reduced_to_counts_without_losing_warnings(self):
+        log = "\n".join([
+            "Blog: generated 30 article(s)",
+            "Profile README already matches.",
+            "Injected latest blog posts into deployed homepage.",
+            "::warning::Public activity unavailable (HTTPError); retaining previous snapshot.",
+            "Rendered 6 public contribution repositories.",
+            "Verified 33 HTML pages, 30 posts, 1804 references and sitemap.",
+            "",
+        ])
+        summary, notes = preview.summarize(log)
+        self.assertEqual(summary, ["30 articles", "33 pages verified", "6 repositories"])
+        self.assertEqual(notes, ["::warning::Public activity unavailable (HTTPError); retaining previous snapshot."])
+
+    def test_unrecognized_output_without_counts_is_still_reported(self):
+        summary, notes = preview.summarize("Something changed unexpectedly\n")
+        self.assertEqual(summary, [])
+        self.assertEqual(notes, ["Something changed unexpectedly"])
+
+    def test_colors_are_omitted_when_output_is_not_a_terminal(self):
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(preview.paint("ok", preview.GREEN), "ok")
+
+    def test_colors_wrap_text_when_the_terminal_supports_them(self):
+        with patch.object(preview, "color_enabled", return_value=True):
+            self.assertEqual(preview.paint("ok", preview.GREEN), "\033[32mok\033[0m")
+
+    def test_progress_line_is_silent_when_output_is_redirected(self):
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            with preview.Progress("Building preview..."):
+                time.sleep(0.05)
+        self.assertEqual(output.getvalue(), "")
+
+    def test_progress_line_animates_and_clears_on_a_terminal(self):
+        class Terminal:
+            def __init__(self):
+                self.text = ""
+
+            def isatty(self):
+                return True
+
+            def write(self, text):
+                self.text += text
+
+            def flush(self):
+                pass
+
+        terminal = Terminal()
+        with patch.object(preview.sys, "stdout", terminal):
+            with preview.Progress("Building preview..."):
+                time.sleep(0.3)
+        self.assertIn("Building preview...", terminal.text)
+        frames = [part for part in terminal.text.split("\r") if part.strip()]
+        self.assertTrue(all(part.endswith(" Building preview...") for part in frames))
+        self.assertGreaterEqual(len(frames), 2)
+        erased = terminal.text.split("\r")[-2]  # Spaces overwrite the finished spinner line.
+        self.assertEqual(erased, " " * (len("Building preview...") + 4))
+
+    def test_glyphs_fall_back_when_the_console_encoding_cannot_print_them(self):
+        class Console:
+            def __init__(self, encoding):
+                self.encoding = encoding
+
+        def mark(encoding, preferred, fallback):
+            with patch.object(preview.sys, "stdout", Console(encoding)):
+                return preview.mark(preferred, fallback)
+
+        self.assertEqual(mark("gbk", "✓", "OK"), "OK")
+        self.assertEqual(mark("gbk", "✗", "x"), "x")
+        self.assertEqual(mark("gbk", "→", "->"), "→")  # GBK can print arrows and middle dots.
+        self.assertEqual(mark("ascii", "→", "->"), "->")
+        self.assertEqual(mark("ascii", "·", "-"), "-")
+        self.assertEqual(mark("utf-8", "✓", "OK"), "✓")
+        self.assertEqual(mark(None, "✓", "OK"), "OK")
 
 
 if __name__ == "__main__":
