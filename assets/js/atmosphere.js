@@ -127,10 +127,12 @@
       vec3 seed=fract(vec3(grainCell.xyx)*.1031);
       seed+=dot(seed,seed.yzx+33.33);
       float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
-      // White canvas with a restrained, slowly moving cool-blue highlight.
-      float glow=exp(-dot((uv-vec2(.68,.78))*vec2(aspect*.7,1.),(uv-vec2(.68,.78))*vec2(aspect*.7,1.))*2.);
-      float tint=glow*(.12+.20*smoothstep(.25,.8,cloud));
-      vec3 paper=mix(vec3(1.),vec3(.78,.89,1.),tint);
+      // Layered cool-blue light over a pure white canvas.
+      vec2 lightPos=(uv-vec2(.65,.78))*vec2(aspect*.7,1.);
+      float halo=exp(-dot(lightPos,lightPos)*2.3);
+      float ribbon=smoothstep(.35,.75,cloud);
+      float tint=halo*(.24+.55*ribbon);
+      vec3 paper=mix(vec3(1.),vec3(.55,.77,.98),tint);
       pixel=vec4(mix(paper,col+grain*.005,dark),1.);
     }`);
   const program = gl.createProgram();
