@@ -385,6 +385,7 @@
       img.setAttribute('role', 'button');
       img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
       img.addEventListener('click', () => {
+        if (!img.complete || !img.naturalWidth || !img.naturalHeight) return;
         if (activeImage === img) { closeZoom(); return; }
         closeZoom();
         finishPending();
@@ -397,7 +398,7 @@
         rect.y += (rect.height - height) / 2 - transform.f;
         rect.width = width;
         rect.height = height;
-        const scale = Math.min((innerWidth - 48) / rect.width, (innerHeight - 48) / rect.height);
+        const scale = Math.max(0.1, Math.min((innerWidth - 48) / rect.width, (innerHeight - 48) / rect.height, img.naturalWidth / rect.width || 1, img.naturalHeight / rect.height || 1));
         const x = innerWidth / 2 - rect.left - rect.width / 2;
         const y = innerHeight / 2 - rect.top - rect.height / 2;
         const layer = document.createElement('div');
@@ -427,7 +428,11 @@
       });
     });
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeZoom();
+      if (event.key === 'Escape' && activeImage) {
+        const focusTarget = activeImage;
+        closeZoom();
+        focusTarget.focus();
+      }
     });
     window.addEventListener('scroll', closeZoom, { passive: true });
     window.addEventListener('resize', closeZoom, { passive: true });

@@ -803,8 +803,13 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article h4{font-size:19px;font-weight:640;margin:30px 0 13px}
 .article ul,.article ol{padding-left:22px;margin:0 0 20px}
 .article li{margin:4px 0}
-.article img{width:auto;max-width:100%;max-height:min(70vh,640px);height:auto;margin-inline:auto;object-fit:contain;border-radius:6px}
+.article img{display:block;width:auto;max-width:100%;max-height:min(70vh,640px);height:auto;margin-inline:auto;object-fit:contain;border-radius:6px}
+.article figure{margin:28px 0;text-align:center}
+.article figure img{max-height:none}
+.article figcaption{margin-top:10px;color:var(--ink-faint);font-size:13px;line-height:1.6;text-align:center}
+.article figure p{margin:0}
 .article p>img:only-child,.article p>a:only-child>img:only-child{margin-block:28px}
+.article p>a:only-child>img:only-child{display:block}
 .article img[data-zoom]{cursor:zoom-in;transform-origin:center;transition:transform .3s cubic-bezier(.2,0,.2,1)}
 .article img.is-zoomed{cursor:zoom-out}
 .image-zoom-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.8);opacity:0;transition:opacity .3s;will-change:opacity;cursor:zoom-out}
@@ -831,12 +836,15 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article code{font:13px ui-monospace,SFMono-Regular,Consolas,monospace}
 .article :not(pre)>code{background:var(--bg-soft);border-radius:3px;padding:2px 5px}
 .article blockquote{margin:22px 0;padding-left:17px;border-left:3px solid var(--line);color:var(--ink-soft)}
-.article-table{max-width:100%;overflow-x:auto;margin:28px 0;border:1px solid var(--line);border-radius:6px}
+.article-table{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;margin:28px 0;border:1px solid var(--line);border-radius:6px}
+.article-table:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .article table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.65;overflow-wrap:normal}
 .article th,.article td{min-width:7ch;padding:12px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
 .article th{background:var(--bg-soft);font-weight:630}
 .article tbody tr:nth-child(even){background:var(--bg-soft)}
 .article tbody tr:last-child td{border-bottom:0}
+.article caption{padding:12px 16px;text-align:left;font-weight:600}
+@media(max-width:680px){.article th,.article td{padding:10px 12px}.article figure{margin:24px 0}}
 
 @media(max-width:860px){
  .blog-layout{grid-template-columns:minmax(0,1fr) auto;column-gap:16px}

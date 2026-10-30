@@ -121,13 +121,17 @@ def size_article_images(article: str, folder: Path) -> str:
     def size(match: re.Match[str]) -> str:
         tag = match.group()
         source = re.search(r'\bsrc="([^"]+)"', tag)
-        if not source or re.search(r'\bwidth=', tag):
+        if not source:
+            return tag
+        if not re.search(r'\bloading=', tag):
+            tag = tag[:-2] + 'loading="lazy" decoding="async" />' if tag.endswith("/>") else tag[:-1] + ' loading="lazy" decoding="async">'
+        if re.search(r'\bwidth=', tag):
             return tag
         path = (folder / unescape(source[1])).resolve()
         if not path.is_relative_to(folder.resolve()) or not path.is_file():
             return tag
         width, height = image_dimensions(path)
-        return tag[:-2] + f'width="{width}" height="{height}" />'
+        return tag[:-2] + f' width="{width}" height="{height}" />' if tag.endswith("/>") else tag[:-1] + f' width="{width}" height="{height}">'
     return re.sub(r'<img\b[^>]*>', size, article)
 
 def article_toc(tokens: list[dict]) -> tuple[str, str]:

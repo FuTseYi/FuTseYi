@@ -41,6 +41,6 @@ Article text goes here.
 
 `title` and `date` are required; `tags` and `lang` (`zh-CN` or `en`) are optional. The frontmatter title is the sole page H1; body headings render one level lower without changing their source anchors. Every post is published when its changes reach `main`; dates control display order, not publication scheduling.
 
-Put images and other files in `posts/my-note/assets/`, referencing them as `assets/example.webp`. The folder name is the public URL slug (`/blog/my-note/`); keep it stable after publication.
+Put images and other files in `posts/my-note/assets/`, referencing them as `assets/example.webp`. Describe informative images with meaningful alt text; use empty alt text only for decorative images. For a captioned image, use semantic HTML `<figure>` and `<figcaption>`. The folder name is the public URL slug (`/blog/my-note/`); keep it stable after publication.
 
 The same push deploys the Blog and updates the website/Profile READMEs.
