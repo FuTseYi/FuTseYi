@@ -133,6 +133,13 @@
       toc.setAttribute('aria-hidden', String(!visible));
       toc.inert = !visible;
     }
+    if (toc?.classList.contains('archive-toc')) {
+      const target = document.getElementById(active);
+      const activeDate = target.matches('.post-date') ? target : target.querySelector('.post-date');
+      document.querySelectorAll('.blog-entry .post-date').forEach((date) => {
+        date.classList.toggle('is-active', date === activeDate);
+      });
+    }
     tocLinks.forEach((link) => {
       const current = decodeURIComponent(link.hash.slice(1)) === active;
       const changed = current && !link.classList.contains('is-active');
