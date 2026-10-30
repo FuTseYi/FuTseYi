@@ -1,77 +1,33 @@
 # Local preview
 
-Requires Python 3.10 or later. Run these commands from the repository directory.
-
-Windows:
+Requires Python 3.10 or later.
 
 ```powershell
+# Windows
 py -3 preview.py
 ```
 
-macOS / Linux:
-
 ```sh
+# macOS / Linux
 python3 preview.py
 ```
 
-Open <http://127.0.0.1:8765/> or <http://127.0.0.1:8765/blog/>.
-The same command builds, verifies, serves and watches the website. Refresh the
-browser manually after the terminal reports a successful build. Press Ctrl+C to stop.
-Preview messages use Chinese and English. The initial build reports completion,
-article/page/contribution counts, the preview address and usage instructions.
-Later successful rebuilds show only `网站已更新，请刷新浏览器。 / Updated. Refresh your browser.`
-While building, one spinner line shows `正在生成预览 / Building preview…` and is
-cleared when the build finishes. Anything the builders report
-outside those counts, such as an activity warning, is still printed underneath, and
-the symbols fall back to ASCII when the console encoding cannot print them. Colours
-are used only on an interactive terminal and are disabled by `NO_COLOR`; the
-spinner is left out when the output is redirected to a file.
+Open <http://127.0.0.1:8765/> for the homepage or <http://127.0.0.1:8765/blog/> for the Blog. The preview builds the site, indexes search, checks links, and watches for changes. Refresh the browser after each successful rebuild; stop with Ctrl+C.
 
-If a compatible Python-Markdown or Pagefind is missing, the script installs
-`Markdown>=3.7,<4` and `pagefind[extended]==1.5.2` into the active virtual
-environment, or creates a project-local `.venv` and restarts
-itself there. Existing compatible installations require no download. First-time
-setup requires network access and Python venv/pip support. Some Linux installations
-need their distribution's `python3-venv` package installed first. System Python is
-never modified by the automatic installer. Python itself must already be installed.
+On first use, the script installs `Markdown>=3.7,<4` and `pagefind[extended]==1.5.2` in a project-local `.venv` (or an already active virtual environment). Internet access and Python's `venv`/`pip` support are required. It does not install packages into the system Python.
 
-The watcher checks source HTML, `robots.txt`, Markdown posts, assets and Python
-build scripts every half second, and rebuilds after a quiet scan to combine
-consecutive saves. Added and deleted files are detected; generated files,
-Git files and virtual environments are excluded. Build errors are reported
-without stopping the watcher; fix the source and save again to retry.
-The current preview stays available while a candidate is built and verified.
-Only a successful candidate replaces `_site/`; failed builds leave the last good
-preview intact. File serving and directory replacement are coordinated to avoid
-Windows file-sharing errors.
+The preview serves generated files from `_site/`. A failed rebuild leaves the last working preview available. Local links are adjusted only in the temporary build; repository source files are unchanged. Public contributions come from a recent snapshot when available, otherwise from GitHub.
 
-The script copies source files into an automatically cleaned temporary directory,
-builds the blog, stages the website, injects latest posts and public activity,
-builds the search index, and verifies local links before serving. A killed preview
-can leave a `.preview-*` directory behind; the next start deletes such leftovers
-once it has bound the port, so they cannot accumulate. Local preview reuses the existing snapshot,
-with the deployed JSON as a backup, and queries GitHub only if neither is valid.
-Deployments always request fresh activity.
-If a query fails, the previous snapshot and its timestamp are preserved; without
-a valid snapshot, the static GitHub link remains available. Website and Profile
-repository activity is excluded.
+Useful options:
 
-Only navigation links in the preview copy are converted from the production
-origin to local paths. Source HTML and deployment behavior are unchanged.
-Generated files remain ignored by Git. No README is generated or published.
+- `--build-only` builds and validates the full site without serving it. The preview port must still be available.
+- `--port 8766` uses a different port if the default is occupied.
 
-Run one preview process per checkout. The port is checked before building, so a
-second process using the same port exits without changing the preview. Use
-`--port 8766` if another application occupies the default port, or `--build-only`
-to build and verify without starting a server (stop the preview first).
-HTML and unversioned resources are not cached. Content-hashed CSS and JavaScript
-are cached across page transitions; a source change produces a new asset URL.
-Refresh manually after a successful build. The terminal stays quiet while pages
-load correctly and prints the path only when a request fails, such as a missing image.
+Run only one preview process per checkout. The build and generated files are excluded from Git.
 
-## Publishing articles
+## Publishing an article
 
-Create a file such as `posts/my-note/index.md`:
+Create `posts/my-note/index.md`:
 
 ```markdown
 ---
@@ -83,12 +39,8 @@ tags: Notes, Website
 Article text goes here.
 ```
 
-Only `title` and `date` are required; `tags` is optional. There is no description,
-draft switch or date-based publication gate. All articles are published when you
-push to `main` and deployment succeeds. Dates control display and newest-first
-ordering; tags are metadata, not sorting rules. The same push triggers automatic
-updates of both READMEs (Profile updates require the existing `PROFILE_README_TOKEN`).
+`title` and `date` are required; `tags` is optional. Every post is published when its changes reach `main`; dates control display order, not publication scheduling.
 
-Keep article resources in `posts/my-note/assets/` and reference them with relative
-paths, for example `![Example](assets/example.webp)`. The directory name determines
-the article URL (`/blog/my-note/`); keep it stable after publishing.
+Put images and other files in `posts/my-note/assets/`, referencing them as `assets/example.webp`. The folder name is the public URL slug (`/blog/my-note/`); keep it stable after publication.
+
+The same push deploys the Blog and updates the website/Profile READMEs.
