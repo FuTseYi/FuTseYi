@@ -346,6 +346,7 @@ section.section { padding: 38px 0; }
 
 .section-title {
     color: #55534d;
+    font-style: italic;
     font-size: clamp(26px, 3vw, 36px);
     font-weight: 400; letter-spacing: -.035em; line-height: 1.25;
   }
