@@ -431,7 +431,8 @@ section.section { padding: 38px 0; }
 .education-list .education-item::before,.project-item::before{content:"";position:absolute;inset:6px -6px;border-radius:10px;background:var(--bg);z-index:-1;pointer-events:none;opacity:0;box-shadow:0 4px 14px rgba(18,19,23,.08);transition:opacity .2s ease}
 .education-list .education-item:focus-within,.project-item:focus-within{transform:translateY(-2px)}
 .education-list .education-item:focus-within::before,.project-item:focus-within::before{opacity:1}
-@media(hover:hover){.education-list .education-item:hover,.project-item:hover{transform:translateY(-2px)}.education-list .education-item:hover::before,.project-item:hover::before{opacity:1}}
+.education-list .education-item:hover,.project-item:hover{transform:translateY(-2px)}
+.education-list .education-item:hover::before,.project-item:hover::before{opacity:1}
 @media(prefers-reduced-motion:reduce){.education-list .education-item,.project-item,.education-list .education-item::before,.project-item::before{transition:none}}
 
 .activity-note{font-size:11px;color:var(--ink-faint);margin-top:14px}
