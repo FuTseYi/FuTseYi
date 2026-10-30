@@ -68,13 +68,13 @@ class PreviewTests(unittest.TestCase):
             self.assertFalse((root / "_site/stale.txt").exists())
             self.assertEqual(list(root.glob(".preview-*")), [])
 
-    def test_installed_renderer_needs_no_setup(self):
-        with patch.object(preview, "version", return_value="3.10.3"), \
+    def test_installed_dependencies_need_no_setup(self):
+        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2"}.get), \
                 patch.object(preview.subprocess, "run") as install:
-            preview.ensure_markdown()
+            preview.ensure_dependencies()
         install.assert_not_called()
 
-    def test_missing_renderer_bootstraps_platform_specific_environment(self):
+    def test_missing_dependencies_bootstrap_platform_specific_environment(self):
         for platform, executable in (("win32", "Scripts/python.exe"), ("darwin", "bin/python"), ("linux", "bin/python")):
             with self.subTest(platform=platform), tempfile.TemporaryDirectory() as directory, \
                     patch.object(preview, "ROOT", Path(directory)), \
@@ -87,11 +87,11 @@ class PreviewTests(unittest.TestCase):
                     patch.object(preview.subprocess, "call", return_value=0) as restart, \
                     contextlib.redirect_stdout(io.StringIO()):
                 with self.assertRaises(SystemExit) as result:
-                    preview.ensure_markdown()
+                    preview.ensure_dependencies()
                 self.assertEqual(result.exception.code, 0)
                 interpreter = Path(directory) / ".venv" / executable
                 environment.return_value.create.assert_called_once_with(Path(directory) / ".venv")
-                install.assert_called_once_with([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4"], check=True)
+                install.assert_called_once_with([str(interpreter), "-m", "pip", "install", "Markdown>=3.7,<4", "pagefind[extended]==1.5.2"], check=True)
                 self.assertEqual(restart.call_args.args[0][-2:], ["--port", "8766"])
 
     def test_source_changes_include_additions_deletions_but_not_outputs(self):

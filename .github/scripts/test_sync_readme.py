@@ -52,7 +52,7 @@ class ReadmeTests(unittest.TestCase):
                                 "A new profile note.")
             html = html.replace("Interested in AI, engineering, and whatever keeps me curious.", "A new focus.")
             html = html.replace(">LinkedIn</a>", ">Professional profile</a>")
-            html = html.replace("Open-source learning and knowledge sharing in AI and data science.",
+            html = html.replace("Datawhale is an AI-focused open source organization founded in 2018.",
                                 "A revised community description.")
             (root / "index.html").write_text(html, encoding="utf-8")
             shutil.copytree(sync.ROOT / "posts", root / "posts")
