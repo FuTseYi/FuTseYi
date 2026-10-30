@@ -56,7 +56,8 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
     footer = footer.replace('href="#about"', 'href="#main"')
     css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
-    script = '/' + re.search(r'<script src="([^"]+)"', home)[1]
+    theme_init = re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0]
+    scripts = '\n'.join(f'<script src="/{src}" defer></script>' for src in re.findall(r'<script src="([^"]+)"', home))
 
     return f"""<!doctype html>
 <html lang="en">
@@ -69,7 +70,8 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/assets/icons/site.webmanifest">
 <link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{css}"><script src="{script}" defer></script>
+{theme_init}
+<link rel="stylesheet" href="{css}">{scripts}
 </head>
 <body class="{body_class}">
 <a class="skip-link" href="#main">Skip to content</a>

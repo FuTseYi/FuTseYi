@@ -10,5 +10,5 @@ def version_assets(html: str, root: Path) -> str:
         digest = hashlib.sha256((root / path).read_bytes()).hexdigest()[:12]
         return match[0].split('?')[0].rstrip('"') + f'?v={digest}"'
 
-    return re.sub(r'(?:href|src)="/?(assets/(?:css/style\.css|js/site\.js))(?:\?[^"\s]*)?"',
+    return re.sub(r'(?:href|src)="/?(assets/(?:css/style\.css|js/(?:site|atmosphere)\.js))(?:\?[^"\s]*)?"',
                   replace, html)

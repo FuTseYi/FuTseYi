@@ -1,6 +1,37 @@
 /* Minimal progressive enhancement: menu, active section, and scroll state. */
 (() => {
   document.documentElement.classList.add('js');
+  const root = document.documentElement;
+  const themeControl = document.querySelector('.theme-control');
+  const themes = ['system', 'light', 'dark'];
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const syncTheme = () => {
+    const theme = root.dataset.theme || 'system';
+    const next = themes[(themes.indexOf(theme) + 1) % themes.length];
+    if (themeControl) {
+      themeControl.dataset.mode = theme;
+      themeControl.setAttribute('aria-label', `Color theme: ${theme}. Switch to ${next}`);
+      themeControl.title = `${theme[0].toUpperCase() + theme.slice(1)} theme. Click for ${next}`;
+    }
+    const dark = theme === 'dark' || (theme === 'system' && systemTheme.matches);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0a0b' : '#ffffff');
+  };
+  themeControl?.addEventListener('click', () => {
+    const theme = themes[(themes.indexOf(root.dataset.theme || 'system') + 1) % themes.length];
+    if (theme === 'system') delete root.dataset.theme;
+    else root.dataset.theme = theme;
+    try { localStorage.setItem('site-theme', theme); } catch {}
+    syncTheme();
+  });
+  systemTheme.addEventListener('change', syncTheme);
+  window.addEventListener('storage', (event) => {
+    if (event.key !== 'site-theme' && event.key !== null) return;
+    if (event.newValue === 'light' || event.newValue === 'dark') root.dataset.theme = event.newValue;
+    else delete root.dataset.theme;
+    syncTheme();
+  });
+  syncTheme();
+  if (themeControl) themeControl.hidden = false;
   const currentYear = String(new Date().getFullYear());
   document.querySelectorAll('[data-current-year]').forEach((element) => {
     element.dateTime = currentYear;
