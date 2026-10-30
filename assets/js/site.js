@@ -38,7 +38,9 @@
     header.classList.toggle('menu-open', open);
     toggle?.setAttribute('aria-expanded', String(open));
     toggle?.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    if (nav) nav.inert = window.innerWidth <= 860 && !open;
   };
+  setOpen(false);
   toggle?.addEventListener('click', () => setOpen(!header.classList.contains('menu-open')));
   nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
   document.addEventListener('keydown', (event) => {
@@ -51,7 +53,7 @@
     if (header.classList.contains('menu-open') && !header.contains(event.target)) setOpen(false);
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 860) setOpen(false);
+    setOpen(window.innerWidth <= 860 && header.classList.contains('menu-open'));
   }, { passive: true });
 
   const addScrollHint = (content, container) => {

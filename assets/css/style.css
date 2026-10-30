@@ -521,7 +521,12 @@ footer {
 .js .nav-toggle { display: inline-flex; }
 
 .js .nav-links {
-      display: none;
+      display: flex;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity .2s cubic-bezier(.2,.7,.3,1), transform .2s cubic-bezier(.2,.7,.3,1), visibility 0s .2s;
       position: absolute;
       top: var(--nav-h);
       left: 0; right: 0;
@@ -537,8 +542,7 @@ footer {
       -webkit-overflow-scrolling: touch;
     }
 
-.site-header.menu-open .nav-links { display: flex; animation: nav-reveal .2s cubic-bezier(.2,.7,.3,1); }
-@keyframes nav-reveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.site-header.menu-open .nav-links { opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);transition-delay:0s; }
 .site-header.is-scrolled .nav-links { border: 1px solid var(--line); border-radius: 14px; }
 
 .nav-links a {
