@@ -5,7 +5,7 @@
 :root {
     color-scheme: light;
     --atmosphere-opacity: 1;
-    --atmosphere-enter-duration: 1.8s;
+    --atmosphere-enter-duration: .45s;
     --bg: #ffffff;
     --surface: #f7f7f7;
     --glass-fill: rgba(255,255,255,.78);
@@ -107,6 +107,8 @@ body {
 /* Native cross-document fade; preserve the header and content as one snapshot. */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
+  .site-header { view-transition-name: site-header; }
+  ::view-transition-old(site-header), ::view-transition-new(site-header) { animation: none; }
   ::view-transition-old(root) { animation: .16s ease-in both page-fade-out; }
   ::view-transition-new(root) { animation: .2s ease-out both page-fade-in; }
 }
