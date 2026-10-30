@@ -127,12 +127,12 @@
       vec3 seed=fract(vec3(grainCell.xyx)*.1031);
       seed+=dot(seed,seed.yzx+33.33);
       float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
-      // Restrained slate-blue lighting, leaving the canvas predominantly white.
-      vec2 lightPos=(uv-vec2(.73,.83))*vec2(aspect,1.);
-      float halo=exp(-dot(lightPos,lightPos)*4.0);
+      // Clean blue light in normalized coordinates, consistent across page widths.
+      vec2 lightPos=(uv-vec2(.72,.78))*vec2(1.15,1.);
+      float halo=exp(-dot(lightPos,lightPos)*5.0);
       float ribbon=smoothstep(.32,.78,cloud);
-      float tint=halo*(.18+.38*ribbon);
-      vec3 paper=mix(vec3(1.),vec3(.58,.69,.79),tint);
+      float tint=halo*(.15+.42*ribbon);
+      vec3 paper=mix(vec3(1.),vec3(.68,.84,1.),tint);
       pixel=vec4(mix(paper,col+grain*.005,dark),1.);
     }`);
   const program = gl.createProgram();
