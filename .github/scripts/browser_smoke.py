@@ -12,6 +12,13 @@ def check(page, name, width):
     page.goto(f"http://127.0.0.1:8766/blog/{name}/", wait_until="networkidle")
     assert page.locator("article.article").count() == 1
     assert page.locator("h1").count() == 1
+    atmosphere = page.locator(".atmosphere")
+    if atmosphere.count():
+        atmosphere.locator("canvas").wait_for(state="visible", timeout=5000)
+        assert atmosphere.evaluate("(el) => el.classList.contains('is-ready')"), "WebGL atmosphere failed to render"
+        assert atmosphere.evaluate("(el) => getComputedStyle(el).opacity === '1'"), "Atmosphere must not be darkened by CSS opacity"
+        assert atmosphere.evaluate("(el) => getComputedStyle(el).pointerEvents === 'none'")
+
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2"), f"Page overflow at {width}px"
     code = page.locator(".article-code")
     if code.count():
