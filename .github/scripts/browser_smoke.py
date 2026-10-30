@@ -16,7 +16,7 @@ def check(page, name, width):
     if atmosphere.count():
         atmosphere.locator("canvas").wait_for(state="visible", timeout=5000)
         assert atmosphere.evaluate("(el) => el.classList.contains('is-ready')"), "WebGL atmosphere failed to render"
-        assert atmosphere.evaluate("(el) => Number(getComputedStyle(el).opacity) >= 0.85"), "Atmosphere must retain sufficient contrast"
+        assert atmosphere.evaluate("(el) => Math.abs(Number(getComputedStyle(el).opacity) - (document.documentElement.dataset.theme === 'dark' ? 0.76 : 1)) < 0.02"), "Atmosphere must match intended theme opacity"
         assert atmosphere.evaluate("(el) => getComputedStyle(el).pointerEvents === 'none'")
 
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2"), f"Page overflow at {width}px"
