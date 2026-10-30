@@ -130,8 +130,8 @@
       // Shape the light palette from the moving field, not the almost-flat blue mix.
       float ribbon=smoothstep(.24,.76,cloud);
       float valley=smoothstep(.33,.65,flow*.5+.5);
-      vec3 paper=mix(vec3(.995,.998,1.),vec3(.75,.87,.99),ribbon*.55+valley*.16);
-      paper=mix(paper,vec3(.985,.995,1.),mist*.55);
+      vec3 paper=mix(vec3(1.),vec3(.75,.87,.99),ribbon*.55+valley*.16);
+      paper=mix(paper,vec3(1.),mist*.55);
       float sheen=exp(-distanceToLight*distanceToLight*3.);
       paper=mix(paper,vec3(1.),sheen*.28);
       pixel=vec4(mix(paper,col,dark)+grain*mix(.0025,.005,dark),1.);
