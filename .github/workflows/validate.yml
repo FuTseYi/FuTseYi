@@ -18,3 +18,19 @@ jobs:
         run: python -m unittest discover -s .github/scripts -p 'test_*.py' -v
       - name: Build and verify complete website
         run: python preview.py --build-only
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build website
+        run: python preview.py --build-only
+      - name: Install Chromium browser test tools
+        run: |
+          python -m pip install "playwright==1.56.0"
+          python -m playwright install --with-deps chromium
+      - name: Test article layouts and interactions in Chromium
+        run: python .github/scripts/browser_smoke.py
