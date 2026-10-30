@@ -607,9 +607,9 @@ section.section { padding: 32px 0; }
 .scroll-hint::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
 .scroll-hint.is-visible::before{animation:scroll-hint 1.4s ease-in-out infinite}
 @keyframes scroll-hint{50%{transform:translateY(3px) rotate(45deg)}}
-#search-results:not(:empty){padding:12px 0;color:var(--ink-faint);font-size:13px}
+#search-results:not(:empty){padding:12px 10px;color:var(--ink-faint);font-size:13px}
 #search-results ul{list-style:none}
-#search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px}
+#search-results li a{display:block;padding:7px 10px;border-radius:8px}
 #search-results li a:is(:hover,:focus-visible){background:var(--bg);box-shadow:0 4px 14px rgba(18,19,23,.08)}
 html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .back-link,.all-tags-link{display:inline-flex}
