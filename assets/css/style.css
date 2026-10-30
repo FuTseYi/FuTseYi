@@ -801,6 +801,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article h2{font-size:28px;font-weight:630;line-height:1.4;margin:42px 0 18px;letter-spacing:-.026em}
 .article h3{font-size:24px;font-weight:630;margin:38px 0 16px;letter-spacing:-.026em}
 .article h4{font-size:19px;font-weight:640;margin:30px 0 13px}
+.article h5,.article h6{font-size:16px;font-weight:650;line-height:1.5;margin:26px 0 12px}
 .article ul,.article ol{padding-left:22px;margin:0 0 20px}
 .article li{margin:4px 0}
 .article img{width:auto;max-width:100%;max-height:min(70vh,640px);height:auto;margin-inline:auto;object-fit:contain;border-radius:6px}
@@ -814,7 +815,8 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article .code-copy{border:0;border-radius:5px;background:transparent;color:var(--ink-soft);padding:5px 9px;font:500 12px/1.3 var(--font);cursor:pointer}
 .article .code-copy:is(:hover,:focus-visible){background:var(--accent-soft);color:var(--ink)}
 .article .code-copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.article pre{margin:0;overflow:auto;max-width:100%;padding:16px 18px;background:transparent;line-height:1.65;tab-size:4}
+.article pre{margin:26px 0;overflow:auto;max-width:100%;padding:16px 18px;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;line-height:1.65;tab-size:4}
+.article .article-code pre{margin:0;border:0;border-radius:0;background:transparent}
 .article pre code{display:block;min-width:max-content;background:none;padding:0;font-size:13px;line-height:inherit;white-space:pre}
 .article .codehilite{min-width:0}
 .article .codehilite .hll{background:var(--code-mark)}

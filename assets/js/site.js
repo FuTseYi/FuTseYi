@@ -340,6 +340,10 @@
       }
       copy.setAttribute('aria-label', copy.textContent);
     });
+    copy.addEventListener('blur', () => {
+      copy.textContent = 'Copy';
+      copy.setAttribute('aria-label', 'Copy code');
+    });
     toolbar.append(copy);
     container.prepend(toolbar);
   });
