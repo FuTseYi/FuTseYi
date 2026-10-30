@@ -268,6 +268,23 @@ strong { font-weight: 600; }
 
 .hero .wrap { position: relative; z-index: 1; }
 
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: var(--nav-h) 0 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    animation: hero-grid-move 6s linear infinite;
+  }
+@keyframes hero-grid-move { to { background-position: 24px 0; } }
+
+
+
 
 .hero-grid {
     display: grid;
