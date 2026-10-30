@@ -591,6 +591,11 @@ footer {
 :root { --nav-offset: 12px; }
 .js .nav-toggle { display: inline-flex; }
 
+/* Reset BFCache menu state without a closing animation during navigation. */
+.site-header.nav-reset .header-inner,
+.site-header.nav-reset .header-inner::before,
+.site-header.nav-reset .nav-links { transition: none !important; }
+
 /* The menu extends the existing floating header instead of moving its top edge. */
 .js .site-header .header-inner{
     display:grid;height:auto;

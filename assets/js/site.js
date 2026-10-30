@@ -71,7 +71,16 @@
   };
   setOpen(false);
   toggle?.addEventListener('click', () => setOpen(!header.classList.contains('menu-open')));
-  nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+    if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search) setOpen(false);
+  }));
+  window.addEventListener('pagehide', () => {
+    header.classList.add('nav-reset');
+    setOpen(false);
+  });
+  window.addEventListener('pageshow', () => {
+    requestAnimationFrame(() => header.classList.remove('nav-reset'));
+  });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && header.classList.contains('menu-open')) {
       setOpen(false);
