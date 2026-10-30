@@ -2,7 +2,6 @@
 """Verify generated static pages and local references before deployment."""
 from __future__ import annotations
 import json
-import re
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
@@ -32,6 +31,69 @@ class Page(HTMLParser):
                 src = candidate.strip().split()
                 if src:
                     self.links.append(src[0])
+
+
+
+class ArticleStructure(HTMLParser):
+    """Inspect article markup without depending on exact HTML serialization."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack = []
+        self.language = None
+        self.h1_count = 0
+        self.body_h1 = False
+        self.article_found = False
+        self.pre_count = 0
+        self.pre_with_code = 0
+        self.table_count = 0
+        self.wrapped_table_count = 0
+        self.image_errors = []
+        self.toc_links = []
+        self.pre_has_code = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        ancestors = [kind for _, kind in self.stack]
+        classes = attrs.get("class", "").split()
+        in_article = "article" in ancestors
+        if tag == "html":
+            self.language = attrs.get("lang")
+        if tag == "h1":
+            self.h1_count += 1
+            self.body_h1 |= in_article
+        if tag == "article" and "article" in classes:
+            self.article_found = True
+        if in_article:
+            if tag == "pre":
+                self.pre_count += 1
+                self.pre_has_code.append(False)
+            if tag == "code" and self.pre_has_code and "pre" in ancestors:
+                self.pre_has_code[-1] = True
+            if tag == "table":
+                self.table_count += 1
+                if "table-wrap" in ancestors:
+                    self.wrapped_table_count += 1
+            if tag == "img":
+                if "alt" not in attrs:
+                    self.image_errors.append("image missing alt attribute")
+                if attrs.get("loading") != "lazy" or attrs.get("decoding") != "async":
+                    self.image_errors.append("image missing native loading hints")
+        if tag == "a" and "toc" in ancestors and attrs.get("href", "").startswith("#"):
+            self.toc_links.append(attrs["href"][1:])
+        if tag not in ("area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"):
+            kind = ("article" if tag == "article" and "article" in classes else
+                    "table-wrap" if "article-table" in classes else
+                    "toc" if tag == "details" and "article-toc-inline" in classes else tag)
+            self.stack.append((tag, kind))
+
+    def handle_endtag(self, tag):
+        if tag == "pre" and self.pre_has_code:
+            self.pre_with_code += self.pre_has_code.pop()
+        for index in range(len(self.stack) - 1, -1, -1):
+            if self.stack[index][0] == tag:
+                del self.stack[index:]
+                break
 
 
 def local_target(page: Path, link: str) -> tuple[Path, str] | None:
@@ -78,29 +140,23 @@ def main():
             continue
         html = post_page.read_text(encoding="utf-8")
         name = post_page.relative_to(ROOT)
-        language = re.search(r'<html\s+lang="([^"]+)"', html)
-        if not language or language.group(1) not in ("en", "zh-CN"):
-            errors.append(f"{name}: unsupported page language")
-        if len(re.findall(r"<h1(?:\s|>)", html)) != 1:
-            errors.append(f"{name}: expected exactly one H1")
-        body = re.search(r'<article class="article">(.*?)</article>', html, re.S)
-        if body:
-            article = body.group(1)
-            if re.search(r"<h1(?:\s|>)", article):
-                errors.append(f"{name}: H1 inside article body")
-            if re.search(r"<pre(?:\s|>)", article) and not re.search(r"<code(?:\s|>)", article):
-                errors.append(f"{name}: code block missing code element")
-            if article.count('<table>') != article.count('class="article-table"'):
-                errors.append(f"{name}: table missing scroll wrapper")
-            for image in re.findall(r'<img\b[^>]*>', article):
-                if 'loading="lazy"' not in image or 'decoding="async"' not in image:
-                    errors.append(f"{name}: image missing native loading hints")
-        else:
+        parsed = ArticleStructure()
+        parsed.feed(html)
+        if parsed.language not in ("en", "zh-CN"):
+            errors.append(f"{name}: missing or unsupported page language")
+        if parsed.h1_count != 1 or parsed.body_h1:
+            errors.append(f"{name}: expected one page H1 and no H1 inside article")
+        if not parsed.article_found:
             errors.append(f"{name}: article body missing")
-        for anchor in re.findall(r'<details class="article-toc-inline">.*?</details>', html, re.S):
-            for target in re.findall(r'href="#([^"]+)"', anchor):
-                if target not in pages[post_page.resolve()].ids:
-                    errors.append(f"{name}: missing inline TOC target #{target}")
+        if parsed.pre_count != parsed.pre_with_code:
+            errors.append(f"{name}: code block missing code element")
+        if parsed.table_count != parsed.wrapped_table_count:
+            errors.append(f"{name}: table missing scroll wrapper")
+        if parsed.image_errors:
+            errors.extend(f"{name}: {issue}" for issue in parsed.image_errors)
+        for anchor in parsed.toc_links:
+            if anchor not in pages[post_page.resolve()].ids:
+                errors.append(f"{name}: missing inline TOC target #{anchor}")
     count = 0
     for file, parsed in pages.items():
         for link in parsed.links:

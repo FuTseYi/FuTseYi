@@ -340,6 +340,10 @@
       }
       copy.setAttribute('aria-label', copy.textContent);
     });
+    copy.addEventListener('blur', () => {
+      copy.textContent = 'Copy';
+      copy.setAttribute('aria-label', 'Copy code');
+    });
     toolbar.append(copy);
     container.prepend(toolbar);
   });
@@ -385,6 +389,7 @@
       img.setAttribute('role', 'button');
       img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
       img.addEventListener('click', () => {
+        img.focus();
         if (!img.complete || !img.naturalWidth || !img.naturalHeight) return;
         if (activeImage === img) { closeZoom(); return; }
         closeZoom();
@@ -428,6 +433,10 @@
       });
     });
     document.addEventListener('keydown', (event) => {
+      if (event.key === 'Tab' && activeImage) {
+        event.preventDefault();
+        activeImage.focus();
+      }
       if (event.key === 'Escape' && activeImage) {
         const focusTarget = activeImage;
         closeZoom();

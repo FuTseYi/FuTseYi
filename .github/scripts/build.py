@@ -123,8 +123,9 @@ def size_article_images(article: str, folder: Path) -> str:
         source = re.search(r'\bsrc="([^"]+)"', tag)
         if not source:
             return tag
-        if not re.search(r'\bloading=', tag):
-            tag = tag[:-2] + 'loading="lazy" decoding="async" />' if tag.endswith("/>") else tag[:-1] + ' loading="lazy" decoding="async">'
+        for attribute, value in (("loading", "lazy"), ("decoding", "async")):
+            if not re.search(rf'\b{attribute}=', tag):
+                tag = tag[:-2].rstrip() + f' {attribute}="{value}" />' if tag.endswith("/>") else tag[:-1] + f' {attribute}="{value}">'
         if re.search(r'\bwidth=', tag):
             return tag
         path = (folder / unescape(source[1])).resolve()
