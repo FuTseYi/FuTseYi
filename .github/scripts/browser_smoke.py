@@ -28,10 +28,11 @@ def check(page, name, width):
     if images.count():
         img = images.first
         img.scroll_into_view_if_needed()
+        img.evaluate("(e) => e.decode()")
         img.click()
-        assert page.locator(".image-zoom-overlay.is-open").count() == 1
+        page.locator(".image-zoom-overlay.is-open").wait_for(timeout=3000)
         page.keyboard.press("Escape")
-        assert page.locator(".image-zoom-overlay.is-open").count() == 0
+        page.locator(".image-zoom-overlay.is-open").wait_for(state="detached", timeout=3000)
         assert img.evaluate("(el) => document.activeElement === el")
     tables = page.locator(".article-table")
     if tables.count():
