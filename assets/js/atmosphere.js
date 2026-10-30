@@ -171,7 +171,7 @@
     frame = 0;
     if (lost || !visible || document.hidden) { last = 0; return; }
     if (!last || now - last >= 1000 / 30) {
-      if (last && !reduced.matches) elapsed += Math.min(now - last, 100) / 1000;
+      if (last && !reduced.matches) elapsed += Math.min(now - last, 100) / 1000 * 1.25;
       last = now;
       draw();
     }
