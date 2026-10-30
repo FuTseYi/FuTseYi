@@ -626,7 +626,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .archive-year{container-type:inline-size;margin-top:64px}
 .archive-year:first-child{margin-top:40px}
 .archive-heading{position:relative;height:32px;pointer-events:none}
-.archive-heading h2{position:absolute;top:calc(11px - .5em);left:0;color:transparent;-webkit-text-stroke:1px #cdbd91;opacity:.3;font:italic 500 clamp(80px,24cqi,120px)/1 "Bodoni Moda",Georgia,serif}
+.archive-heading h2{position:absolute;top:calc(11px - .5em);left:0;right:0;color:transparent;-webkit-text-stroke:1px #cdbd91;opacity:.3;font:italic 500 clamp(80px,24cqi,120px)/1 "Bodoni Moda",Georgia,serif}
 .archive-heading span{position:relative;color:var(--ink-faint);font-size:13px;line-height:22px}
 .blog-entry{position:relative;z-index:1;display:grid;grid-template-columns:116px minmax(0,1fr);gap:22px;align-items:baseline;padding:5px 12px;margin:0 -12px;border-radius:10px;color:inherit;transition:transform .2s ease,box-shadow .2s ease}
 .blog-entry:is(:hover,:focus-visible){background:var(--bg);box-shadow:0 4px 14px rgba(18,19,23,.08);transform:translateY(-2px);text-decoration:none}
