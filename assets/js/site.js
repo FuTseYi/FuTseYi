@@ -349,58 +349,39 @@
   });
   const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
   if (images.length) {
-    const dialog = document.createElement('dialog');
-    dialog.className = 'image-lightbox';
-    dialog.setAttribute('aria-label', 'Image preview');
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.className = 'image-lightbox-close';
-    close.setAttribute('aria-label', 'Close image preview');
-    close.textContent = '×';
-    const preview = document.createElement('img');
-    preview.alt = '';
-    const frame = document.createElement('div');
-    frame.className = 'image-lightbox-frame';
-    frame.append(preview);
-    dialog.append(close, frame);
-    document.body.append(dialog);
-    let sourceImage = null;
-
-    const dismiss = () => {
-      if (!dialog.open) return;
-      dialog.close();
-    };
-    const open = (img) => {
-      if (!img.complete || !img.naturalWidth) return;
-      sourceImage = img;
-      preview.src = img.currentSrc || img.src;
-      preview.alt = img.alt;
-      dialog.setAttribute('aria-label', img.alt || 'Image preview');
-      dialog.showModal();
-      close.focus();
-    };
-    // The preview must never scroll the article underneath it.
-    dialog.addEventListener('wheel', (event) => event.preventDefault(), { passive: false });
-    dialog.addEventListener('touchmove', (event) => event.preventDefault(), { passive: false });
-    close.addEventListener('click', dismiss);
-    dialog.addEventListener('click', (event) => {
-      if (event.target === dialog) dismiss();
-    });
-    dialog.addEventListener('close', () => {
-      preview.removeAttribute('src');
-      sourceImage?.focus({ preventScroll: true });
-      sourceImage = null;
-    });
+    // Pin the browser build; defer it until an article image is actually opened.
+    let zoomPromise;
+    const loadZoom = () => zoomPromise ??= new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js';
+      script.integrity = 'sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==';
+      script.crossOrigin = 'anonymous';
+      script.onload = () => resolve(window.mediumZoom(images, {
+        margin: 24,
+        background: 'rgba(0, 0, 0, .88)',
+        scrollOffset: 1000000,
+      }));
+      script.onerror = () => reject(new Error('Image preview could not be loaded'));
+      document.head.append(script);
+    }).catch((error) => { zoomPromise = null; throw error; });
     images.forEach((img) => {
       img.dataset.zoom = '';
       img.tabIndex = 0;
       img.setAttribute('role', 'button');
       img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
-      img.addEventListener('click', () => open(img));
+      img.addEventListener('click', async (event) => {
+        event.preventDefault();
+        try {
+          const zoom = await loadZoom();
+          if (!zoom.getZoomedImage()) await zoom.open({ target: img });
+        } catch (error) {
+          console.warn(error);
+        }
+      });
       img.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          open(img);
+          img.click();
         }
       });
     });
