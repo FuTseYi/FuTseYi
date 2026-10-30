@@ -74,6 +74,8 @@ def main():
 
     errors = []
     for post_page in (ROOT / "blog").glob("*/index.html"):
+        if post_page.parent.name == "tags":
+            continue
         html = post_page.read_text(encoding="utf-8")
         name = post_page.relative_to(ROOT)
         language = re.search(r'<html\s+lang="([^"]+)"', html)
