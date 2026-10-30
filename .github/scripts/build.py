@@ -159,7 +159,8 @@ def main() -> None:
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir(parents=True)
     posts: list[dict] = []
-    parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc"])
+    parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "codehilite"],
+                               extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
     for position, (slug, meta, source) in enumerate(source_posts):
         url = f"/blog/{slug}/"
         item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
