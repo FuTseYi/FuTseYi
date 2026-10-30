@@ -15,6 +15,7 @@ import sys
 import tempfile
 from threading import Event, RLock, Thread
 import time
+import unicodedata
 
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
@@ -25,12 +26,12 @@ PAGEFIND_VERSION = "1.5.2"
 REQUIREMENTS = (f"Markdown>={MARKDOWN_MIN[0]}.{MARKDOWN_MIN[1]},<{MARKDOWN_MAX[0]}.{MARKDOWN_MAX[1]}",
                 f"pagefind[extended]=={PAGEFIND_VERSION}")
 CHECK_FLAG = "--check-dependencies"
-# Build output is condensed to one line: these messages become counts, the rest is
+# Routine build output becomes initial summary counts; the rest is
 # noise while previewing. Anything unlisted is still shown, so warnings survive.
 SUMMARY_RULES = (
-    (re.compile(r"^Blog: generated (\d+) article", re.MULTILINE), r"\1 articles"),
-    (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 pages verified"),
-    (re.compile(r"^Rendered (\d+) public contribution repositories", re.MULTILINE), r"\1 repositories"),
+    (re.compile(r"^Blog: generated (\d+) article", re.MULTILINE), r"\1 篇文章 / articles"),
+    (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 个页面检查通过 / pages verified"),
+    (re.compile(r"^Rendered (\d+) public contribution repositories", re.MULTILINE), r"\1 个贡献仓库 / contribution repositories"),
 )
 ROUTINE_MESSAGES = re.compile(r"^(?:Injected latest blog posts|Website README unchanged|Generated website README"
                               r"|Profile README already matches)")
@@ -139,7 +140,8 @@ class Progress:
         self.stopping.set()
         if self.worker:
             self.worker.join(timeout=1)
-            sys.stdout.write("\r" + " " * (len(self.label) + 4) + "\r")
+            width = sum(2 if unicodedata.east_asian_width(char) in "WF" else 1 for char in self.label)
+            sys.stdout.write("\r" + " " * (width + 4) + "\r")
             sys.stdout.flush()
         return False
 
@@ -228,22 +230,22 @@ def source_state():
 
 
 def rebuild(initial=False):
-    """Build and report one line; returns False when the last good preview was kept."""
+    """Report initial counts or a short update; return False on a failed build."""
     try:
-        with Progress(mark("Building preview…", "Building preview...")):
+        with Progress(mark("正在生成预览 / Building preview…", "Building preview...")):
             parts, notes = build()
     except (subprocess.CalledProcessError, OSError, ValueError) as error:
-        print(paint(f"{mark('✗', 'x')} Build failed: {error}", RED), flush=True)
-        print(paint("  The previous preview is still served. Fix the source and save to retry.", DIM), flush=True)
+        print(paint(f"{mark('✗', 'x')} 生成失败 / Build failed: {error}", RED), flush=True)
+        print(paint("  保留上次预览，修正文件并保存后重试。 / Previous preview kept; fix the source and save to retry.", DIM), flush=True)
         return False
     separator = mark(" · ", " - ")
     details = separator.join(parts)
-    headline = paint(f"{mark('✓', 'OK')} Build complete", GREEN)
-    print(headline + (f"{separator}{details}" if details else ""), flush=True)
+    message = "生成完成 / Build complete" if initial else "网站已更新，请刷新浏览器。 / Updated. Refresh your browser."
+    print(paint(f"{mark('✓', 'OK')} {message}", GREEN), flush=True)
+    if initial and details:
+        print(paint(f"  {details}", DIM), flush=True)
     for note in notes:
         print(paint(f"  {note}", DIM), flush=True)
-    if not initial:
-        print(paint("  Refresh your browser.", DIM), flush=True)
     return True
 
 
@@ -329,7 +331,8 @@ def main():
             return
         rebuild(initial=True)
         print(paint(f"{mark('→', '->')} http://127.0.0.1:{args.port}/", CYAN), flush=True)
-        print(paint("  Ctrl+C to stop. Saving a file rebuilds; refresh the browser to see it.", DIM), flush=True)
+        print(paint("  保存文件后自动生成，浏览器需手动刷新。 / Saving rebuilds the site; refresh the browser manually.", DIM), flush=True)
+        print(paint("  按 Ctrl+C 停止。 / Press Ctrl+C to stop.", DIM), flush=True)
         worker = Thread(target=server.serve_forever, daemon=True)
         worker.start()
         try:

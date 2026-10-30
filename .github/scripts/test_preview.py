@@ -197,8 +197,8 @@ class PreviewTests(unittest.TestCase):
                 preview.watch({})
         self.assertEqual(build.call_count, 2)
         self.assertIn("Build failed", output.getvalue())
-        self.assertIn("Build complete", output.getvalue())
-        self.assertIn("2 articles", output.getvalue())
+        self.assertIn("网站已更新", output.getvalue())
+        self.assertNotIn("2 articles", output.getvalue())
         self.assertIn("Refresh your browser", output.getvalue())
 
     def test_build_output_is_reduced_to_counts_without_losing_warnings(self):
@@ -212,7 +212,7 @@ class PreviewTests(unittest.TestCase):
             "",
         ])
         summary, notes = preview.summarize(log)
-        self.assertEqual(summary, ["30 articles", "33 pages verified", "6 repositories"])
+        self.assertEqual(summary, ["30 篇文章 / articles", "33 个页面检查通过 / pages verified", "6 个贡献仓库 / contribution repositories"])
         self.assertEqual(notes, ["::warning::Public activity unavailable (HTTPError); retaining previous snapshot."])
 
     def test_unrecognized_output_without_counts_is_still_reported(self):

@@ -17,10 +17,11 @@ python3 preview.py
 Open <http://127.0.0.1:8765/> or <http://127.0.0.1:8765/blog/>.
 The same command builds, verifies, serves and watches the website. Refresh the
 browser manually after the terminal reports a successful build. Press Ctrl+C to stop.
-A finished build is one line: `✓ Build complete · 30 articles · 33 pages verified
-· 6 repositories`, followed by the preview address. While it runs, a single
-spinner line (`| Building preview…`) shows the build is alive and is replaced by
-that result, so nothing else scrolls. Anything the builders report
+Preview messages use Chinese and English. The initial build reports completion,
+article/page/contribution counts, the preview address and usage instructions.
+Later successful rebuilds show only `网站已更新，请刷新浏览器。 / Updated. Refresh your browser.`
+While building, one spinner line shows `正在生成预览 / Building preview…` and is
+cleared when the build finishes. Anything the builders report
 outside those counts, such as an activity warning, is still printed underneath, and
 the symbols fall back to ASCII when the console encoding cannot print them. Colours
 are used only on an interactive terminal and are disabled by `NO_COLOR`; the
