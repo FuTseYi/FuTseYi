@@ -110,11 +110,11 @@
       p+=vec2(-slope.y,slope.x)*.036;
       float flow=field(p);
       float cloud=noise(vec3(p*.8+flow*1.5,0.)+travel(4200.,.00595,false))*.5+.5;
-      float depth=flow*.5+.5;
-      vec3 col=mix(vec3(0.),vec3(26.,56.,112.)/255.,smoothstep(.2,.5,depth));
-      col=mix(col,vec3(32.,74.,126.)/255.,smoothstep(.35,.65,depth+cloud*.25));
-      col=mix(col,vec3(238.,216.,170.)/255.,smoothstep(.6,.85,cloud)*.55);
-      col*=1.-smoothstep(.5,.8,depth*cloud)*.35;
+      float blue=smoothstep(.35,.65,flow*.5+.5+cloud*.25);
+      float mist=smoothstep(.6,.85,cloud)*.55;
+      vec3 col=mix(vec3(0.),vec3(32.,74.,126.)/255.,blue);
+      col=mix(col,vec3(238.,216.,170.)/255.,mist);
+      col*=1.-smoothstep(.5,.8,(flow*.5+.5)*cloud)*.35;
       float brightness=dot(col,vec3(.299,.587,.114));
       col+=(col*.85+vec3(.15,.145,.13))*smoothstep(.43,.79,brightness)*.4;
       float distanceToLight=length((uv-vec2(.89,.46))*vec2(aspect,1.));
