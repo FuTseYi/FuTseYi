@@ -13,8 +13,6 @@
       themeControl.setAttribute('aria-label', `Color theme: ${theme}. Switch to ${next}`);
       themeControl.title = `${theme[0].toUpperCase() + theme.slice(1)} theme. Click for ${next}`;
     }
-    const dark = theme === 'dark' || (theme === 'system' && systemTheme.matches);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0a0b' : '#ffffff');
   };
   themeControl?.addEventListener('click', () => {
     const theme = themes[(themes.indexOf(root.dataset.theme || 'system') + 1) % themes.length];
