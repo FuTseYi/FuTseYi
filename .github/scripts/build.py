@@ -43,8 +43,9 @@ def get_post(path: Path) -> tuple[dict[str, str], str]:
     date.fromisoformat(meta["date"])
     return meta, raw[match.end():]
 
-def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page") -> str:
+def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page", lang: str = "en") -> str:
     title, description, url = (escape(value, quote=True) for value in (title, description, url))
+    lang = escape(lang, quote=True)
     home = version_assets((ROOT / "index.html").read_text(encoding="utf-8"), ROOT)
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
@@ -60,7 +61,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     scripts = '\n'.join(f'<script src="/{src}" defer></script>' for src in re.findall(r'<script src="([^"]+)"', home))
 
     return f"""<!doctype html>
-<html lang="en">
+<html lang="{lang}">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="{description}">
@@ -129,7 +130,7 @@ def size_article_images(article: str, folder: Path) -> str:
         return tag[:-2] + f'width="{width}" height="{height}" />'
     return re.sub(r'<img\b[^>]*>', size, article)
 
-def article_toc(tokens: list[dict]) -> str:
+def article_toc(tokens: list[dict]) -> tuple[str, str]:
     entries = []
     first_level = min((token["level"] for token in tokens), default=2)
     pending = list(reversed(tokens))
@@ -137,11 +138,14 @@ def article_toc(tokens: list[dict]) -> str:
         token = pending.pop()
         pending.extend(reversed(token.get("children", [])))
         if first_level <= token["level"] <= first_level + 1:
-            label = re.sub(r"<[^>]+>", "", token["name"])
+            label = escape(unescape(re.sub(r"<[^>]+>", "", token["name"])))
             entries.append(f'<a href="#{escape(token["id"], quote=True)}" class="toc-level-{token["level"] - first_level + 1}">{label}</a>')
     if len(entries) < 3:
-        return ""
-    return '<nav class="page-toc article-toc is-visible" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + "".join(entries) + '</nav>'
+        return "", ""
+    links = "".join(entries)
+    sidebar = '<nav class="page-toc article-toc is-visible" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + links + '</nav>'
+    inline = '<details class="article-toc-inline"><summary>On this page</summary><nav aria-label="Article contents">' + links + '</nav></details>'
+    return sidebar, inline
 
 
 def main() -> None:
@@ -166,6 +170,8 @@ def main() -> None:
         item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
         parser.reset()
         article = size_article_images(parser.convert(source), SOURCE / slug)
+        # The frontmatter title is the page H1; preserve existing TOC IDs while shifting body headings.
+        article = re.sub(r"<(/?)h([1-5])(?=[\s>])", lambda match: f"<{match[1]}h{int(match[2]) + 1}", article)
         article = article.replace('<table>', '<div class="article-table" role="region" aria-label="Data table" tabindex="0"><table>').replace('</table>', '</table></div>')
         tags = ''.join(f'<a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)}</a>' for tag in item["tags"])
         header = f'<a class="back-link" href="/blog/"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><div class="article-meta"><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><a class="post-date" href="https://github.com/FuTseYi/futseyi.github.io/edit/main/posts/{slug}/index.md" target="_blank" rel="noopener noreferrer"><em>Edit on GitHub</em></a></div><div class="post-tags">{tags}</div></div>'
@@ -176,13 +182,14 @@ def main() -> None:
                 other_slug, other_meta, _ = source_posts[other]
                 direction = '<i class="link-arrow link-arrow-left" aria-hidden="true"></i>Previous post' if offset == 1 else 'Next post<i class="link-arrow" aria-hidden="true"></i>'
                 neighbors.append(f'<a class="post-neighbor {css_class}" href="/blog/{other_slug}/"><span class="post-neighbor-label">{direction}</span><strong>{escape(other_meta["title"])}</strong></a>')
-        content = '<div class="article-layout"><div data-pagefind-body>' + header + '<article class="article">' + article + '</article></div>' + article_toc(parser.toc_tokens) + '</div><nav class="post-neighbors" aria-label="Adjacent posts">' + ''.join(neighbors) + '</nav>'
+        sidebar_toc, inline_toc = article_toc(parser.toc_tokens)
+        content = '<div class="article-layout"><div data-pagefind-body>' + header + inline_toc + '<article class="article">' + article + '</article></div>' + sidebar_toc + '</div><nav class="post-neighbors" aria-label="Adjacent posts">' + ''.join(neighbors) + '</nav>'
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
         assets = SOURCE / slug / "assets"
         if assets.is_dir():
             shutil.copytree(assets, destination / "assets")
-        (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content, body_class="blog-page article-page"), encoding="utf-8")
+        (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content, body_class="blog-page article-page", lang=meta.get("lang", "zh-CN" if re.search(r"[\u3400-\u9fff]", meta["title"] + source) else "en")), encoding="utf-8")
         posts.append(item)
 
     entries = []
