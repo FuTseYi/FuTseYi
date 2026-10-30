@@ -58,6 +58,7 @@
     navigationProgress.classList.remove('is-loading');
     requestAnimationFrame(() => {
       header.classList.toggle('is-scrolled', window.scrollY > 6);
+      header.classList.remove('nav-reset');
       document.documentElement.classList.add('is-ready');
     });
   });
@@ -82,20 +83,14 @@
       requestAnimationFrame(() => header.classList.remove('nav-reset'));
     }
   });
-  header.addEventListener('click', (event) => {
+  nav?.addEventListener('click', (event) => {
     const link = event.target.closest('a[href]');
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (link.target && link.target !== '_self')) return;
-    // Leave cross-document menus untouched until pagehide so no exit animation is painted.
-    if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search) {
-      setOpen(false);
-    }
+    if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search) setOpen(false);
   });
   window.addEventListener('pagehide', () => {
     header.classList.add('nav-reset');
     setOpen(false);
-  });
-  window.addEventListener('pageshow', () => {
-    requestAnimationFrame(() => header.classList.remove('nav-reset'));
   });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && header.classList.contains('menu-open')) {
