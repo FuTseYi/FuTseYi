@@ -594,6 +594,8 @@ footer {
 /* Reset BFCache menu state without a closing animation during navigation. */
 .site-header.nav-reset .header-inner,
 .site-header.nav-reset .header-inner::before,
+.site-header.nav-reset .brand img,
+.site-header.nav-reset .menu-icon span,
 .site-header.nav-reset .nav-links { transition: none !important; }
 
 /* The menu extends the existing floating header instead of moving its top edge. */
