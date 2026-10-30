@@ -503,7 +503,8 @@ footer {
 @keyframes footer-back-top{50%{transform:translateY(-3px) rotate(-45deg)}}
 .footer-divider{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
 .footer-brand{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap}
-.footer-brand span{font:600 25px/1.2 Caveat,var(--font)}
+.footer-brand > span{font:600 21px/1.2 Caveat,var(--font)}
+.footer-brand .alias{font-size:.5em;font-weight:500;letter-spacing:.02em}
 .site-footer .hero-links{margin:0}
 
 @media (max-width: 960px) {
