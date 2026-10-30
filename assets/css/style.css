@@ -145,10 +145,6 @@ strong { font-weight: 600; }
 
 .wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 28px; }
 
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
-}
-
 .reading-progress,.navigation-progress{position:fixed;top:0;left:0;z-index:200;width:100%;height:3px;background:var(--gold);transform-origin:left;pointer-events:none}
 .reading-progress{transform:scaleX(0)}
 .navigation-progress{opacity:0;transform:scaleX(0)}
@@ -207,7 +203,7 @@ strong { font-weight: 600; }
 .site-header.is-scrolled .brand img { transform: scale(.8333); }
 .js:not(.is-ready) .header-inner,.js:not(.is-ready) .brand img,html:not(.is-ready) .page-toc { transition: none; }
 
-.brand:hover { text-decoration: none; opacity: .7; }
+@media (hover:hover) {.brand:hover { opacity: .7; }}
 
 .nav-toggle {
     display: none;
@@ -270,20 +266,6 @@ strong { font-weight: 600; }
   }
 
 .hero .wrap { position: relative; z-index: 1; }
-
-/* Match the Harness landing page's first-screen entrance rhythm. */
-@media (prefers-reduced-motion: no-preference) {
-  .js .hero-content{animation:hero-intro-enter .9s ease-out backwards}
-  .js .portrait{animation:hero-portrait-enter .8s ease-out .4s backwards}
-}
-@keyframes hero-intro-enter{
-  from{opacity:0;transform:translateY(24px);filter:blur(10px)}
-  to{opacity:1;transform:translateY(0);filter:blur(0)}
-}
-@keyframes hero-portrait-enter{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
 
 
 .hero-grid {
