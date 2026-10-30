@@ -2,6 +2,7 @@
 """Verify generated static pages and local references before deployment."""
 from __future__ import annotations
 import json
+import re
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
@@ -72,6 +73,32 @@ def main():
         pages[file.resolve()] = parsed
 
     errors = []
+    for post_page in (ROOT / "blog").glob("*/index.html"):
+        html = post_page.read_text(encoding="utf-8")
+        name = post_page.relative_to(ROOT)
+        language = re.search(r'<html\s+lang="([^"]+)"', html)
+        if not language or language.group(1) not in ("en", "zh-CN"):
+            errors.append(f"{name}: unsupported page language")
+        if len(re.findall(r"<h1(?:\s|>)", html)) != 1:
+            errors.append(f"{name}: expected exactly one H1")
+        body = re.search(r'<article class="article">(.*?)</article>', html, re.S)
+        if body:
+            article = body.group(1)
+            if re.search(r"<h1(?:\s|>)", article):
+                errors.append(f"{name}: H1 inside article body")
+            if re.search(r"<pre(?:\s|>)", article) and not re.search(r"<code(?:\s|>)", article):
+                errors.append(f"{name}: code block missing code element")
+            if article.count('<table>') != article.count('class="article-table"'):
+                errors.append(f"{name}: table missing scroll wrapper")
+            for image in re.findall(r'<img\b[^>]*>', article):
+                if 'loading="lazy"' not in image or 'decoding="async"' not in image:
+                    errors.append(f"{name}: image missing native loading hints")
+        else:
+            errors.append(f"{name}: article body missing")
+        for anchor in re.findall(r'<details class="article-toc-inline">.*?</details>', html, re.S):
+            for target in re.findall(r'href="#([^"]+)"', anchor):
+                if target not in pages[post_page.resolve()].ids:
+                    errors.append(f"{name}: missing inline TOC target #{target}")
     count = 0
     for file, parsed in pages.items():
         for link in parsed.links:

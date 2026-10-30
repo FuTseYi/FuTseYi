@@ -44,3 +44,9 @@ Article text goes here.
 Put images and other files in `posts/my-note/assets/`, referencing them as `assets/example.webp`. Describe informative images with meaningful alt text; use empty alt text only for decorative images. For a captioned image, use semantic HTML `<figure>` and `<figcaption>`. The folder name is the public URL slug (`/blog/my-note/`); keep it stable after publication.
 
 The same push deploys the Blog and updates the website/Profile READMEs.
+
+## Article regression checks
+
+Run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`) before publishing layout or rendering changes. The existing build verification checks generated article language, one page-level H1, code markup, table scroll containers, image loading hints and in-page contents links, in addition to local links and the sitemap.
+
+The static checks do not replace browser testing. Review a code-heavy post, an image-heavy post and a table-heavy post at narrow and wide widths, in light and dark themes. Verify keyboard access to the contents, code copying and image enlargement in a secure browser context before merging interaction changes.
