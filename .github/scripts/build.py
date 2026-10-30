@@ -69,10 +69,10 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/assets/icons/site.webmanifest">
 <link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
-<script>document.documentElement.classList.add('js');</script>
 <link rel="stylesheet" href="{css}"><script src="{script}" defer></script>
 </head>
 <body class="{body_class}">
+<noscript><style>@media(max-width:860px){{.nav-links{{visibility:visible}}}}</style></noscript>
 <a class="skip-link" href="#main">Skip to content</a>
 {header}
 <main class="blog-container wrap" id="main">{content}</main>
