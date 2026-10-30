@@ -518,14 +518,11 @@ footer {
 }
 
 @media (max-width: 860px) {
-.nav-links{visibility:hidden}
 .js .nav-toggle { display: inline-flex; }
 
 .js .nav-links {
-      display: flex;
+      display: none;
       opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
       transform: translateY(-6px);
       position: absolute;
       top: var(--nav-h);
@@ -542,8 +539,9 @@ footer {
       -webkit-overflow-scrolling: touch;
     }
 
-.js.is-ready .nav-links{transition:opacity .2s cubic-bezier(.2,.7,.3,1),transform .2s cubic-bezier(.2,.7,.3,1),visibility 0s .2s}
-.site-header.menu-open .nav-links { opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);transition-delay:0s; }
+.js.is-ready .nav-links{transition:opacity .2s ease,transform .2s ease,display .2s allow-discrete}
+.site-header.menu-open .nav-links { display:flex;opacity:1;transform:translateY(0); }
+@starting-style{.site-header.menu-open .nav-links{opacity:0;transform:translateY(-6px)}}
 .site-header.is-scrolled .nav-links { border: 1px solid var(--line); border-radius: 14px; }
 
 .nav-links a {
