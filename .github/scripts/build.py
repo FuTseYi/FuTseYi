@@ -197,7 +197,7 @@ def main() -> None:
             toc_entries.append(f'<a class="toc-level-2" href="#{month_id}">{month_name[int(month)]}</a>')
             for position, post in enumerate(month_posts):
                 anchor = f' id="{month_id}"' if position == 0 else ''
-                entries.append(f'<a class="blog-entry" id="post-{post["slug"]}" href="{escape(post["url"], quote=True)}"><time class="post-date"{anchor} datetime="{post["date"]}">{pretty_date(post["date"])}</time><h3>{escape(post["title"])} <span class="link-arrow" aria-hidden="true"></span></h3></a>')
+                entries.append(f'<a class="blog-entry" id="post-{post["slug"]}" href="{escape(post["url"], quote=True)}"><time class="post-date"{anchor} datetime="{post["date"]}">{pretty_date(post["date"])}</time><h3><span class="link-label">{escape(post["title"][:-2])}<span class="title-tail">{escape(post["title"][-2:])}&nbsp;<span class="link-arrow" aria-hidden="true"></span></span></span></h3></a>')
         entries.append('</section>')
     tag_posts: dict[str, list[dict]] = {}
     for post in posts:

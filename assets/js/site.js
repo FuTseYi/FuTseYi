@@ -285,7 +285,10 @@
           const row = document.createElement('li');
           const link = document.createElement('a');
           link.href = item.url;
-          link.textContent = item.meta.title;
+          const label = document.createElement('span');
+          label.className = 'link-label';
+          label.textContent = item.meta.title;
+          link.append(label);
           row.append(link);
           list.append(row);
         });
