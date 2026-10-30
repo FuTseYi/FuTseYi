@@ -2,6 +2,12 @@
 
 A static personal website built with HTML, CSS, JavaScript, and a Python-generated Blog. Keep the implementation small and maintainable; introduce dependencies only when they solve a concrete problem.
 
+## Working in this repository
+
+- Read the relevant source files and existing tests before editing. Use the current implementation as the source of truth rather than assuming this document is exhaustive.
+- Make focused changes and run the affected tests. For changes to templates, assets, or build logic, run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
+- Update this file in the same change when file ownership, architecture, build commands, or long-term maintenance rules change. Keep it factual and concise; do not rewrite it for routine fixes or content updates.
+
 ## Sources of truth
 
 - `index.html`: homepage content, navigation, and shared header/footer markup. Keep local asset paths relative so the homepage can open directly as a file.
