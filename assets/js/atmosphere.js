@@ -127,12 +127,12 @@
       vec3 seed=fract(vec3(grainCell.xyx)*.1031);
       seed+=dot(seed,seed.yzx+33.33);
       float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
-      // Clean blue light in normalized coordinates, consistent across page widths.
-      vec2 lightPos=(uv-vec2(.72,.78))*vec2(1.15,1.);
-      float halo=exp(-dot(lightPos,lightPos)*5.0);
+      // Both themes share the same moving field; only the color mapping differs.
       float ribbon=smoothstep(.32,.78,cloud);
-      float tint=halo*(.15+.42*ribbon);
-      vec3 paper=mix(vec3(1.),vec3(.68,.84,1.),tint);
+      float left=exp(-pow((uv.x-.17)*2.4,2.))*(.25+.75*ribbon);
+      float right=exp(-pow((uv.x-.81)*2.1,2.))*(.3+.7*smoothstep(.25,.75,flow*.5+.5));
+      float tint=clamp((left*.38+right*.48)*smoothstep(0.,.55,uv.y),0.,.58);
+      vec3 paper=mix(vec3(1.),vec3(.65,.83,1.),tint);
       pixel=vec4(mix(paper,col+grain*.005,dark),1.);
     }`);
   const program = gl.createProgram();
