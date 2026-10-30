@@ -71,6 +71,17 @@
   };
   setOpen(false);
   toggle?.addEventListener('click', () => setOpen(!header.classList.contains('menu-open')));
+  header.querySelector('.brand')?.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (location.pathname === '/' || location.pathname === '/index.html') {
+      event.preventDefault();
+      header.classList.add('nav-reset');
+      setOpen(false);
+      if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      requestAnimationFrame(() => header.classList.remove('nav-reset'));
+    }
+  });
   header.addEventListener('click', (event) => {
     const link = event.target.closest('a[href]');
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (link.target && link.target !== '_self')) return;
