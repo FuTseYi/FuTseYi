@@ -349,81 +349,34 @@
   });
   const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
   if (images.length) {
-    let activeImage = null;
-    let overlay = null;
-    let cleanupTimer = null;
-    let pendingImage = null;
-    let pendingOverlay = null;
-    const finishPending = () => {
-      clearTimeout(cleanupTimer);
-      if (pendingImage) {
-        pendingImage.removeEventListener('transitionend', finishTransition);
-        pendingImage.style.position = '';
-        pendingImage.style.zIndex = '';
-        pendingImage.style.willChange = '';
-      }
-      pendingOverlay?.remove();
-      document.documentElement.classList.remove('image-zoom-active');
-      cleanupTimer = pendingImage = pendingOverlay = null;
-    };
-    const finishTransition = (event) => {
-      if (event.target === pendingImage && event.propertyName === 'transform') finishPending();
-    };
-    const closeZoom = () => {
-      if (!activeImage) return;
-      const image = activeImage;
-      const layer = overlay;
-      image.style.transform = '';
-      image.classList.remove('is-zoomed');
-      layer.classList.remove('is-open');
-      pendingImage = image;
-      pendingOverlay = layer;
-      image.addEventListener('transitionend', finishTransition);
-      cleanupTimer = setTimeout(finishPending, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 350);
-      activeImage = null;
-      overlay = null;
-    };
+    // Pin the browser build; defer it until an article image is actually opened.
+    let zoomPromise;
+    const loadZoom = () => zoomPromise ??= new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js';
+      script.integrity = 'sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==';
+      script.crossOrigin = 'anonymous';
+      script.onload = () => resolve(window.mediumZoom(images, {
+        margin: 24,
+        background: 'rgba(0, 0, 0, .88)',
+        scrollOffset: 1000000,
+      }));
+      script.onerror = () => reject(new Error('Image preview could not be loaded'));
+      document.head.append(script);
+    }).catch((error) => { zoomPromise = null; throw error; });
     images.forEach((img) => {
       img.dataset.zoom = '';
       img.tabIndex = 0;
       img.setAttribute('role', 'button');
       img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
-      img.addEventListener('click', () => {
-        img.focus();
-        if (!img.complete || !img.naturalWidth || !img.naturalHeight) return;
-        if (activeImage === img) { closeZoom(); return; }
-        closeZoom();
-        finishPending();
-        const rect = img.getBoundingClientRect();
-        // A quick reopen can interrupt the return transition; measure its layout box.
-        const transform = new DOMMatrix(getComputedStyle(img).transform);
-        const width = rect.width / transform.a;
-        const height = rect.height / transform.d;
-        rect.x += (rect.width - width) / 2 - transform.e;
-        rect.y += (rect.height - height) / 2 - transform.f;
-        rect.width = width;
-        rect.height = height;
-        const scale = Math.max(0.1, Math.min((innerWidth - 48) / rect.width, (innerHeight - 48) / rect.height, img.naturalWidth / rect.width || 1, img.naturalHeight / rect.height || 1));
-        const x = innerWidth / 2 - rect.left - rect.width / 2;
-        const y = innerHeight / 2 - rect.top - rect.height / 2;
-        const layer = document.createElement('div');
-        layer.className = 'image-zoom-overlay';
-        layer.setAttribute('aria-hidden', 'true');
-        layer.addEventListener('click', closeZoom);
-        document.body.append(layer);
-        overlay = layer;
-        activeImage = img;
-        document.documentElement.classList.add('image-zoom-active');
-        img.style.position = 'relative';
-        // Keep this layer until the return transition finishes.
-        img.style.zIndex = '1000';
-        img.style.willChange = 'transform';
-        img.classList.add('is-zoomed');
-        requestAnimationFrame(() => {
-          if (activeImage !== img) return;
-          layer.classList.add('is-open');
-          img.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
-        });
+      img.addEventListener('click', async (event) => {
+        event.preventDefault();
+        try {
+          const zoom = await loadZoom();
+          if (!zoom.getZoomedImage()) await zoom.open({ target: img });
+        } catch (error) {
+          console.warn(error);
+        }
       });
       img.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -432,19 +385,6 @@
         }
       });
     });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Tab' && activeImage) {
-        event.preventDefault();
-        activeImage.focus();
-      }
-      if (event.key === 'Escape' && activeImage) {
-        const focusTarget = activeImage;
-        closeZoom();
-        focusTarget.focus();
-      }
-    });
-    window.addEventListener('scroll', closeZoom, { passive: true });
-    window.addEventListener('resize', closeZoom, { passive: true });
   }
   schedule();
 })();
