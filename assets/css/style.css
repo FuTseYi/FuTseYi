@@ -586,6 +586,8 @@ footer {
 }
 
 @media (max-width: 860px) {
+/* Keep the floating header clear of Safari's top-edge chrome sampling. */
+.site-header { top: 12px; }
 .js .nav-toggle { display: inline-flex; }
 
 /* Keep one layout while opening and closing; avoid display/auto-height jumps. */
