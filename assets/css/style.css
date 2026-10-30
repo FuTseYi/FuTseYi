@@ -608,8 +608,8 @@ section.section { padding: 32px 0; }
 @keyframes scroll-hint{50%{transform:translateY(3px) rotate(45deg)}}
 #search-results:not(:empty){padding:12px 0;color:var(--ink-faint);font-size:13px}
 #search-results ul{list-style:none}
-#search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px;color:var(--ink);font-weight:550}
-#search-results li a:is(:hover,:focus-visible){background:var(--bg);color:var(--gold-ink);box-shadow:0 4px 14px rgba(18,19,23,.08);text-decoration:none}
+#search-results li a{display:block;padding:7px 10px;margin:0 -10px;border-radius:8px}
+#search-results li a:is(:hover,:focus-visible){background:var(--bg);box-shadow:0 4px 14px rgba(18,19,23,.08)}
 html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .back-link,.all-tags-link{display:inline-flex}
 .back-link,.all-tags-link,.blog-tags-mobile{align-items:center;gap:8px;min-height:36px;color:var(--ink-soft);font-size:13px;font-weight:600;transition:color .16s}
@@ -624,10 +624,10 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .archive-heading span{position:relative;color:var(--ink-faint);font-size:13px;line-height:22px}
 .blog-entry{position:relative;z-index:1;display:grid;grid-template-columns:116px minmax(0,1fr);gap:22px;align-items:baseline;padding:5px 12px;margin:0 -12px;border-radius:10px;color:inherit;transition:transform .2s ease,box-shadow .2s ease}
 .blog-entry:is(:hover,:focus-visible){background:var(--bg);box-shadow:0 4px 14px rgba(18,19,23,.08);transform:translateY(-2px);text-decoration:none}
-.blog-entry:is(:hover,:focus-visible) h3{color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.blog-entry:is(:hover,:focus-visible) h3,#search-results li a:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .blog-entry .post-date,.post-date{font-size:12px;color:var(--ink-faint)}
 .blog-entry .post-date.is-active{color:var(--gold-ink)}
-.blog-entry h3{font-weight:500;font-size:15px;color:var(--ink);line-height:1.5}
+.blog-entry h3,#search-results li a{font-weight:500;font-size:15px;color:var(--ink);line-height:1.5}
 .blog-entry h3 .link-arrow{vertical-align:3px}
 .blog-sidebar{position:sticky;top:82px;align-self:start;max-height:calc(100vh - 100px);overflow:auto;scrollbar-width:none}
 .blog-sidebar::-webkit-scrollbar{display:none}
