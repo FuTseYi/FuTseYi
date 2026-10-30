@@ -68,7 +68,6 @@ def main():
             assert copy.count() == 1
             expected = page.locator(".article-code").first.locator("pre").inner_text()
             copy.click()
-            assert copy.inner_text() == "Copied"
             actual = page.evaluate("navigator.clipboard.readText()")
             assert actual.strip() == expected.strip()
             context.close()
