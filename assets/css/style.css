@@ -279,7 +279,7 @@ strong { font-weight: 600; }
     background-size: 24px 24px;
     -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    animation: hero-grid-move 6s linear infinite;
+    animation: hero-grid-move 2s linear infinite;
   }
 @keyframes hero-grid-move { to { background-position: 24px 0; } }
 
