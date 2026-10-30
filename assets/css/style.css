@@ -104,6 +104,15 @@ body {
     text-size-adjust: 100%;
   }
 
+/* Native cross-document fade; preserve the header and content as one snapshot. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: .16s ease-in both page-fade-out; }
+  ::view-transition-new(root) { animation: .2s ease-out both page-fade-in; }
+}
+@keyframes page-fade-out { to { opacity: 0; } }
+@keyframes page-fade-in { from { opacity: 0; } }
+
 /* Flowing blue-grey atmosphere, with a CSS fallback before the canvas is ready. */
 body::before,.atmosphere {
     position:absolute;inset:0 0 auto;height:1120px;z-index:-1;pointer-events:none;
@@ -591,7 +600,7 @@ footer {
 :root { --nav-offset: 12px; }
 .js .nav-toggle { display: inline-flex; }
 
-/* Keep one layout while opening and closing; avoid display/auto-height jumps. */
+/* The menu extends the existing floating header instead of moving its top edge. */
 .js .site-header .header-inner{
     display:grid;height:auto;
     grid-template-columns:44px minmax(0,1fr) 44px;
@@ -601,6 +610,7 @@ footer {
 .js .site-header.is-scrolled .header-inner{grid-template-rows:max(44px,calc(var(--nav-h) - 12px)) 0fr}
 .js .site-header.menu-open .header-inner{grid-template-rows:var(--nav-h) 1fr}
 .js .site-header.menu-open.is-scrolled .header-inner{grid-template-rows:max(44px,calc(var(--nav-h) - 12px)) 1fr}
+.js .site-header.menu-open .header-inner::before{transition:opacity .24s ease-out,visibility 0s}
 .js .header-inner .brand{grid-column:1;grid-row:1;max-width:none}
 .js .header-inner .theme-control{grid-column:2;grid-row:1;justify-self:end;margin-left:0}
 .js .header-inner .nav-toggle{grid-column:3;grid-row:1;margin-left:0;justify-self:end}
