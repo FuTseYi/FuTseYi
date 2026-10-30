@@ -65,6 +65,7 @@ strong { font-weight: 600; }
 
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.35s;animation-timing-function:ease-in-out}
 }
 
 .reading-progress,.navigation-progress{position:fixed;top:0;left:0;z-index:200;width:100%;height:3px;background:var(--gold);transform-origin:left;pointer-events:none}
