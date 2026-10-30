@@ -346,9 +346,8 @@ section.section { padding: 38px 0; }
 
 .section-title {
     color: #55534d;
-    font-family: Caveat, var(--font);
     font-size: clamp(26px, 3vw, 36px);
-    font-weight: 600; letter-spacing: 0; line-height: 1.25;
+    font-weight: 400; letter-spacing: -.035em; line-height: 1.25;
   }
 
 
