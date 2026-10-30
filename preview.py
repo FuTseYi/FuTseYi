@@ -20,14 +20,12 @@ import unicodedata
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
 SERVING_LOCK = RLock()
-# Single source of truth: pip specs and the version probe are derived from these.
 MARKDOWN_MIN, MARKDOWN_MAX = (3, 7), (4, 0)
 PAGEFIND_VERSION = "1.5.2"
 REQUIREMENTS = (f"Markdown>={MARKDOWN_MIN[0]}.{MARKDOWN_MIN[1]},<{MARKDOWN_MAX[0]}.{MARKDOWN_MAX[1]}",
                 f"pagefind[extended]=={PAGEFIND_VERSION}")
 CHECK_FLAG = "--check-dependencies"
-# Routine build output becomes initial summary counts; the rest is
-# noise while previewing. Anything unlisted is still shown, so warnings survive.
+# Summarize routine build output; retain unrecognized messages.
 SUMMARY_RULES = (
     (re.compile(r"^Blog: generated (\d+) article", re.MULTILINE), r"\1 篇文章 / articles"),
     (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 个页面检查通过 / pages verified"),
@@ -118,7 +116,7 @@ def summarize(log):
 
 
 class Progress:
-    """A single rewritable line so a build never looks frozen; silent when output is redirected."""
+    """Show build progress on interactive terminals."""
 
     FRAMES = "|/-\\"
     INTERVAL = 0.12
@@ -153,7 +151,7 @@ class Progress:
 
 
 def run(root, script, *args):
-    """Run a shared build step, hiding its routine chatter but never its failures."""
+    """Run a build step, reporting failures."""
     result = subprocess.run([sys.executable, str(root / ".github/scripts" / script), *args],
                             cwd=root, capture_output=True, encoding="utf-8", errors="replace")
     if result.returncode:

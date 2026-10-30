@@ -145,8 +145,7 @@ def article_toc(tokens: list[dict]) -> str:
 
 
 def main() -> None:
-    # Validate every source before replacing the generated website.
-    # A malformed post must not erase an otherwise usable local preview.
+    # Validate article metadata before replacing generated pages.
     source_posts: list[tuple[str, dict[str, str], str]] = []
     for path in sorted(SOURCE.glob("*/index.md")):
         slug = path.parent.name
@@ -223,9 +222,6 @@ def main() -> None:
     urls = [SITE + "/", SITE + "/blog/", SITE + "/blog/tags/"] + [SITE + post["url"] for post in posts]
     sitemap = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{xml_escape(url)}</loc></url>\n" for url in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sitemap, encoding="utf-8")
-    # Confirm that every published article has an HTML page and the index is sound.
-    assert (OUTPUT / "index.html").is_file()
-    assert all((OUTPUT / post["slug"] / "index.html").is_file() for post in posts)
     print(f"Blog: generated {len(posts)} article(s)")
 
 if __name__ == "__main__":

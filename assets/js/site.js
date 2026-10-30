@@ -1,4 +1,3 @@
-/* Minimal progressive enhancement: menu, active section, and scroll state. */
 (() => {
   document.documentElement.classList.add('js');
   const root = document.documentElement;

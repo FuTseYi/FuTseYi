@@ -1,7 +1,6 @@
 @font-face{font-family:Caveat;src:url("../fonts/caveat-handwriting.woff2") format("woff2");font-style:normal;font-weight:400 600;font-display:block}
 @font-face{font-family:"Bodoni Moda";src:url("../fonts/bodoni-moda-numerals.ttf") format("truetype");font-style:italic;font-weight:500;font-display:swap;unicode-range:U+0030-0039}
 
-/* FuTseYi academic homepage and Blog styles. */
 :root {
     color-scheme: light;
     --atmosphere-opacity: 1;
@@ -78,7 +77,8 @@
   }
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box}
 
 html {
     scroll-behavior: auto;
@@ -104,7 +104,7 @@ body {
     text-size-adjust: 100%;
   }
 
-/* Flowing blue-grey atmosphere, with a CSS fallback before the canvas is ready. */
+/* Atmosphere and fallback gradient. */
 body::before,.atmosphere {
     position:absolute;inset:0 0 auto;height:1120px;z-index:-1;pointer-events:none;
     -webkit-mask-image:linear-gradient(#000000fc 0%,#000000e8 9%,transparent 100%);
@@ -133,8 +133,7 @@ a { color: var(--accent); text-decoration: none; }
 
 a:is(:hover,:focus-visible) { text-decoration: none; }
 
-/* Keyboard navigation and shared section descriptions. */
-*,*::before,*::after{box-sizing:border-box}
+/* Keyboard focus and shared section descriptions. */
 a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-offset:4px;border-radius:3px}
 .skip-link{position:fixed;top:-100px;left:16px;z-index:200;background:var(--bg);padding:10px 16px}
 .skip-link:focus{top:8px}
@@ -177,7 +176,7 @@ strong { font-weight: 600; }
     border-radius: 14px;
   }
 
-/* Shared glass material; each component owns its layout and lifecycle. */
+/* Glass surfaces. */
 .header-inner::before,.search-dialog,.education-item::before,.project-item::before,.blog-entry:is(:hover,:focus-visible),#search-results li a:is(:hover,:focus-visible){
     background-color:var(--glass-fill);
     -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
@@ -528,7 +527,7 @@ section.section { padding: 38px 0; }
 .community-icon{display:block;width:40px;height:40px;object-fit:contain;border-radius:8px}
 
 
-/* Consistent compact community and contribution lists. */
+/* Community and contribution lists. */
 #active-in .project-item{grid-template-columns:40px minmax(0,1fr)}
 #contributions .project-item{grid-template-columns:90px minmax(0,1fr)}
 #recent-blog .project-item{grid-template-columns:minmax(0,1fr) auto;column-gap:32px}

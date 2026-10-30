@@ -1,7 +1,6 @@
-/* Blue-grey noise atmosphere. Independent WebGL implementation informed by the
-   DeepSeek Harness landing page's fluid layering, lighting and fade treatment.
-   Simplex noise: Copyright (C) 2011 Ashima Arts, MIT; see webgl-noise-LICENSE.txt.
-   Uses the original noise constants; the light palette is a site adaptation. */
+/* WebGL atmosphere inspired by DeepSeek Harness.
+   Simplex noise: Copyright (C) 2011 Ashima Arts, MIT.
+   See webgl-noise-LICENSE.txt. */
 (() => {
   const layer = document.createElement('div');
   layer.className = 'atmosphere';
