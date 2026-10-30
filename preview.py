@@ -22,8 +22,10 @@ SITE = ROOT / "_site"
 SERVING_LOCK = RLock()
 MARKDOWN_MIN, MARKDOWN_MAX = (3, 7), (4, 0)
 PAGEFIND_VERSION = "1.5.2"
+PYGMENTS_MIN, PYGMENTS_MAX = (2, 17), (3, 0)
 REQUIREMENTS = (f"Markdown>={MARKDOWN_MIN[0]}.{MARKDOWN_MIN[1]},<{MARKDOWN_MAX[0]}.{MARKDOWN_MAX[1]}",
-                f"pagefind[extended]=={PAGEFIND_VERSION}")
+                f"pagefind[extended]=={PAGEFIND_VERSION}",
+                f"Pygments>={PYGMENTS_MIN[0]}.{PYGMENTS_MIN[1]},<{PYGMENTS_MAX[0]}")
 CHECK_FLAG = "--check-dependencies"
 # Summarize routine build output; retain unrecognized messages.
 SUMMARY_RULES = (
@@ -269,7 +271,10 @@ def watch(previous):
 def dependencies_valid():
     try:
         markdown = tuple(int(part) for part in version("Markdown").split(".")[:2])
-        return MARKDOWN_MIN <= markdown < MARKDOWN_MAX and version("pagefind") == PAGEFIND_VERSION
+        pygments = tuple(int(part) for part in version("Pygments").split(".")[:2])
+        return (MARKDOWN_MIN <= markdown < MARKDOWN_MAX
+                and PYGMENTS_MIN <= pygments < PYGMENTS_MAX
+                and version("pagefind") == PAGEFIND_VERSION)
     except (PackageNotFoundError, ValueError):
         return False
 

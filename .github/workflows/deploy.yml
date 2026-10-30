@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install build dependencies
-        run: python -m pip install "Markdown>=3.7,<4" "pagefind[extended]==1.5.2"
+        run: python -m pip install "Markdown>=3.7,<4" "pagefind[extended]==1.5.2" "Pygments>=2.17,<3"
       - name: Verify preview, README, and public activity helpers
         run: python -m unittest discover -s .github/scripts -p 'test_*.py' -v
       - name: Build Blog archive

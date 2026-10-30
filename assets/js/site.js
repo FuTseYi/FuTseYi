@@ -316,6 +316,33 @@
       }
     });
   }
+  document.querySelectorAll('.article pre').forEach((pre) => {
+    const source = pre.querySelector('code') || pre;
+    const original = source.textContent;
+    const highlighted = pre.parentElement.classList.contains('codehilite') ? pre.parentElement : pre;
+    const container = document.createElement('div');
+    container.className = 'article-code';
+    highlighted.before(container);
+    container.append(highlighted);
+    const toolbar = document.createElement('div');
+    toolbar.className = 'article-code-header';
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'code-copy';
+    copy.textContent = 'Copy';
+    copy.setAttribute('aria-label', 'Copy code');
+    copy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(original);
+        copy.textContent = 'Copied';
+      } catch {
+        copy.textContent = 'Copy failed';
+      }
+      copy.setAttribute('aria-label', copy.textContent);
+    });
+    toolbar.append(copy);
+    container.prepend(toolbar);
+  });
   const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
   if (images.length) {
     let activeImage = null;
