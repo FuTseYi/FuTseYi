@@ -113,7 +113,7 @@
       float blue=smoothstep(.35,.65,flow*.5+.5+cloud*.25);
       float mist=smoothstep(.6,.85,cloud)*.55;
       vec3 col=mix(vec3(0.),vec3(32.,74.,126.)/255.,blue);
-      col=mix(col,vec3(238.,216.,170.)/255.,mist);
+      col=mix(col,vec3(206.,200.,187.)/255.,mist);
       col*=1.-smoothstep(.5,.8,(flow*.5+.5)*cloud)*.35;
       float brightness=dot(col,vec3(.299,.587,.114));
       col+=(col*.85+vec3(.15,.145,.13))*smoothstep(.43,.79,brightness)*.4;
