@@ -347,44 +347,5 @@
     toolbar.append(copy);
     container.prepend(toolbar);
   });
-  const images = [...document.querySelectorAll('.article img')].filter((img) => !img.closest('a, button'));
-  if (images.length) {
-    // Pin the browser build; defer it until an article image is actually opened.
-    let zoomPromise;
-    const loadZoom = () => zoomPromise ??= new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js';
-      script.integrity = 'sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==';
-      script.crossOrigin = 'anonymous';
-      script.onload = () => resolve(window.mediumZoom(images, {
-        margin: 24,
-        background: 'rgba(0, 0, 0, .88)',
-        scrollOffset: 1000000,
-      }));
-      script.onerror = () => reject(new Error('Image preview could not be loaded'));
-      document.head.append(script);
-    }).catch((error) => { zoomPromise = null; throw error; });
-    images.forEach((img) => {
-      img.dataset.zoom = '';
-      img.tabIndex = 0;
-      img.setAttribute('role', 'button');
-      img.setAttribute('aria-label', `Enlarge image: ${img.alt || 'Article image'}`);
-      img.addEventListener('click', async (event) => {
-        event.preventDefault();
-        try {
-          const zoom = await loadZoom();
-          if (!zoom.getZoomedImage()) await zoom.open({ target: img });
-        } catch (error) {
-          console.warn(error);
-        }
-      });
-      img.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          img.click();
-        }
-      });
-    });
-  }
   schedule();
 })();

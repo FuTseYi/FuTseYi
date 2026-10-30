@@ -24,21 +24,13 @@ def check(page, name, width):
             contents.locator("summary").click()
             assert contents.locator("nav a").first.is_visible()
             contents.locator("summary").click()
-    images = page.locator("article.article img[data-zoom]")
+    images = page.locator("article.article img")
     if images.count():
         img = images.first
         img.scroll_into_view_if_needed()
-        img.evaluate("(e) => e.decode()")
-        for _ in range(3):
-            img.click()
-            overlay = page.locator(".medium-zoom-overlay")
-            overlay.wait_for(state="visible", timeout=10000)
-            page.locator(".medium-zoom-image--opened").wait_for(state="visible", timeout=5000)
-            page.mouse.wheel(0, 80)
-            assert page.locator(".medium-zoom-image--opened").count() == 1, "Small scroll must not dismiss zoom"
-            page.keyboard.press("Escape")
-            page.locator(".medium-zoom-image--opened").wait_for(state="detached", timeout=5000)
-            assert img.is_visible(), "Article image should remain visible after closing"
+        img.click()
+        assert page.locator(".medium-zoom-overlay, .image-zoom-overlay, .image-lightbox").count() == 0
+        assert img.evaluate("(e) => !e.hasAttribute('data-zoom') && getComputedStyle(e).cursor !== 'zoom-in'")
     tables = page.locator(".article-table")
     if tables.count():
         assert tables.first.evaluate("(e) => getComputedStyle(e).overflowX === 'auto'")
@@ -77,7 +69,7 @@ def main():
             assert actual.strip() == expected.strip()
             context.close()
             browser.close()
-            print("Chromium article smoke checks passed: responsive, themes, contents, zoom, tables, no-JS, clipboard.")
+            print("Chromium article smoke checks passed: responsive, themes, contents, static images, tables, no-JS, clipboard.")
     finally:
         server.shutdown()
         server.server_close()
