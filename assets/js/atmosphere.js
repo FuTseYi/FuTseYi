@@ -118,20 +118,22 @@
       float leftShade=1.-smoothstep(.03,.46,uv.x);
       float lowerShade=1.-smoothstep(.12,.72,uv.y);
       col*=1.-.64*leftShade*lowerShade;
-      vec2 lightPos=(uv-vec2(.79,.92))*vec2(aspect,1.);
-      float light=exp(-dot(lightPos,lightPos)*2.8);
-      col+=vec3(.38,.59,.83)*light*(.07+.10*mist);
+      vec2 lightPos=(uv-vec2(.70,.89))*vec2(1.3,1.);
+      float light=exp(-dot(lightPos,lightPos)*5.0);
+      col+=vec3(.70,.83,1.)*light*(.22+.15*mist);
       col*=1.-.18*smoothstep(.48,.9,length(uv-vec2(.5,.52)));
       vec2 grainCell=floor((uv*resolution+(p-(vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)))*resolution.y)/5.);
       vec3 seed=fract(vec3(grainCell.xyx)*.1031);
       seed+=dot(seed,seed.yzx+33.33);
       float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
-      // Both themes share the same moving field; only the color mapping differs.
-      float ribbon=smoothstep(.32,.78,cloud);
-      float left=exp(-pow((uv.x-.17)*2.4,2.))*(.25+.75*ribbon);
-      float right=exp(-pow((uv.x-.81)*2.1,2.))*(.3+.7*smoothstep(.25,.75,flow*.5+.5));
-      float tint=clamp((left*.38+right*.48)*smoothstep(0.,.55,uv.y),0.,.58);
-      vec3 paper=mix(vec3(1.),vec3(.65,.83,1.),tint);
+      // Map the same flow field to cool shadows and a white highlight.
+      float ribbon=smoothstep(.36,.76,cloud);
+      float left=exp(-pow((uv.x-.16)*2.1,2.))*(.2+.8*ribbon);
+      float right=exp(-pow((uv.x-.80)*2.3,2.))*(.25+.75*smoothstep(.24,.72,depth));
+      float tint=clamp((left*.28+right*.40)*smoothstep(.02,.70,uv.y),0.,.46);
+      vec3 paper=mix(vec3(1.),vec3(.56,.76,1.),tint);
+      float highlight=exp(-dot(lightPos,lightPos)*7.0)*(.45+.55*mist);
+      paper=mix(paper,vec3(1.),highlight*.80);
       pixel=vec4(mix(paper,col+grain*.005,dark),1.);
     }`);
   const program = gl.createProgram();
