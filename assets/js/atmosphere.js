@@ -111,16 +111,17 @@
       float flow=field(p);
       float cloud=noise(vec3(p*.8+flow*1.5,0.)+travel(4200.,.00595,false))*.5+.5;
       float depth=flow*.5+.5;
-      vec3 col=mix(vec3(0.),vec3(26.,56.,112.)/255.,smoothstep(.2,.5,depth));
-      col=mix(col,vec3(32.,74.,126.)/255.,smoothstep(.35,.65,depth+cloud*.25));
-      col=mix(col,vec3(238.,216.,170.)/255.,smoothstep(.6,.85,cloud)*.55);
-      col=mix(col,vec3(0.),smoothstep(.5,.8,depth*cloud)*.35);
-      float brightness=dot(col,vec3(.299,.587,.114));
-      col+=(col*.85+vec3(.15,.145,.13))*smoothstep(.43,.79,brightness)*.4;
-      float distanceToLight=length((uv-vec2(.89,.46))*vec2(aspect,1.));
-      col+=(vec3(1.,.97,.9)*exp(-distanceToLight*distanceToLight*4.5)*.14+
-        vec3(.72,.8,1.)*exp(-distanceToLight*1.8)*.14);
-      col*=1.-.38*smoothstep(.35,.75,length(uv-.5));
+      float band=smoothstep(.28,.68,depth+cloud*.16);
+      vec3 col=mix(vec3(7.,15.,27.),vec3(28.,70.,121.),band)/255.;
+      float mist=smoothstep(.56,.84,cloud)*smoothstep(.18,.65,depth);
+      col=mix(col,vec3(131.,162.,195.)/255.,mist*.38);
+      float leftShade=1.-smoothstep(.03,.46,uv.x);
+      float lowerShade=1.-smoothstep(.12,.72,uv.y);
+      col*=1.-.64*leftShade*lowerShade;
+      vec2 lightPos=(uv-vec2(.79,.92))*vec2(aspect,1.);
+      float light=exp(-dot(lightPos,lightPos)*2.8);
+      col+=vec3(.38,.59,.83)*light*(.07+.10*mist);
+      col*=1.-.18*smoothstep(.48,.9,length(uv-vec2(.5,.52)));
       vec2 grainCell=floor((uv*resolution+(p-(vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)))*resolution.y)/5.);
       vec3 seed=fract(vec3(grainCell.xyx)*.1031);
       seed+=dot(seed,seed.yzx+33.33);
