@@ -710,7 +710,7 @@ section.section { padding: 32px 0; }
 .article-toc-inline .scroll-hint{margin-bottom:8px}
 .article-toc-inline nav a{display:block;padding:12px 6px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .article-toc-inline nav a:last-child{border:0}
-.article-toc-inline nav .toc-level-2{padding-left:20px}}
+.article-toc-inline nav .toc-level-2{padding-left:20px}
 @media(min-width:1600px){.article-toc-inline{display:none}}
 /* Blog: shared page width, navigation and footer. */
 .blog-page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
