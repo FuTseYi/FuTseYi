@@ -135,7 +135,7 @@
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const bottom = inlineToc.getBoundingClientRect().bottom;
       const overflow = bottom - (window.innerHeight - 24);
-      if (overflow > 0) window.scrollBy({ top: Math.min(overflow, 140), behavior: 'smooth' });
+      if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' });
     });
   }
   const toc = document.querySelector('.page-toc');
