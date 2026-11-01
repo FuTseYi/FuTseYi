@@ -31,5 +31,8 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 - [把 GitHub 变成内容后台：HKUST-ELPA 的 Serverless 架构实践](https://futseyi.github.io/blog/hkust-elpa-serverless-github-native-cms/)
 - [Cloudflare Email Routing 免费搭建自有域名邮箱：转发到 Outlook 的实战记录](https://futseyi.github.io/blog/cloudflare-email-routing-outlook-forwarding/)
 - [2026 最新土耳其（外区）Apple ID 注册教程：低价订阅 ChatGPT Plus 完整指南（附开启跨区 Apple 家庭共享）](https://futseyi.github.io/blog/turkey-foreign-apple-id-chatgpt-plus-cross-region-family-sharing/)
+- [我们都还在路上：在不确定中攒出自己的选择权](https://futseyi.github.io/blog/on-the-road-accumulating-choices/)
+- [Claude Desktop 接入第三方模型 API：基于 ccswitch 的配置与踩坑](https://futseyi.github.io/blog/claude-desktop-third-party-api-ccswitch/)
+- [一生难忘，仅此一次：傅氏傅厝井朵桥祖厝重建竣工暨祔桃庆典](https://futseyi.github.io/blog/fushi-zucuo-2026/)
 
 [View all articles](https://futseyi.github.io/blog/)
