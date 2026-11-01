@@ -1,5 +1,5 @@
 ---
-title: 用于备份和恢复 Zotero 配置的插件-蒲公英 Tara
+title: Zotero 配置备份与恢复：Tara 插件
 date: 2025-07-21
 tags: REPOST, Zotero
 ---

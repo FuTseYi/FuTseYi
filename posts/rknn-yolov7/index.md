@@ -1,5 +1,5 @@
 ---
-title: 以RKNN系列模型为例，训练一个yolov7的目标检测模型
+title: YOLOv7 目标检测模型训练与 RKNN 适配
 date: 2025-07-08
 tags: 目标检测, RKNN
 ---

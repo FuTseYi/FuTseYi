@@ -1,5 +1,5 @@
 ---
-title: 02讲 - 数据 - PyTorch深度学习快速入门教程
+title: PyTorch 入门 02：数据处理
 date: 2025-07-14
 tags: pytorch, 学习笔记, 深度学习
 ---
@@ -241,7 +241,6 @@ writer.close()
 
 其包括很多常用的图像处理方法，比如 `transforms.ToTensor()` ![](assets/3faee1e71ef0c2eec74cea13a763c273-brfwqy8f-zmvgw1.webp)
 
-> **Note:**
 > **为什么用 Tensor 数据类型？**
 > Tensor 类型中的很多属性我们都需要在神经网络中用到，如反向传播、梯度等
 
@@ -302,7 +301,6 @@ cv_img = cv2.imread(img_path)
 print(cv_img) ## 使用opencv读取图片,可以直接得到numpy.ndarray类型img
 ```
 
-> **Note:**
 > 多关注 **「输入、输出」** 类型，不会的多看 **「官方文档」**
 > 关注方法需要的 **「参数」** ，不知道返回值的时候 「Print」打印查看
 

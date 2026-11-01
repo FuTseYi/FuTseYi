@@ -1,5 +1,5 @@
 ---
-title: 2026 最新土耳其（外区）Apple ID 注册教程：低价订阅 ChatGPT Plus 完整指南（附开启跨区 Apple 家庭共享）
+title: 土耳其 Apple ID 注册与跨区家庭共享实践
 date: 2026-05-16
 tags: 土耳其AppleID, 外区AppleID, ChatGPTPlus订阅, 土区礼品卡, 跨区Apple家庭共享, iCloud订阅
 ---

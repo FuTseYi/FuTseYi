@@ -1,5 +1,5 @@
 ---
-title: Qwen2.5 - VL的vllm部署方案(图像分析)
+title: Qwen2.5-VL 的 vLLM 部署与图像分析
 date: 2025-06-15
 tags: Qwen系列, vLLM
 ---

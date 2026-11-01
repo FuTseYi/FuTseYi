@@ -1,5 +1,5 @@
 ---
-title: Jetson Orin Nano开发指南记录
+title: Jetson Orin Nano 开发指南
 date: 2025-07-08
 tags: Jetson, Orin-Nano
 ---
@@ -33,7 +33,6 @@ ls -la /etc/apt/sources.list.d/
 wget http://fishros.com/install -O fishros && . fishros
 ```
 
-> **Note:**
 > 不要清除第三方源: 这样会把 nvidia 源配置文件给删除
 
 ### 1.2.2 方式 2.输入以下代码换源

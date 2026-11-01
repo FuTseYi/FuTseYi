@@ -1,5 +1,5 @@
 ---
-title: YOLO V11及多线程优化和边缘端设备RK3588-RK3588S部署
+title: YOLO11 在 RK3588 上的部署与多线程优化
 date: 2025-07-26
 tags: RKNN, YOLO
 ---

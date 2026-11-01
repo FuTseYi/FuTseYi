@@ -1,5 +1,5 @@
 ---
-title: 部署大模型并用Chatbox连接到远程Ollama服务
+title: Ollama 远程部署与 Chatbox 连接
 date: 2025-06-11
 tags: Chatbox, Ollama, LLM
 ---

@@ -1,5 +1,5 @@
 ---
-title: 为 Astro 博客打造完美的 Waline 评论系统：从集成到深度定制的完整实践
+title: Astro 博客的 Waline 评论系统集成与定制
 date: 2025-10-11
 tags: Astro, Blog, Waline评论系统, TypeScript
 ---

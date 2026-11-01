@@ -1,5 +1,5 @@
 ---
-title: 把 GitHub 变成内容后台：HKUST-ELPA 的 Serverless 架构实践
+title: 把 GitHub 变成内容后台：HKUST-ELPA 的 Serverless 实践
 date: 2026-10-19
 tags: Serverless, Cloudflare Workers, GitHub Actions, Local-First, 开源实践
 ---

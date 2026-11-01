@@ -1,5 +1,5 @@
 ---
-title: 04讲 - 炼丹流程 - PyTorch深度学习快速入门教程
+title: PyTorch 入门 04：模型训练流程
 date: 2025-07-16
 tags: pytorch, 学习笔记, 深度学习
 ---
@@ -690,7 +690,6 @@ loss_fn.to(device)
 
 # 1.4 验证
 
-> **Note:**
 > 本节加载模型，选择导入 model 文件中模型的方式，不再复制代码
 
 > test.py

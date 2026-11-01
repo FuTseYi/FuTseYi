@@ -1,5 +1,5 @@
 ---
-title: vscode优化体验（推荐设置 & 推荐插件）
+title: VS Code 配置与扩展推荐
 date: 2025-09-17
 tags: VSCode
 ---

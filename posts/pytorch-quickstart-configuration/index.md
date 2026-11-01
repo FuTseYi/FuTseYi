@@ -1,5 +1,5 @@
 ---
-title: 01讲 - 配置 - PyTorch深度学习快速入门教程
+title: PyTorch 入门 01：环境配置
 date: 2025-07-13
 tags: pytorch, 学习笔记, 深度学习
 ---

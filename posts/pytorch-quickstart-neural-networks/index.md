@@ -1,5 +1,5 @@
 ---
-title: 03讲 - 神经网络 - PyTorch深度学习快速入门教程
+title: PyTorch 入门 03：神经网络
 date: 2025-07-15
 tags: pytorch, 学习笔记, 深度学习
 ---
@@ -594,7 +594,6 @@ for data in dataloader:
     ## 输出torch.Size([10])
 ```
 
-> **Note:**
 > 注意点:
 >
 > `torch.flatten(imgs)`，它**直接把所有图片合成了一个一维向量**，丢掉了 batch 信息。模型只能输出 `torch.Size([10])

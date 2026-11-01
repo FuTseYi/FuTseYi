@@ -1,10 +1,9 @@
 ---
-title: 其他设备通过局域网内主机的代理VPN科学上网(以Jetson设备为例)
+title: 通过局域网主机共享代理：以 Jetson 为例
 date: 2025-07-10
 tags: 局域网, VPN
 ---
 
-> **Note:**
 > **Jetson 等设备不会自动继承主机的代理规则**
 
 # 1 ​**​主机端代理设置​**​
@@ -115,7 +114,6 @@ source /etc/environment
 
 *适用场景*：所有用户和终端命令（如 `apt`、`curl`）均通过代理。
 
-> **Note:**
 > **代理环境变量虽然已写入 `/etc/environment`，但并未被当前 Shell 会话加载**
 > 所以建议重启 Jetson 设备,这会强制重新加载所有系统环境变量（包括 `/etc/environment` 中的代理配置）
 

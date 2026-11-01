@@ -1,5 +1,5 @@
 ---
-title: 新机Linux(Ubuntu)到手一般都会做如下配置
+title: Ubuntu 新机初始化与开发环境配置
 date: 2025-07-17
 tags: Linux
 ---

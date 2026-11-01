@@ -1,5 +1,5 @@
 ---
-title: YOLO V7及多线程优化和边缘端设备RK3588-RK3588S部署
+title: YOLOv7 在 RK3588 上的部署与多线程优化
 date: 2025-07-27
 tags: RKNN, YOLO
 ---
@@ -64,7 +64,6 @@ python export.py --rknpu rk3588 --weight ./runs/train/yolov7-vis2019/weights/bes
 
 ## onnx 转 rknn 模型 (安装 rknn-toolkit 工具)
 
-> **Note:**
 > 请注意,要在此项目上运行新的 onnx 转 rknn 的模型,需要特定的 toolkit 版本 ->1.5.2
 > [GitHub - airockchip/rknn-toolkit2 at v1.5.2](https://github.com/airockchip/rknn-toolkit2/tree/v1.5.2)
 

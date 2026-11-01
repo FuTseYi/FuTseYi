@@ -1,5 +1,5 @@
 ---
-title: Cloudflare Email Routing 免费搭建自有域名邮箱：转发到 Outlook 的实战记录
+title: Cloudflare Email Routing：自有域名邮件转发实践
 date: 2026-10-14
 tags: Cloudflare, Email Routing, Outlook, 域名邮箱, 实践记录
 ---

@@ -1,5 +1,5 @@
 ---
-title: 初识MCP技术
+title: 初识 MCP：概念与应用
 date: 2025-06-16
 tags: MCP, Tool
 ---

@@ -1,5 +1,5 @@
 ---
-title: Jetson系统烧入过程(以Orin - Nano为例)
+title: Jetson Orin Nano 系统烧录指南
 date: 2025-07-09
 tags: Jetson, Jetson-Orin-Nano, 系统烧录
 ---
@@ -13,7 +13,6 @@ Jetson 系列产品烧录系统的方法一般有两种，
 
 此方法不仅仅适用于烧录系统，还可用于提取配置好的 Jetson 系统。
 
-> **Note:**
 > 搭建 Jetson 系列产品烧录系统的环境需要在电脑主机上安装 Ubuntu 系统。
 > 且安装的 Ubuntu 系统版本为 16.04 LTS 或者 18.04 LTS。
 
@@ -34,7 +33,6 @@ sudo apt-get install python
 
 ![2025-07-10_09-57-05.png](assets/20250710095709144.png)
 
-> **Note:**
 > 这里我选择较为稳定的版本 35.3.1
 
 - 下载相关文件到 ubuntu 系统中
@@ -84,10 +82,8 @@ sudo apt-get install python
 sudo ./tools/kernel_flash/l4t_initrd_flash.sh --external-device nvme0n1p1 \   -c tools/kernel_flash/flash_l4t_external.xml -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \   --showlogs --network usb0 jetson-orin-nano-devkit internal
 ```
 
-> **Note:**
 > 在烧录过程中,Jetson 设备与主机连接会断开,并重新连接,要及时确认连接到主机中才能继续烧录
 
-> **Note:**
 > 重新连接后若出现如图所示问题:
 >
 > ![usb问题.png](assets/20250710104406430.png)

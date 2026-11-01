@@ -1,5 +1,5 @@
 ---
-title: Obsidian利用Syncthing全平台同步终极方案 同步ios和PC端
+title: Obsidian 跨设备同步：Syncthing 实践
 date: 2025-07-20
 tags: Obsidian, Syncthing, 局域网, 广域网
 ---

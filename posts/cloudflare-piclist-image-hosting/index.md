@@ -1,5 +1,5 @@
 ---
-title: 配合Cloudflare和Piclist搭建一个属于你的免费图床
+title: 使用 Cloudflare 与 PicList 搭建图床
 date: 2025-05-12
 tags: Piclist, Blog, Tool, Cloudflare
 ---
@@ -37,7 +37,6 @@ tags: Piclist, Blog, Tool, Cloudflare
 
 ![202408281710556](assets/202408281710556.png)
 
-> **Note:**
 > 根据 Cloudflare 的安全策略，令牌信息页面一旦关闭，便永远不再展现，如果忘记了相应的信息，只能重新生成新令牌，所以请将令牌信息记录于可信的位置，妥善保管。
 
 # 4 Piclist 图床配置
@@ -48,7 +47,6 @@ tags: Piclist, Blog, Tool, Cloudflare
 2. 载安装软件，打开后，可以看到，其已经内置支持了不少图床,但是…… 好像就是没有我们用的 cloudflare R2？别急，移步左侧的 “插件” 选项,搜索 s3
 3. ~~插件有 s3 和 s3-lls,不知道是是不是 BUG,使用两者插件输出图片链接格式不同,对于 CF 图床生成的链接格式 (自定义域名 / 设定的文件路径 / 文件名),s3-lls 插件输出才符合~~
 
-> **Note:**
 > 以上第 3 点的问题:
 > 1. 不要勾选 ForcePathStyle
 > 2. 不要勾选 Bucket 前缀
