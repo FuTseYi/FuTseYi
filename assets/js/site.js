@@ -104,13 +104,13 @@
     setOpen(window.innerWidth <= 860 && header.classList.contains('menu-open'));
   }, { passive: true });
 
-  const addScrollHint = (content, container) => {
+  const addScrollHint = (content, container, isEnabled = () => true) => {
     const hint = document.createElement('div');
     hint.className = 'scroll-hint';
     hint.setAttribute('aria-hidden', 'true');
     container.append(hint);
     const syncHint = () => {
-      hint.classList.toggle('is-visible', content.scrollHeight - content.clientHeight - content.scrollTop > 2);
+      hint.classList.toggle('is-visible', isEnabled() && content.scrollHeight - content.clientHeight - content.scrollTop > 2);
     };
     content.addEventListener('scroll', syncHint, { passive: true });
     new ResizeObserver(syncHint).observe(content);
@@ -120,7 +120,7 @@
   if (inlineToc) {
     const button = inlineToc.querySelector('.article-toc-toggle');
     const panel = inlineToc.querySelector('.article-toc-panel');
-    const syncInlineHint = addScrollHint(inlineToc.querySelector('nav'), inlineToc);
+    const syncInlineHint = addScrollHint(inlineToc.querySelector('nav'), inlineToc, () => inlineToc.classList.contains('is-open'));
     const setTocOpen = (open) => {
       inlineToc.classList.toggle('is-open', open);
       button.setAttribute('aria-expanded', String(open));
@@ -129,6 +129,14 @@
     };
     setTocOpen(false);
     button.addEventListener('click', () => setTocOpen(!inlineToc.classList.contains('is-open')));
+    panel.addEventListener('transitionend', (event) => {
+      if (event.target !== panel || event.propertyName !== 'grid-template-rows' || !inlineToc.classList.contains('is-open')) return;
+      syncInlineHint();
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const bottom = inlineToc.getBoundingClientRect().bottom;
+      const overflow = bottom - (window.innerHeight - 24);
+      if (overflow > 0) window.scrollBy({ top: Math.min(overflow, 140), behavior: 'smooth' });
+    });
   }
   const toc = document.querySelector('.page-toc');
   const tocContent = toc && document.createElement('div');
