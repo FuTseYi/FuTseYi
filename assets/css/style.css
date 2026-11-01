@@ -108,6 +108,13 @@ html {
     scroll-behavior: auto;
     scroll-padding-top: calc(var(--nav-h) + var(--nav-offset) + 16px);
   }
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:.22s ease-in both fade-out}
+::view-transition-new(root){animation:.26s ease-out both fade-in}
+@keyframes fade-out{to{opacity:0}}
+@keyframes fade-in{from{opacity:0}}
+@media(prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+
 html.is-ready { scroll-behavior: smooth; }
 
 html { overflow-x: clip; }
