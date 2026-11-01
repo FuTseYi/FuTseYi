@@ -16,17 +16,15 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 
 *People can retire, but the spirit cannot retire. - Gundam*
 
-[Recent Blog](https://futseyi.github.io/#recent-blog)
-
 [Email](mailto:hello@futseyi.com) · [GitHub](https://github.com/FuTseYi) · [LinkedIn](https://www.linkedin.com/in/futseyi) · [X](https://x.com/FuTseYi)
 
 <a class="visitor-counter" href="https://visit-counter.futseyi.workers.dev/status?path=https%3A%2F%2Ffutseyi.github.io%2F" target="_blank" rel="noopener noreferrer"><img src="https://visit-counter.futseyi.workers.dev/api/combined?path=https%3A%2F%2Ffutseyi.github.io%2F" alt="Visitor badge"></a>
 
 ## Active In
 
-- [Datawhale](https://github.com/datawhalechina)
-- [HAI-HKUST](https://hai-hkust.github.io/)
-- [UEM Stu](https://uem-stu.github.io/)
+- <img src="https://futseyi.github.io/assets/images/community/community-datawhale.png" alt="" width="32" height="32" /> [Datawhale](https://github.com/datawhalechina)
+- <img src="https://futseyi.github.io/assets/images/community/community-hai-hkust.png" alt="" width="32" height="32" /> [HAI-HKUST](https://hai-hkust.github.io/)
+- <img src="https://futseyi.github.io/assets/images/community/community-uem-stu.png" alt="" width="32" height="32" /> [UEM Stu](https://uem-stu.github.io/)
 
 ## Recent Blog
 
