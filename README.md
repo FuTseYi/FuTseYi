@@ -22,9 +22,9 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 
 ## Active In
 
-- <img src="https://futseyi.github.io/assets/images/community/community-datawhale.png" alt="" width="32" height="32" /> [Datawhale](https://github.com/datawhalechina)
-- <img src="https://futseyi.github.io/assets/images/community/community-hai-hkust.png" alt="" width="32" height="32" /> [HAI-HKUST](https://hai-hkust.github.io/)
-- <img src="https://futseyi.github.io/assets/images/community/community-uem-stu.png" alt="" width="32" height="32" /> [UEM Stu](https://uem-stu.github.io/)
+<p><img src="https://futseyi.github.io/assets/images/community/community-datawhale.png" alt="" width="36" height="36" align="middle" /> <a href="https://github.com/datawhalechina">Datawhale</a></p>
+<p><img src="https://futseyi.github.io/assets/images/community/community-hai-hkust.png" alt="" width="36" height="36" align="middle" /> <a href="https://hai-hkust.github.io/">HAI-HKUST</a></p>
+<p><img src="https://futseyi.github.io/assets/images/community/community-uem-stu.png" alt="" width="36" height="36" align="middle" /> <a href="https://uem-stu.github.io/">UEM Stu</a></p>
 
 ## Recent Blog
 
