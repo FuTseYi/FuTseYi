@@ -9,18 +9,13 @@ from datetime import date
 from html import unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
-from asset_urls import version_assets
+from asset_urls import version_assets, site_url as production_url
 
 ROOT=Path(__file__).resolve().parents[2]
 
 def site_url():
-    repository=os.environ.get("GITHUB_REPOSITORY")
-    if repository:
-        return f"https://{repository.split('/')[0].lower()}.github.io"
-    html=(ROOT/"index.html").read_text(encoding="utf-8")
-    canonical=re.search(r'<link rel="canonical" href="([^"]+)"',html)
-    if not canonical:raise ValueError("index.html: missing canonical URL")
-    return canonical[1].rstrip("/")
+    return production_url(ROOT)
+
 def md(fragment):
     fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',lambda m:"["+re.sub(r"<[^>]*>","",m[2]).strip()+"]("+(site_url()+"/"+m[1] if m[1].startswith("#") else m[1])+")",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<strong>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)

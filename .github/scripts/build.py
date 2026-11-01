@@ -17,12 +17,12 @@ from html import escape, unescape
 from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 import markdown
-from asset_urls import version_assets
+from asset_urls import version_assets, site_url
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
-SITE = "https://futseyi.github.io"
+SITE = site_url(ROOT)
 
 def get_post(path: Path) -> tuple[dict[str, str], str]:
     raw = path.read_text(encoding="utf-8")
@@ -51,7 +51,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
     header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
-    header = header.replace(f'href="{SITE}/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
+    header = header.replace('href="/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
     if url == f"{SITE}/blog/":
         header = header.replace('href="/blog/" class="is-active"', 'href="#main" class="is-active"')
     footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]

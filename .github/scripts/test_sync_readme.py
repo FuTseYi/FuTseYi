@@ -63,11 +63,11 @@ class ReadmeTests(unittest.TestCase):
                 self.assertIn(text, result)
             self.assertNotIn("A revised community description.", result)
 
-    def test_website_urls_follow_repository_owner(self):
+    def test_website_urls_ignore_repository_name(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
             result = sync.render()
-        self.assertIn("**Homepage**: [newowner.github.io](https://newowner.github.io/)", result)
-        self.assertIn("https://newowner.github.io/blog/", result)
+        self.assertIn("**Homepage**: [futseyi.github.io](https://futseyi.github.io/)", result)
+        self.assertIn("https://futseyi.github.io/blog/", result)
 
     def test_local_website_url_follows_canonical(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(sync.os.environ, {}, clear=True):

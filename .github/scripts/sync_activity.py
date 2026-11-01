@@ -9,10 +9,11 @@ from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+from asset_urls import site_url
 
 ROOT = Path(__file__).resolve().parents[2]
 USER = "FuTseYi"
-SITE = "https://futseyi.github.io"
+SITE = site_url(ROOT)
 MAX_REPOSITORIES = 12
 EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
 SNAPSHOT_ERRORS = (URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError)

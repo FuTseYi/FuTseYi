@@ -24,6 +24,16 @@ class PreviewTests(unittest.TestCase):
         (root / "robots.txt").write_text("robots")
         (root / "_site/index.html").write_text("last good build")
 
+    def test_build_only_does_not_bind_preview_port(self):
+        with patch.object(preview.sys, "argv", ["preview.py", "--build-only"]), \
+                patch.object(preview, "ensure_dependencies"), \
+                patch.object(preview, "discard_stale_builds"), \
+                patch.object(preview, "rebuild", return_value=True) as rebuild, \
+                patch.object(preview, "PreviewServer") as server:
+            preview.main()
+        rebuild.assert_called_once_with(initial=True, refresh_activity=False)
+        server.assert_not_called()
+
     def test_failed_build_keeps_last_good_site(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

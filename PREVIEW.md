@@ -20,10 +20,17 @@ The preview serves generated files from `_site/`. A failed rebuild leaves the la
 
 Useful options:
 
-- `--build-only` builds and validates the full site without serving it. The preview port must still be available.
-- `--port 8766` uses a different port if the default is occupied.
+- `--build-only` builds and validates the full site without serving it. No HTTP port is opened.
+- `--refresh-activity` updates public GitHub contribution data during a build (used for production releases).
+- `--port 8766` uses a different port if the default is occupied when serving.
 
 Run only one preview process per checkout. The build and generated files are excluded from Git.
+
+## Portable production builds
+
+Run `python3 preview.py --build-only --refresh-activity` to reproduce the GitHub Pages build locally, or omit `--refresh-activity` to reuse the latest available activity snapshot. GitHub Pages and Vercel both publish the resulting `_site/` directory; generated output is not committed.
+
+The homepage canonical URL in `index.html` is the production origin for generated blog pages, sitemap, robots sitemap declaration, README links and site validation. Internal navigation uses root-relative paths. A future custom domain or renamed/private source repository does not require changing the core generators; hosting access, DNS, and optional cross-repository README permissions are deployment settings.
 
 ## PR preview deployment
 

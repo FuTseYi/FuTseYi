@@ -28,28 +28,10 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Verify preview, README, and public activity helpers
         run: python -m unittest discover -s .github/scripts -p 'test_*.py' -v
-      - name: Build Blog archive
-        run: python .github/scripts/build.py
-      - name: Prepare site
-        run: |
-          mkdir -p _site
-          cp index.html robots.txt sitemap.xml _site/
-          cp -r assets blog _site/
-          touch _site/.nojekyll
-          test -s _site/index.html
-          test -s _site/blog/index.html
-          test -s _site/blog/posts.json
-          test -s _site/sitemap.xml
-      - name: Render latest posts on homepage
-        run: python .github/scripts/sync_readme.py --update-site
-      - name: Render public contributions
+      - name: Build and verify complete website
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python .github/scripts/sync_activity.py --refresh
-      - name: Index articles for search
-        run: python -m pagefind --site _site --force-language zh
-      - name: Verify local links, blog pages and sitemap
-        run: python .github/scripts/verify.py
+        run: python preview.py --build-only --refresh-activity
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
