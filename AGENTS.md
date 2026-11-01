@@ -1,43 +1,62 @@
-# Repository guide
+# Repository Guide
 
-A personal website built with HTML, CSS, JavaScript, and a Python-generated Blog.
+A lightweight personal website built with HTML, CSS, JavaScript, and a Python-generated blog, deployed through GitHub Pages.
 
-**Principle:** Every line of code should justify its existence. Prefer the simplest maintainable solution that preserves behavior.
+**Core principle: Every line of code should justify its existence.**
 
-## Getting oriented
+Treat the repository as one coherent, evolving system. Prioritize architectural integrity, consistent design, simplicity, performance, and long-term maintainability over isolated optimizations or minimal diffs.
 
-- Start with the relevant source files, existing tests, and [PREVIEW.md](PREVIEW.md) when build or preview behavior matters. Check the implementation rather than assuming this guide is exhaustive.
-- Trace a feature through its source, generated output, and workflow before changing it. Follow existing patterns instead of introducing a parallel implementation.
+## Project Structure
 
-## Project map
+- `index.html`: Homepage content and shared header/footer for generated blog pages.
+- `assets/css/style.css`: Shared styles, responsive layouts, and themes.
+- `assets/js/site.js`: Navigation, theme switching, search, and page interactions.
+- `assets/js/atmosphere.js`: WebGL background animation and reduced-motion support.
+- `posts/<slug>/index.md`: Blog sources, with article assets stored alongside each post.
+- `.github/scripts/`: Site generation, README and activity synchronization, verification, and tests.
+- `.github/workflows/`: Deployment, pull request validation, and Profile README synchronization.
+- `preview.py`: Local build and preview entry point.
+- `PREVIEW.md`: Local development and article publishing instructions.
 
-- `index.html`: homepage content and the shared header/footer used by generated Blog pages. Relative local assets allow direct-file viewing.
-- `assets/css/style.css`: shared layout, responsive styles, and theme colors.
-- `assets/js/site.js`: navigation, theme switching, search, and page interactions.
-- `assets/js/atmosphere.js`: shared WebGL background, with light/dark rendering and reduced-motion support.
-- `posts/<slug>/index.md`: Blog sources. `title` and `date` are required; `tags` is optional. Assets live alongside each post.
-- `.github/scripts/build.py`: generates `blog/` and `sitemap.xml` from posts and the homepage template.
-- `.github/scripts/sync_readme.py`: derives the website/Profile READMEs and injects recent posts into the deployed homepage. Edit `index.html` or post sources, not generated README content.
-- `.github/scripts/sync_activity.py`: renders public GitHub activity into the deployed homepage; uses the previous snapshot when refresh fails.
-- `preview.py` and `PREVIEW.md`: local development; `.github/scripts/verify.py` and `test_*.py`: build checks and tests; `.github/workflows/`: PR validation, deployment, and Profile sync.
+Generated outputs, including `blog/`, `_site/`, `sitemap.xml`, and activity snapshots, must not be committed.
 
-## Working on changes
+## Engineering Principles
 
-- Fix the cause of a demonstrated problem. Prefer removing, consolidating, or reusing code over adding dependencies, abstractions, speculative fallbacks, or patch-on-patch fixes.
-- Keep changes focused and reviewable. Preserve existing content, design, interactions, accessibility, and cross-platform behavior unless the task requires changing them.
-- Retain necessary error handling and accessibility behavior; do not remove safeguards merely to shorten the code.
-- Keep public content factual. Do not add private contact details or inferred credentials; the public email is `hello@futseyi.com`.
-- Do not commit generated `blog/`, `_site/`, `sitemap.xml`, or activity snapshots. When creating Git trees via API, use the current commit's base tree.
+- Understand the relevant architecture, dependencies, design patterns, and existing behavior before making changes.
+- Approach each task from a system-wide perspective. Maintain consistency across related components, pages, interactions, and workflows.
+- Address root causes rather than accumulating patches, overrides, special cases, or compensating logic.
+- Reconsider and restructure existing implementations when necessary. Do not preserve an inadequate design merely to minimize the diff.
+- Favor cohesive solutions, clear responsibilities, appropriate reuse, and the simplest effective implementation.
+- Consolidate duplicated logic and remove obsolete code, unused dependencies, and superseded implementations when making related changes.
+- Avoid unnecessary abstractions, speculative safeguards, premature optimization, and complexity without demonstrated value.
+- Keep changes focused on the intended objective without sacrificing architectural integrity or introducing unrelated refactoring.
+- Preserve established functionality, visual consistency, accessibility, compatibility, and user experience unless the task explicitly requires otherwise.
+- Ensure each change leaves the affected system at least as coherent, efficient, and maintainable as before.
+
+## Change Management
+
+- Use pull requests for significant engineering changes that benefit from independent review, validation, or a lasting record of technical decisions.
+- Use direct commits for routine, low-risk maintenance and content updates when repository permissions and protection rules allow.
+- Organize changes by coherent engineering objectives rather than arbitrary implementation steps.
+- Keep commits meaningful and reviewable. Avoid redundant pull requests, fragmented history, and unnecessary procedural overhead.
+- Follow explicit task instructions and repository rules when choosing, merging, or publishing changes.
+- Do not rewrite shared history or remove existing work without explicit authorization.
 
 ## Verification
 
-- For a homepage-only visual check, open `index.html` directly. For the complete site, use `python3 preview.py` (Windows: `py -3 preview.py`).
-- Run `python -m unittest discover -s .github/scripts -p 'test_*.py' -v` for script changes. Run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`) when changing pages, assets, generation, or deployment behavior.
-- Check affected responsive, light/dark, keyboard, and no-JavaScript behavior when relevant. A successful build does not prove browser rendering is correct.
-- Report what changed, which checks ran, and what remains unverified. Do not claim a test or browser check passed unless it was performed.
+- Match verification to the scope and risk of each change.
+- Review affected code paths and run relevant existing tests before considering a change complete.
+- For Python script changes, run `python -m unittest discover -s .github/scripts -p 'test_*.py' -v`.
+- For site, asset, generation, or deployment changes, run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
+- Verify responsive layouts, light/dark themes, accessibility, browser behavior, and reduced-motion support when relevant.
+- Confirm that obsolete code and redundant implementations have not been left behind.
+- Do not claim successful verification without running the corresponding checks. Clearly report any limitations or unverified behavior.
 
-## Documentation upkeep
+## Documentation and Content
 
-- Treat code and workflows as the source of truth. When architecture, ownership, dependencies, commands, or publishing behavior change, update the relevant documentation in the same change.
-- Keep this file as a concise entry point. Put detailed preview and publishing instructions in `PREVIEW.md`; avoid copying existing code or documentation into agent instructions.
-- Correct outdated guidance when encountered, but do not rewrite unrelated documents for routine fixes, content edits, or stylistic preferences.
+- Treat the implementation and workflows as the source of truth.
+- Update relevant documentation when architecture, dependencies, commands, or publishing behavior changes.
+- Maintain the existing homepage-to-README synchronization model. Modify source content rather than generated README sections.
+- Keep public content factual. Do not introduce private information, inferred credentials, or unsupported claims.
+- Keep `AGENTS.md` concise and limited to durable repository-wide guidance. Refer to existing documentation instead of duplicating it.
+- Avoid unrelated documentation rewrites or cosmetic changes that provide no practical improvement.
