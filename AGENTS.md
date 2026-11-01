@@ -39,11 +39,14 @@ Generated outputs, including `blog/`, `_site/`, `sitemap.xml`, and activity snap
 - Use direct commits for routine, low-risk maintenance and content updates when repository permissions and protection rules allow.
 - Organize changes by coherent engineering objectives rather than arbitrary implementation steps.
 - Keep commits meaningful and reviewable. Avoid redundant pull requests, fragmented history, and unnecessary procedural overhead.
+- Prefer testing coherent changes before pushing; clean up temporary branches after merged PRs while retaining PR history.
 - Follow explicit task instructions and repository rules when choosing, merging, or publishing changes.
 - Do not rewrite shared history or remove existing work without explicit authorization.
 
 ## Verification
 
+- Keep core site generation portable across repository names, visibility settings, domains, and static hosts. Treat deployment credentials and platform-specific settings as adapters, not build inputs.
+- Reuse the same verified build entry point for local development, PR previews, and production.
 - Match verification to the scope and risk of each change.
 - Review affected code paths and run relevant existing tests before considering a change complete.
 - For Python script changes, run `python -m unittest discover -s .github/scripts -p 'test_*.py' -v`.

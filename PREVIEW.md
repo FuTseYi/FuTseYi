@@ -34,7 +34,7 @@ The homepage canonical URL in `index.html` is the production origin for generate
 
 ## PR preview deployment
 
-Vercel uses `vercel.json` to build `_site/` for GitHub pull requests; the `main` branch is not deployed there. Its isolated build installs the same `requirements.txt` dependencies using uv without requiring the host Python's `ensurepip`. The resulting preview is marked `noindex`. GitHub Pages remains the production host.
+Vercel uses `vercel.json` to build `_site/` for GitHub pull requests; the `main` branch is not deployed there. Its isolated build installs the same `requirements.txt` dependencies using a version-pinned uv installer without requiring the host Python's `ensurepip`. The resulting preview is marked `noindex`. GitHub Pages remains the production host.
 
 ## Publishing an article
 
