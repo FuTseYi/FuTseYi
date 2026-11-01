@@ -30,7 +30,7 @@ class ReadmeTests(unittest.TestCase):
                      *home["quotes"], *home["links"]]:
             self.assertIn(text, result)
         for title, image in home["communities"]:
-            self.assertIn(title, result)
+            self.assertIn(sync.community_row(title, image, sync.site_url()), result)
             self.assertIn(f'<img src="{sync.site_url()}/{image}" alt="" width="36" height="36" align="middle" />', result)
         for label in ("**Focus:**", "**Lang:**", "**Motto:**"):
             self.assertIn(label, result)
