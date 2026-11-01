@@ -72,7 +72,7 @@ def read_post_entries(limit=3):
 def community_row(title,image,site):
     match=re.fullmatch(r'\[(.*?)\]\((.*?)\)',title)
     if not match:raise ValueError("Invalid community link")
-    return f'<p><img src="{image if image.startswith("https://") else site + "/" + image}" alt="" width="36" height="36" align="middle" /> <a href="{match[2]}">{match[1]}</a></p>'
+    return f'<tr><td width="48" valign="middle"><img src="{image if image.startswith("https://") else site + "/" + image}" alt="" width="36" height="36"></td><td valign="middle"><a href="{match[2]}">{match[1]}</a></td></tr>'
 
 def render():
     home=read_home()
@@ -89,7 +89,7 @@ def render():
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
       +'## Active In\n\n'
-      +'\n'.join(community_row(title,image,site) for title,image in home["communities"])+'\n\n'
+      +'<table>\n'+'\n'.join(community_row(title,image,site) for title,image in home["communities"])+'\n</table>\n\n'
       +'## Recent Blog\n\n'
       +('\n'.join(f'- [{title}]({site}/blog/{slug}/)' for _,slug,title in posts)
          if posts else 'No published articles yet.')+'\n\n'
