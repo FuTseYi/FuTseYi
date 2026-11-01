@@ -11,6 +11,12 @@
   document.body.prepend(layer);
   const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, powerPreference: 'low-power' });
   if (!gl) { layer.remove(); return; }
+  // One seed per page load; a numeric query parameter allows reproducible previews.
+  const seedParam = new URLSearchParams(location.search).get('atmosphere-seed');
+  const parsedSeed = seedParam === null ? NaN : Number(seedParam);
+  const seedValue = Number.isFinite(parsedSeed) ? parsedSeed >>> 0 : crypto.getRandomValues(new Uint32Array(1))[0];
+  const seeded = Math.imul(seedValue ^ (seedValue >>> 16), 0x85ebca6b) >>> 0;
+  const offset = [seedValue / 4294967295 * 3.8 - 1.9, seeded / 4294967295 * 3.8 - 1.9];
   const shaders = [];
   const compile = (type, source) => {
     const shader = gl.createShader(type);
@@ -28,6 +34,7 @@
     uniform float time;
     uniform float dark;
     uniform float touch;
+    uniform vec2 seed;
     out vec4 pixel;
     vec3 mod289(vec3 x) {
       return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -105,12 +112,16 @@
     void main(){
       vec2 uv=gl_FragCoord.xy/resolution;
       float aspect=resolution.x/resolution.y;
-      vec2 p=vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48);
+      vec2 p=vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)+seed;
+      // Slow, continuous large-scale deformation; no per-frame random jumps.
+      float evolution=noise(vec3(p*.36,time*.008+seed.x));
+      p+=vec2(evolution,-evolution)*.16;
       float base=noise(vec3(p*.8,0.)+travel(3900.,.0068,true));
       vec2 slope=vec2(noise(vec3((p+vec2(.02,0.))*.8,0.)+travel(3900.,.0068,true))-base,
         noise(vec3((p+vec2(0.,.02))*.8,0.)+travel(3900.,.0068,true))-base)/.02;
       p+=vec2(-slope.y,slope.x)*.036;
       float flow=field(p);
+      flow+=evolution*.11;
       float cloud=noise(vec3(p*.8+flow*1.5,0.)+travel(4200.,.00595,false))*.5+.5;
       float blue=smoothstep(.35,.65,flow*.5+.5+cloud*.25);
       float mist=smoothstep(.6,.85,cloud)*.55;
@@ -153,7 +164,8 @@
   const position = gl.getAttribLocation(program, 'position');
   gl.enableVertexAttribArray(position);
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const uniforms = Object.fromEntries(['resolution','time','dark','touch'].map(name => [name, gl.getUniformLocation(program, name)]));
+  const uniforms = Object.fromEntries(['resolution','time','dark','touch','seed'].map(name => [name, gl.getUniformLocation(program, name)]));
+  gl.uniform2f(uniforms.seed, offset[0], offset[1]);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const system = matchMedia('(prefers-color-scheme: dark)');
   const coarse = matchMedia('(pointer: coarse)');
