@@ -14,6 +14,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Install build dependencies
+        run: python -m pip install -r requirements.txt
       - name: Check preview, README, and activity helpers
         run: python -m unittest discover -s .github/scripts -p 'test_*.py' -v
       - name: Build and verify complete website
@@ -26,6 +28,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Install build dependencies
+        run: python -m pip install -r requirements.txt
       - name: Build website
         run: python preview.py --build-only
       - name: Install Chromium browser test tools

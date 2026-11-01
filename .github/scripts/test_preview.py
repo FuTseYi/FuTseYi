@@ -83,7 +83,7 @@ class PreviewTests(unittest.TestCase):
     def test_installed_dependencies_need_no_setup(self):
         with patch.object(preview.sys, "prefix", "venv"), \
                 patch.object(preview.sys, "base_prefix", "system"), \
-                patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2", "Pygments": "2.19.2"}.get), \
+                patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2", "Pygments": "2.19.2", "packaging": "25.0"}.get), \
                 patch.object(preview.subprocess, "run") as install:
             preview.ensure_dependencies()
         install.assert_not_called()
@@ -138,15 +138,15 @@ class PreviewTests(unittest.TestCase):
             self.assertTrue((root / ".previews-kept").exists())
 
     def test_unusable_dependency_metadata_counts_as_missing(self):
-        with patch.object(preview, "version", side_effect={"Markdown": "not-a-version", "pagefind": "1.5.2", "Pygments": "2.19.2"}.get):
+        with patch.object(preview, "version", side_effect={"Markdown": "not-a-version", "pagefind": "1.5.2", "Pygments": "2.19.2", "packaging": "25.0"}.get):
             self.assertFalse(preview.dependencies_valid())
-        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.4.0", "Pygments": "2.19.2"}.get):
+        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.4.0", "Pygments": "2.19.2", "packaging": "25.0"}.get):
             self.assertFalse(preview.dependencies_valid())
-        with patch.object(preview, "version", side_effect={"Markdown": "4.0.0", "pagefind": "1.5.2", "Pygments": "2.19.2"}.get):
+        with patch.object(preview, "version", side_effect={"Markdown": "4.0.0", "pagefind": "1.5.2", "Pygments": "2.19.2", "packaging": "25.0"}.get):
             self.assertFalse(preview.dependencies_valid())
 
     def test_pygments_version_is_checked(self):
-        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2", "Pygments": "2.16.0"}.get):
+        with patch.object(preview, "version", side_effect={"Markdown": "3.10.3", "pagefind": "1.5.2", "Pygments": "2.16.0", "packaging": "25.0"}.get):
             self.assertFalse(preview.dependencies_valid())
 
     def test_missing_dependencies_bootstrap_platform_specific_environment(self):

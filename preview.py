@@ -270,21 +270,15 @@ def watch(previous):
 
 
 def dependencies_valid():
-    """Check the installed packages against the shared requirements file."""
+    """Check installed distributions against the shared PEP 508 requirements."""
     try:
-        for requirement in REQUIREMENTS:
-            match = re.fullmatch(r"([a-zA-Z0-9_-]+)(?:\[[^]]+\])?((?:[<>=]+[0-9.]+)(?:,[<>=]+[0-9.]+)*)", requirement)
-            if not match:
-                raise ValueError(f"Unsupported requirement: {requirement}")
-            installed = tuple(int(part) for part in version(match[1]).split(".")[:3])
-            for operator, value in re.findall(r"(>=|<=|==|>|<)([0-9.]+)", match[2]):
-                expected = tuple(int(part) for part in value.split("."))
-                left, right = (installed + (0, 0, 0))[:3], (expected + (0, 0, 0))[:3]
-                if not {"==": left == right, ">=": left >= right, "<=": left <= right,
-                        ">": left > right, "<": left < right}[operator]:
-                    return False
+        from packaging.requirements import Requirement
+        for entry in REQUIREMENTS:
+            requirement = Requirement(entry)
+            if not requirement.specifier.contains(version(requirement.name)):
+                return False
         return True
-    except (PackageNotFoundError, ValueError):
+    except (ImportError, PackageNotFoundError, ValueError, TypeError):
         return False
 
 
