@@ -100,51 +100,67 @@
       float angle=time*6.2831853/period;
       return vec2(sin(angle),1.-cos(angle))*speed*period/6.2831853;
     }
-    vec3 travel(float period,float speed,bool sideways){
-      vec2 offset=drift(period,speed);
-      return sideways?vec3(0.,offset.y,offset.x):vec3(offset.y,0.,offset.x);
-    }
-    float field(vec2 p){
-      vec2 a=vec2(noise(vec3(p*.6,0.)+travel(3000.,.0102,false)),noise(vec3(p*.6+5.2,1.3)+travel(3000.,.0102,true)))*.36;
-      vec2 b=vec2(noise(vec3((p+a)*.7+1.7,3.1)+travel(3300.,.0085,false)),noise(vec3((p+a)*.7+9.2,5.7)+travel(3300.,.0085,true)))*.3;
-      return noise(vec3((p+a+b)*.5,0.)+travel(3900.,.0068,false))*.6;
+    // Soft directional envelopes share one turbulent field rather than three render passes.
+    float plume(vec2 p,vec2 origin,vec2 direction,float width,float reach){
+      vec2 delta=p-origin;
+      float along=dot(delta,direction);
+      float across=abs(dot(delta,vec2(-direction.y,direction.x)));
+      float spread=width+max(along,0.)*.24;
+      float body=1.-smoothstep(spread*.48,spread*1.65,across);
+      float head=smoothstep(-.2,.18,along);
+      float tail=1.-smoothstep(reach*.55,reach,along);
+      return body*head*tail;
     }
     void main(){
       vec2 uv=gl_FragCoord.xy/resolution;
       float aspect=resolution.x/resolution.y;
-      vec2 p=vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)+seed;
-      // Slow, continuous large-scale deformation; no per-frame random jumps.
-      float evolution=noise(vec3(p*.36,time*.008+seed.x));
-      p+=vec2(evolution,-evolution)*.16;
-      float base=noise(vec3(p*.8,0.)+travel(3900.,.0068,true));
-      vec2 slope=vec2(noise(vec3((p+vec2(.02,0.))*.8,0.)+travel(3900.,.0068,true))-base,
-        noise(vec3((p+vec2(0.,.02))*.8,0.)+travel(3900.,.0068,true))-base)/.02;
-      p+=vec2(-slope.y,slope.x)*.036;
-      float flow=field(p);
-      flow+=evolution*.11;
-      float cloud=noise(vec3(p*.8+flow*1.5,0.)+travel(4200.,.00595,false))*.5+.5;
-      float blue=smoothstep(.35,.65,flow*.5+.5+cloud*.25);
-      float mist=smoothstep(.6,.85,cloud)*.55;
-      vec3 col=mix(vec3(0.),vec3(32.,74.,126.)/255.,blue);
-      col=mix(col,vec3(206.,200.,187.)/255.,mist);
-      col*=1.-smoothstep(.5,.8,(flow*.5+.5)*cloud)*.35;
-      float brightness=dot(col,vec3(.299,.587,.114));
-      col+=(col*.85+vec3(.15,.145,.13))*smoothstep(.43,.79,brightness)*.4;
-      float distanceToLight=length((uv-vec2(.89,.46))*vec2(aspect,1.));
-      col+=(vec3(1.,.97,.9)*exp(-distanceToLight*distanceToLight*4.5)*.14+
-        vec3(.72,.8,1.)*exp(-distanceToLight*1.8)*.2)*(1.-touch);
-      col*=1.-.38*smoothstep(.35,.75,length(uv-.5));
-      vec2 grainCell=floor((uv*resolution+(p-(vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)))*resolution.y)/5.);
-      vec3 seed=fract(vec3(grainCell.xyx)*.1031);
-      seed+=dot(seed,seed.yzx+33.33);
-      float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
-      // Both themes share the same moving field; only the color mapping differs.
-      float ribbon=smoothstep(.32,.78,cloud);
-      float left=exp(-pow((uv.x-.17)*2.4,2.))*(.25+.75*ribbon);
-      float right=exp(-pow((uv.x-.81)*2.1,2.))*(.3+.7*smoothstep(.25,.75,flow*.5+.5));
-      float tint=clamp((left*.38+right*.48)*smoothstep(0.,.55,uv.y),0.,.58);
-      vec3 paper=mix(vec3(1.),vec3(.65,.83,1.),tint);
-      pixel=vec4(mix(paper,col+grain*.005,dark),1.);
+      vec2 pos=vec2(uv.x*aspect,uv.y);
+      vec2 p=pos*1.15+seed*.31;
+      float phase=time*.017;
+      // Shared, continuous domain warp keeps opposed currents connected.
+      vec2 warp=vec2(
+        noise(vec3(p*.73,phase)),
+        noise(vec3(p*.73+vec2(9.1,3.7),phase*.83))
+      );
+      vec2 fine=vec2(
+        noise(vec3(p*1.55+warp*.35,phase*.67+4.)),
+        noise(vec3(p*1.55+warp*.35+vec2(4.7,8.2),phase*.71))
+      );
+      vec2 swept=pos+(warp*.105+fine*.037);
+      vec2 a=normalize(vec2(-.83,-.55));
+      vec2 b=normalize(vec2(.85,.53));
+      vec2 c=normalize(vec2(.55,-.83));
+      float high=plume(swept,vec2(aspect*1.04,.94),a,.20,.98);
+      float low=plume(swept,vec2(-aspect*.08,.03),b,.23,1.05);
+      float side=plume(swept,vec2(aspect*.18,1.13),c,.12,.73);
+      float opposing=max(high,low*.88);
+      float sources=max(opposing,side*.52);
+      // Compression and shear at the meeting point create depth, not flat additive glow.
+      float collision=min(high,low);
+      float turbulence=noise(vec3(p*2.05+warp*.64+fine*.18,phase*.59+7.))*.5+.5;
+      float broad=noise(vec3(p*.85+warp*.2,phase*.31+2.))*.5+.5;
+      float density=clamp(sources*(.48+.53*broad+.39*turbulence)+collision*.22,0.,1.);
+      float ridge=smoothstep(.46,.79,turbulence)*sources;
+      float core=smoothstep(.48,.9,density);
+      float shadow=collision*(1.-turbulence)*.24;
+      // Shared density and lighting, with separate dark/light color ramps.
+      vec3 darkBase=vec3(.012,.026,.058);
+      vec3 darkBody=vec3(.085,.22,.42);
+      vec3 darkLight=vec3(.47,.69,.87);
+      vec3 night=mix(darkBase,darkBody,smoothstep(.08,.68,density));
+      night=mix(night,darkLight,clamp(core*.62+ridge*.24,0.,.75));
+      night*=1.-shadow;
+      vec3 dayBase=vec3(.995,.998,1.);
+      vec3 dayBody=vec3(.69,.82,.96);
+      vec3 dayLight=vec3(.32,.56,.79);
+      vec3 daylight=mix(dayBase,dayBody,smoothstep(.09,.79,density)*.75);
+      daylight=mix(daylight,dayLight,clamp(core*.19+ridge*.07,0.,.22));
+      daylight=mix(daylight,dayBase,collision*.18);
+      // Preserve negative space and the site's existing soft vertical fade.
+      float fade=1.-smoothstep(.64,1.,1.-uv.y);
+      night=mix(darkBase,night,fade);
+      daylight=mix(dayBase,daylight,fade);
+      pixel=vec4(mix(daylight,night,dark),1.);
     }`);
   const program = gl.createProgram();
   const buffer = gl.createBuffer();
