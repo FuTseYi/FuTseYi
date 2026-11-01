@@ -117,7 +117,7 @@ def update_site():
     posts=read_post_entries(limit=None)
     for dt,slug,title in posts[:3]:
         url=f"{SITE}/blog/{slug}/"
-        entries.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time><div><h3><a href="{html_escape(url,quote=True)}">{html_escape(title)} <span class="link-arrow" aria-hidden="true"></span></a></h3></div></article>')
+        entries.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time><div><h3><a href="{html_escape(url,quote=True)}"><span class="link-label">{html_escape(title[:-2])}<span class="title-tail">{html_escape(title[-2:])}&nbsp;<span class="link-arrow" aria-hidden="true"></span></span></span></a></h3></div></article>')
     content='<div class="project-list" id="latest-posts">'+"".join(entries)+'</div>'
     if len(posts)>3 or not posts:
         label="View all articles" if posts else "Browse recent articles"

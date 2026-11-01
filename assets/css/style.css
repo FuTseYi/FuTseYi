@@ -101,6 +101,8 @@
 
 * { margin: 0; padding: 0; }
 *,*::before,*::after{box-sizing:border-box}
+/* Suppress browser tap flashes without changing authored interaction states. */
+a,button,summary,[role="button"]{-webkit-tap-highlight-color:transparent}
 
 html {
     scroll-behavior: auto;
@@ -548,6 +550,7 @@ section.section { padding: 38px 0; }
 #recent-blog .project-item{grid-template-columns:minmax(0,1fr) auto;column-gap:32px}
 #recent-blog .contribution-date{grid-column:2;grid-row:1}
 #recent-blog .project-item > div{grid-column:1;grid-row:1}
+#recent-blog .project-item h3 a{background-image:none}
 .contribution-date{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
 #contributions .project-tags{margin-top:5px;gap:8px}
 .project-item[hidden]{display:none}
@@ -698,8 +701,10 @@ section.section { padding: 32px 0; }
 .article-toc-inline summary::-webkit-details-marker{display:none}
 .article-toc-inline summary::after{content:"";width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);transition:transform .24s ease}
 .article-toc-inline[open] summary::after{transform:rotate(225deg)}
-.article-toc-inline summary:is(:hover,:focus-visible),.article-toc-inline[open] summary{color:var(--gold-ink)}
-.article-toc-inline nav{display:flex;flex-direction:column;gap:0;max-height:50vh;overflow-y:auto;padding:8px 6px 18px;animation:toc-reveal .24s ease both}
+.article-toc-inline summary:is(:hover,:focus-visible),.article-toc-inline[open] summary,.article-toc-inline nav a:is(:hover,:focus-visible){color:var(--gold-ink)}
+.article-toc-inline nav{display:flex;flex-direction:column;gap:0;max-height:50vh;overflow-y:auto;scrollbar-width:none;padding:8px 6px 12px;animation:toc-reveal .24s ease both}
+.article-toc-inline nav::-webkit-scrollbar{display:none}
+.article-toc-inline .scroll-hint{margin-bottom:8px}
 .article-toc-inline nav a{display:block;padding:12px 6px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .article-toc-inline nav a:last-child{border:0}
 .article-toc-inline nav .toc-level-2{padding-left:20px}
@@ -880,9 +885,9 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
     background-position:left calc(100% - var(--underline-offset,0px));
     background-size:var(--underline-width) 1.5px;
     -webkit-box-decoration-break:clone;box-decoration-break:clone;
-    transition:background-size .25s cubic-bezier(.2,.7,.3,1),color .2s;
+    transition:background-size .48s cubic-bezier(.22,1,.36,1),color .3s ease;
   }
-:where(a:not(:has(img),.blog-entry,.post-neighbor,.page-toc a,#search-results li a),.theme-control,.list-toggle,.search-open):is(:hover,:focus-visible),:is(.education-list .education-item,.project-item):is(:hover,:focus-within) a,.blog-entry:is(:hover,:focus-visible) .link-label,#search-results li a:is(:hover,:focus-visible) .link-label,.post-neighbor:is(:hover,:focus-visible) strong{
+:where(a:not(:has(img),.blog-entry,.post-neighbor,.page-toc a,#search-results li a),.theme-control,.list-toggle,.search-open):is(:hover,:focus-visible),:is(.education-list .education-item,.project-item):is(:hover,:focus-within) a,:is(.education-list .education-item,.project-item):is(:hover,:focus-within) .link-label,.blog-entry:is(:hover,:focus-visible) .link-label,#search-results li a:is(:hover,:focus-visible) .link-label,.post-neighbor:is(:hover,:focus-visible) strong{
     --underline-width:100%;
   }
 .nav-links a,.theme-control{--underline-offset:2px}
