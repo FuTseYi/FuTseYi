@@ -58,6 +58,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     footer = footer.replace('href="#about"', 'href="#main"')
     css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
     theme_init = re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0]
+    year_font = '<link rel="preload" href="/assets/fonts/bodoni-moda-numerals.ttf" as="font" type="font/ttf" crossorigin>\n' if url == f"{SITE}/blog/" else ""
     scripts = '\n'.join(f'<script src="/{src}" defer></script>' for src in re.findall(r'<script src="([^"]+)"', home))
 
     return f"""<!doctype html>
@@ -71,7 +72,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/assets/icons/site.webmanifest">
 <link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
-{theme_init}
+{year_font}{theme_init}
 <link rel="stylesheet" href="{css}">{scripts}
 </head>
 <body class="{body_class}">
