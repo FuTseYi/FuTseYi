@@ -16,6 +16,7 @@
   <link rel="preload" href="assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
   <script data-theme-init>
     (() => {
+      document.documentElement.classList.add('js');
       let theme = 'system';
       try { theme = localStorage.getItem('site-theme') || 'system'; } catch {}
       if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
