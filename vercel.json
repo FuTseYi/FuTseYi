@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && $HOME/.local/bin/uv run --no-project --with-requirements requirements.txt python3 preview.py --build-only",
+  "outputDirectory": "_site",
+  "framework": null,
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ]
+}

@@ -20,12 +20,8 @@ import unicodedata
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
 SERVING_LOCK = RLock()
-MARKDOWN_MIN, MARKDOWN_MAX = (3, 7), (4, 0)
-PAGEFIND_VERSION = "1.5.2"
-PYGMENTS_MIN, PYGMENTS_MAX = (2, 17), (3, 0)
-REQUIREMENTS = (f"Markdown>={MARKDOWN_MIN[0]}.{MARKDOWN_MIN[1]},<{MARKDOWN_MAX[0]}.{MARKDOWN_MAX[1]}",
-                f"pagefind[extended]=={PAGEFIND_VERSION}",
-                f"Pygments>={PYGMENTS_MIN[0]}.{PYGMENTS_MIN[1]},<{PYGMENTS_MAX[0]}")
+REQUIREMENTS = tuple(line.strip() for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
+                     if line.strip() and not line.lstrip().startswith("#"))
 CHECK_FLAG = "--check-dependencies"
 # Summarize routine build output; retain unrecognized messages.
 SUMMARY_RULES = (
@@ -215,7 +211,7 @@ def build():
 
 
 def source_state():
-    files = [ROOT / "index.html", ROOT / "robots.txt"]
+    files = [ROOT / "index.html", ROOT / "robots.txt", ROOT / "requirements.txt"]
     for folder, pattern in (("posts", "*"), ("assets", "*"), (".github/scripts", "*.py")):
         files.extend((ROOT / folder).rglob(pattern))
     state = {}
@@ -269,12 +265,20 @@ def watch(previous):
 
 
 def dependencies_valid():
+    """Check the installed packages against the shared requirements file."""
     try:
-        markdown = tuple(int(part) for part in version("Markdown").split(".")[:2])
-        pygments = tuple(int(part) for part in version("Pygments").split(".")[:2])
-        return (MARKDOWN_MIN <= markdown < MARKDOWN_MAX
-                and PYGMENTS_MIN <= pygments < PYGMENTS_MAX
-                and version("pagefind") == PAGEFIND_VERSION)
+        for requirement in REQUIREMENTS:
+            match = re.fullmatch(r"([a-zA-Z0-9_-]+)(?:\[[^]]+\])?((?:[<>=]+[0-9.]+)(?:,[<>=]+[0-9.]+)*)", requirement)
+            if not match:
+                raise ValueError(f"Unsupported requirement: {requirement}")
+            installed = tuple(int(part) for part in version(match[1]).split(".")[:3])
+            for operator, value in re.findall(r"(>=|<=|==|>|<)([0-9.]+)", match[2]):
+                expected = tuple(int(part) for part in value.split("."))
+                left, right = (installed + (0, 0, 0))[:3], (expected + (0, 0, 0))[:3]
+                if not {"==": left == right, ">=": left >= right, "<=": left <= right,
+                        ">": left > right, "<": left < right}[operator]:
+                    return False
+        return True
     except (PackageNotFoundError, ValueError):
         return False
 
@@ -290,6 +294,8 @@ def dependencies_ready(interpreter):
 
 def ensure_dependencies():
     current = Path(sys.executable)
+    if dependencies_ready(current):
+        return
     if sys.prefix != sys.base_prefix:
         interpreter = current
     else:
@@ -300,7 +306,7 @@ def ensure_dependencies():
             venv.EnvBuilder(with_pip=True).create(environment)
     if not dependencies_ready(interpreter):
         print("Installing preview build dependencies...", flush=True)
-        subprocess.run([str(interpreter), "-m", "pip", "install", *REQUIREMENTS], check=True)
+        subprocess.run([str(interpreter), "-m", "pip", "install", "-r", str(ROOT / "requirements.txt")], check=True)
     if interpreter != current:
         # Restart inside the environment that now has the build dependencies.
         raise SystemExit(subprocess.call([str(interpreter), str(Path(__file__).resolve()), *sys.argv[1:]], cwd=ROOT))

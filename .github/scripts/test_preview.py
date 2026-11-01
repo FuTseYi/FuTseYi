@@ -159,7 +159,7 @@ class PreviewTests(unittest.TestCase):
                                  [str(interpreter), str(Path(preview.__file__).resolve()), preview.CHECK_FLAG])
                 pip_calls = [call for call in install.call_args_list if "pip" in call.args[0]]
                 self.assertEqual(len(pip_calls), 1)
-                self.assertEqual(pip_calls[0].args[0], [str(interpreter), "-m", "pip", "install", *preview.REQUIREMENTS])
+                self.assertEqual(pip_calls[0].args[0], [str(interpreter), "-m", "pip", "install", "-r", str(Path(directory) / "requirements.txt")])
                 self.assertEqual(restart.call_args.args[0][-2:], ["--port", "8766"])
 
     def test_source_changes_include_additions_deletions_but_not_outputs(self):

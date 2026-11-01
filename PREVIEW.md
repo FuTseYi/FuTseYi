@@ -14,7 +14,7 @@ python3 preview.py
 
 Open <http://127.0.0.1:8765/> for the homepage or <http://127.0.0.1:8765/blog/> for the Blog. The preview builds the site, indexes search, checks links, and watches for changes. Refresh the browser after each successful rebuild; stop with Ctrl+C.
 
-On first use, the script installs `Markdown>=3.7,<4`, `pagefind[extended]==1.5.2`, and `Pygments>=2.17,<3` in a project-local `.venv` (or an already active virtual environment). Internet access and Python's `venv`/`pip` support are required. It does not install packages into the system Python.
+Build dependencies are declared in `requirements.txt`. On first use, the script installs them in a project-local `.venv` (or an already active virtual environment). When the current interpreter already satisfies the requirements, no virtual environment is created. Internet access and Python's `venv`/`pip` support are required. It does not install packages into the system Python.
 
 The preview serves generated files from `_site/`. A failed rebuild leaves the last working preview available. Local links are adjusted only in the temporary build; repository source files are unchanged. Public contributions come from a recent snapshot when available, otherwise from GitHub.
 
@@ -24,6 +24,10 @@ Useful options:
 - `--port 8766` uses a different port if the default is occupied.
 
 Run only one preview process per checkout. The build and generated files are excluded from Git.
+
+## PR preview deployment
+
+Vercel uses `vercel.json` to build `_site/` for GitHub pull requests; the `main` branch is not deployed there. Its isolated build installs the same `requirements.txt` dependencies using uv without requiring the host Python's `ensurepip`. The resulting preview is marked `noindex`. GitHub Pages remains the production host.
 
 ## Publishing an article
 
