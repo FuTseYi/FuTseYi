@@ -84,7 +84,7 @@ def render():
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
       +'## Active In\n\n'
-      +'<table>\n'+'\n'.join(f'<tr><td width="44" align="center"><img src="{site}/{image}" alt="" width="36" height="36"></td><td valign="middle">{title}</td></tr>' for title,image in home["communities"])+'\n</table>\n\n'
+      +'\n'.join(f'<p><img src="{site}/{image}" alt="" width="36" height="36" align="middle" /> <a href="{re.fullmatch(r"\\[(.*?)\\]\\((.*?)\\)",title)[2]}">{re.fullmatch(r"\\[(.*?)\\]\\((.*?)\\)",title)[1]}</a></p>' for title,image in home["communities"])+'\n\n'
       +'## Recent Blog\n\n'
       +('\n'.join(f'- [{title}]({site}/blog/{slug}/)' for _,slug,title in posts)
          if posts else 'No published articles yet.')+'\n\n'
