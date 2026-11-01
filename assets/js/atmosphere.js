@@ -1,7 +1,5 @@
-/* Blue-grey noise atmosphere. Independent WebGL implementation informed by the
-   DeepSeek Harness landing page's fluid layering, lighting and fade treatment.
-   Simplex noise: Copyright (C) 2011 Ashima Arts, MIT; see webgl-noise-LICENSE.txt.
-   Uses the original noise constants; the light palette is a site adaptation. */
+/* Multi-source fluid atmosphere built on Simplex noise.
+   Simplex noise: Copyright (C) 2011 Ashima Arts, MIT; see webgl-noise-LICENSE.txt. */
 (() => {
   const layer = document.createElement('div');
   layer.className = 'atmosphere';
@@ -33,7 +31,6 @@
     uniform vec2 resolution;
     uniform float time;
     uniform float dark;
-    uniform float touch;
     uniform vec2 seed;
     out vec4 pixel;
     vec3 mod289(vec3 x) {
@@ -180,16 +177,14 @@
   const position = gl.getAttribLocation(program, 'position');
   gl.enableVertexAttribArray(position);
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const uniforms = Object.fromEntries(['resolution','time','dark','touch','seed'].map(name => [name, gl.getUniformLocation(program, name)]));
+  const uniforms = Object.fromEntries(['resolution','time','dark','seed'].map(name => [name, gl.getUniformLocation(program, name)]));
   gl.uniform2f(uniforms.seed, offset[0], offset[1]);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const system = matchMedia('(prefers-color-scheme: dark)');
-  const coarse = matchMedia('(pointer: coarse)');
   let visible = true, lost = false, frame = 0, last = 0, elapsed = 0;
   const draw = () => {
     const theme = document.documentElement.dataset.theme;
     gl.uniform1f(uniforms.dark, theme === 'dark' || (theme !== 'light' && system.matches) ? 1 : 0);
-    gl.uniform1f(uniforms.touch, coarse.matches ? 1 : 0);
     gl.uniform1f(uniforms.time, elapsed);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -222,7 +217,7 @@
   resize.observe(layer);
   new IntersectionObserver(entries => { visible = entries[0].isIntersecting; refresh(); }).observe(layer);
   new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  [reduced, system, coarse].forEach(query => query.addEventListener('change', refresh));
+  [reduced, system].forEach(query => query.addEventListener('change', refresh));
   document.addEventListener('visibilitychange', refresh);
   canvas.addEventListener('webglcontextlost', event => {
     event.preventDefault(); lost = true; cancelAnimationFrame(frame); layer.classList.remove('is-ready');
