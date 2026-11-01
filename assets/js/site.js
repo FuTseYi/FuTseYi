@@ -255,7 +255,7 @@
     clip.className = 'expandable-clip';
     clip.append(...extra);
     panel.append(clip);
-    list.append(panel);
+    list.insertBefore(panel, list.querySelector(':scope > .activity-note'));
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'list-toggle';
