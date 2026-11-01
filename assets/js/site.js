@@ -288,6 +288,13 @@
       syncScrollHint();
     };
     openButton.addEventListener('click', openSearch);
+    dialog.addEventListener('close', () => {
+      ++sequence;
+      searchInput.value = '';
+      results.replaceChildren();
+      syncScrollHint();
+      openButton.focus();
+    });
     dialog.querySelector('.search-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
     document.addEventListener('keydown', (event) => {

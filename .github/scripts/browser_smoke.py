@@ -90,11 +90,22 @@ def check_search(page):
     assert dialog.evaluate("(el) => el.open")
     search = page.locator("#blog-search")
     assert search.evaluate("(el) => document.activeElement === el")
+    assert not page.locator("#search-results").is_visible()
+    assert not dialog.locator(".scroll-hint").is_visible()
+    assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
     search.fill("PyTorch")
     result = page.locator("#search-results a")
     result.first.wait_for(timeout=15000)
     assert result.first.get_attribute("href").startswith("/blog/")
+    assert page.locator("#search-results").is_visible()
     page.keyboard.press("Escape")
+    assert not dialog.evaluate("(el) => el.open")
+    assert search.input_value() == ""
+    assert not page.locator("#search-results").is_visible()
+    page.keyboard.press("Control+k")
+    assert dialog.evaluate("(el) => el.open")
+    assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
+    dialog.locator(".search-close").click()
     assert not dialog.evaluate("(el) => el.open")
 
 def main():
