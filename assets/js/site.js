@@ -115,28 +115,35 @@
     new ResizeObserver(syncHint).observe(content);
     return syncHint;
   };
-  const inlineToc = document.querySelector('.article-toc-inline');
-  if (inlineToc) {
-    const button = inlineToc.querySelector('.article-toc-toggle');
-    const panel = inlineToc.querySelector('.article-toc-panel');
-    const syncInlineHint = addScrollHint(inlineToc.querySelector('nav'), inlineToc, () => inlineToc.classList.contains('is-open'));
-    const setTocOpen = (open) => {
-      inlineToc.classList.toggle('is-open', open);
+  const scrollExpandedIntoView = (element) => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const overflow = element.getBoundingClientRect().bottom - (window.innerHeight - 24);
+    if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' });
+  };
+  const setupDisclosure = (container, toggleSelector, panelSelector, onChange) => {
+    if (!container) return;
+    const button = container.querySelector(toggleSelector);
+    const panel = container.querySelector(panelSelector);
+    const setOpen = (open) => {
+      container.classList.toggle('is-open', open);
       button.setAttribute('aria-expanded', String(open));
       panel.inert = !open;
-      syncInlineHint();
+      onChange?.();
     };
-    setTocOpen(false);
-    button.addEventListener('click', () => setTocOpen(!inlineToc.classList.contains('is-open')));
+    setOpen(false);
+    button.addEventListener('click', () => setOpen(!container.classList.contains('is-open')));
     panel.addEventListener('transitionend', (event) => {
-      if (event.target !== panel || event.propertyName !== 'grid-template-rows' || !inlineToc.classList.contains('is-open')) return;
-      syncInlineHint();
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const bottom = inlineToc.getBoundingClientRect().bottom;
-      const overflow = bottom - (window.innerHeight - 24);
-      if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' });
+      if (event.target !== panel || event.propertyName !== 'grid-template-rows' || !container.classList.contains('is-open')) return;
+      onChange?.();
+      scrollExpandedIntoView(container);
     });
+  };
+  const inlineToc = document.querySelector('.article-toc-inline');
+  if (inlineToc) {
+    const syncInlineHint = addScrollHint(inlineToc.querySelector('nav'), inlineToc, () => inlineToc.classList.contains('is-open'));
+    setupDisclosure(inlineToc, '.article-toc-toggle', '.article-toc-panel', syncInlineHint);
   }
+  setupDisclosure(document.querySelector('.web-evolution'), '.web-evolution-toggle', '.web-evolution-panel');
   const toc = document.querySelector('.page-toc');
   const tocContent = toc && document.createElement('div');
   if (toc) {
@@ -241,22 +248,33 @@
   document.querySelectorAll('[data-expandable]').forEach((list) => {
     const extra = [...list.querySelectorAll(':scope > .project-item')].slice(3);
     if (!extra.length) return;
+    const panel = document.createElement('div');
+    panel.className = 'expandable-panel';
+    panel.id = `${list.id}-extra`;
+    const clip = document.createElement('div');
+    clip.className = 'expandable-clip';
+    clip.append(...extra);
+    panel.append(clip);
+    list.append(panel);
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'list-toggle';
-    button.setAttribute('aria-controls', list.id);
+    button.setAttribute('aria-controls', panel.id);
     const setExpanded = (expanded) => {
-      extra.forEach((item) => { item.hidden = !expanded; });
+      list.classList.toggle('is-open', expanded);
+      panel.inert = !expanded;
       button.setAttribute('aria-expanded', String(expanded));
-      button.textContent = expanded ? 'Show less ↑' : 'Show more ↓';
+      button.textContent = expanded ? 'Show less' : 'Show more';
     };
     setExpanded(false);
     button.addEventListener('click', () => {
-      const expanded = button.getAttribute('aria-expanded') !== 'true';
-      setExpanded(expanded);
+      setExpanded(!list.classList.contains('is-open'));
       releaseTarget();
-      const target = expanded ? extra[0] : list.closest('section');
-      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+    });
+    panel.addEventListener('transitionend', (event) => {
+      if (event.target === panel && event.propertyName === 'grid-template-rows' && list.classList.contains('is-open')) {
+        scrollExpandedIntoView(list);
+      }
     });
     list.after(button);
   });
