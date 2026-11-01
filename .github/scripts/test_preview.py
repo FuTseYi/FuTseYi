@@ -87,7 +87,7 @@ class PreviewTests(unittest.TestCase):
                 patch.object(preview.sys, "argv", ["preview.py"]), \
                 patch.object(preview.venv, "EnvBuilder") as environment, \
                 patch.object(preview.subprocess, "run") as check, \
-                patch.object(preview, "dependencies_ready", side_effect=[False, True]), \
+                patch.object(preview, "dependencies_ready", side_effect=[False, True]) as ready, \
                 patch.object(preview.subprocess, "call", return_value=0) as restart, \
                 contextlib.redirect_stdout(io.StringIO()) as output:
             interpreter = Path(directory) / ".venv" / "Scripts/python.exe"
@@ -98,8 +98,8 @@ class PreviewTests(unittest.TestCase):
                 preview.ensure_dependencies()
         self.assertEqual(result.exception.code, 0)
         environment.assert_not_called()
-        check.assert_called_once_with([str(interpreter), str(Path(preview.__file__).resolve()), preview.CHECK_FLAG],
-                                      capture_output=True)
+        self.assertEqual([call.args[0] for call in ready.call_args_list], [Path(preview.sys.executable), interpreter])
+        check.assert_not_called()
         restart.assert_called_once()
         self.assertEqual(output.getvalue(), "")
 
