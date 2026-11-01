@@ -28,9 +28,17 @@ def check(page, name, width):
         contents = page.locator(".article-toc-inline")
         if contents.count():
             assert contents.is_visible()
-            contents.locator("summary").click()
+            toggle = contents.locator(".article-toc-toggle")
+            panel = contents.locator(".article-toc-panel")
+            assert toggle.get_attribute("aria-expanded") == "false"
+            assert panel.get_attribute("inert") is not None
+            toggle.click()
+            assert toggle.get_attribute("aria-expanded") == "true"
+            assert panel.get_attribute("inert") is None
             assert contents.locator("nav a").first.is_visible()
-            contents.locator("summary").click()
+            toggle.click()
+            assert toggle.get_attribute("aria-expanded") == "false"
+            assert panel.get_attribute("inert") is not None
     images = page.locator("article.article img")
     if images.count():
         img = images.first
