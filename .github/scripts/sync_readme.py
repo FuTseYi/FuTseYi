@@ -72,7 +72,7 @@ def read_post_entries(limit=3):
 def community_row(title,image,site):
     match=re.fullmatch(r'\[(.*?)\]\((.*?)\)',title)
     if not match:raise ValueError("Invalid community link")
-    return f'<p><img src="{site}/{image}" alt="" width="36" height="36" align="middle" /> <a href="{match[2]}">{match[1]}</a></p>'
+    return f'<p><img src="{image if image.startswith("https://") else site + "/" + image}" alt="" width="36" height="36" align="middle" /> <a href="{match[2]}">{match[1]}</a></p>'
 
 def render():
     home=read_home()
