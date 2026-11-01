@@ -300,12 +300,17 @@
     let engine;
     let sequence = 0;
     const loadSearch = () => engine ??= import('/pagefind/pagefind.js');
+    const positionSearch = () => {
+      dialog.style.setProperty('--search-top', `${Math.round(openButton.getBoundingClientRect().bottom + 12)}px`);
+    };
     const openSearch = () => {
+      positionSearch();
       dialog.showModal();
       searchInput.focus();
       syncScrollHint();
     };
     openButton.addEventListener('click', openSearch);
+    window.addEventListener('resize', () => { if (dialog.open) positionSearch(); });
     dialog.addEventListener('close', () => {
       ++sequence;
       searchInput.value = '';
