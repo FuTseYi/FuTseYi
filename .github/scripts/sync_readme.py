@@ -52,7 +52,7 @@ def read_home():
         if not content[field]:raise ValueError(f"index.html: empty or unrecognized {field}")
     return content
 
-def read_post_entries(limit=3):
+def read_post_entries(limit=6):
     found=[]
     for file in (ROOT/"posts").glob("*/index.md"):
         raw=file.read_text(encoding="utf-8")
