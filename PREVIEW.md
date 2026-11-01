@@ -60,4 +60,4 @@ The same push deploys the Blog and updates the website/Profile READMEs.
 
 Run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`) before publishing layout or rendering changes. The existing build verification checks generated article language, one page-level H1, code markup, table scroll containers, image loading hints and in-page contents links, in addition to local links and the sitemap.
 
-The static checks do not replace browser testing. Review a code-heavy post, an image-heavy post and a table-heavy post at narrow and wide widths, in light and dark themes. Verify keyboard access to the contents, code copying and image enlargement in a secure browser context before merging interaction changes.
+The static checks do not replace browser testing. Review a code-heavy post, an image-heavy post and a table-heavy post at narrow and wide widths, in light and dark themes. Verify keyboard access to the contents, code copying, homepage navigation, search, and theme switching in a secure browser context before merging interaction changes.

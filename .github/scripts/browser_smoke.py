@@ -43,6 +43,52 @@ def check(page, name, width):
         assert tables.first.evaluate("(e) => getComputedStyle(e).overflowX === 'auto'")
 
 
+
+def check_site_navigation(page, width):
+    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    assert page.locator("h1").count() == 1
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
+
+    theme = page.locator(".theme-control")
+    assert theme.is_visible()
+    initial = theme.get_attribute("data-mode")
+    theme.click()
+    assert theme.get_attribute("data-mode") != initial
+    selected = theme.get_attribute("data-mode")
+    assert page.evaluate("localStorage.getItem('site-theme')") == selected
+
+    if width <= 860:
+        toggle = page.locator(".nav-toggle")
+        assert toggle.is_visible()
+        assert toggle.get_attribute("aria-expanded") == "false"
+        toggle.click()
+        assert toggle.get_attribute("aria-expanded") == "true"
+        assert page.locator("#primary-navigation").evaluate("(el) => !el.inert")
+        page.keyboard.press("Escape")
+        assert toggle.get_attribute("aria-expanded") == "false"
+        assert page.locator("#primary-navigation").evaluate("(el) => el.inert")
+        toggle.click()
+        page.locator("#primary-navigation a[href='/blog/']").click()
+    else:
+        page.locator("#primary-navigation a[href='/blog/']").click()
+    page.wait_for_url("**/blog/")
+    assert page.locator(".blog-entry").count() > 0
+
+
+def check_search(page):
+    page.goto("http://127.0.0.1:8766/blog/", wait_until="networkidle")
+    page.locator(".search-open").click()
+    dialog = page.locator("#search-dialog")
+    assert dialog.evaluate("(el) => el.open")
+    search = page.locator("#blog-search")
+    assert search.evaluate("(el) => document.activeElement === el")
+    search.fill("PyTorch")
+    result = page.locator("#search-results a")
+    result.first.wait_for(timeout=15000)
+    assert result.first.get_attribute("href").startswith("/blog/")
+    page.keyboard.press("Escape")
+    assert not dialog.evaluate("(el) => el.open")
+
 def main():
     server = ThreadingHTTPServer(("127.0.0.1", 8766), partial(SimpleHTTPRequestHandler, directory=str(SITE)))
     thread = Thread(target=server.serve_forever, daemon=True)
@@ -55,9 +101,13 @@ def main():
                     context = browser.new_context(viewport={"width": width, "height": 850}, reduced_motion="reduce")
                     context.add_init_script(f"localStorage.setItem('site-theme', '{theme}')")
                     page = context.new_page()
+                    check_site_navigation(page, width)
                     for slug in ("astro-waline-comments", "pytorch-quickstart-neural-networks", "hkust-elpa-serverless-github-native-cms"):
                         check(page, slug, width)
                     context.close()
+            context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
+            check_search(context.new_page())
+            context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, java_script_enabled=False)
             page = context.new_page()
             page.goto("http://127.0.0.1:8766/blog/astro-waline-comments/")
@@ -76,7 +126,7 @@ def main():
             assert actual.strip() == expected.strip()
             context.close()
             browser.close()
-            print("Chromium article smoke checks passed: responsive, themes, contents, static images, tables, no-JS, clipboard.")
+            print("Chromium smoke checks passed: homepage navigation, mobile menu, search, themes, articles, no-JS, clipboard.")
     finally:
         server.shutdown()
         server.server_close()
