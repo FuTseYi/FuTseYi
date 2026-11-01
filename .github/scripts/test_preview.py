@@ -87,6 +87,7 @@ class PreviewTests(unittest.TestCase):
                 patch.object(preview.sys, "argv", ["preview.py"]), \
                 patch.object(preview.venv, "EnvBuilder") as environment, \
                 patch.object(preview.subprocess, "run") as check, \
+                patch.object(preview, "dependencies_ready", side_effect=[False, True]), \
                 patch.object(preview.subprocess, "call", return_value=0) as restart, \
                 contextlib.redirect_stdout(io.StringIO()) as output:
             interpreter = Path(directory) / ".venv" / "Scripts/python.exe"
