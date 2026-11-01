@@ -353,7 +353,9 @@
     copy.className = 'code-copy';
     copy.textContent = 'Copy';
     copy.setAttribute('aria-label', 'Copy code');
+    let resetTimer;
     copy.addEventListener('click', async () => {
+      clearTimeout(resetTimer);
       try {
         await navigator.clipboard.writeText(original);
         copy.textContent = 'Copied';
@@ -361,10 +363,10 @@
         copy.textContent = 'Copy failed';
       }
       copy.setAttribute('aria-label', copy.textContent);
-    });
-    copy.addEventListener('blur', () => {
-      copy.textContent = 'Copy';
-      copy.setAttribute('aria-label', 'Copy code');
+      resetTimer = setTimeout(() => {
+        copy.textContent = 'Copy';
+        copy.setAttribute('aria-label', 'Copy code');
+      }, 2000);
     });
     toolbar.append(copy);
     container.prepend(toolbar);
