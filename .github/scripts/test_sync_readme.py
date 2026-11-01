@@ -31,7 +31,6 @@ class ReadmeTests(unittest.TestCase):
             self.assertIn(text, result)
         for title, image in home["communities"]:
             self.assertIn(sync.community_row(title, image, sync.site_url()), result)
-            self.assertIn(sync.community_row(title, image, sync.site_url()), result)
         for label in ("**Focus:**", "**Lang:**", "**Motto:**"):
             self.assertIn(label, result)
         for dt, _, _ in sync.read_post_entries():
