@@ -135,7 +135,7 @@ body::before,.atmosphere {
     mask-image:linear-gradient(#000000fc 0%,#000000e8 9%,transparent 100%);
   }
 body::before,.atmosphere{background:radial-gradient(ellipse at 89% 46%,var(--glow-mist) 0%,var(--glow-blue) 35%,transparent 75%)}
-body::before{content:"";opacity:var(--atmosphere-opacity)}
+body::before{content:"";opacity:var(--atmosphere-opacity);transition:opacity var(--atmosphere-enter-duration) ease-out}
 .atmosphere{overflow:hidden;opacity:0}
 .atmosphere.is-ready{opacity:var(--atmosphere-opacity)}
 body:has(.atmosphere.is-ready)::before{opacity:0}
