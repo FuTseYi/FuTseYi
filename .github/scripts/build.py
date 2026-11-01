@@ -149,7 +149,7 @@ def article_toc(tokens: list[dict]) -> tuple[str, str]:
         return "", ""
     links = "".join(entries)
     sidebar = '<nav class="page-toc article-toc is-visible" aria-label="On this page"><span class="toc-title">ON THIS PAGE</span>' + links + '</nav>'
-    inline = '<details class="article-toc-inline"><summary>On this page</summary><nav aria-label="Article contents">' + links + '</nav></details>'
+    inline = '<div class="article-toc-inline"><button class="article-toc-toggle" type="button" aria-expanded="false" aria-controls="article-toc-links">On this page</button><div class="article-toc-panel"><nav id="article-toc-links" aria-label="Article contents">' + links + '</nav></div></div>'
     return sidebar, inline
 
 
