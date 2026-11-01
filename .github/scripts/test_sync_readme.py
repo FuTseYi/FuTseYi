@@ -26,11 +26,12 @@ class ReadmeTests(unittest.TestCase):
         result = sync.render()
         self.assertEqual([line for line in result.splitlines() if line.startswith("#")],
                          ["## About", "## Active In", "## Recent Blog"])
-        for text in [home["note"], *home["paragraphs"], home["languages"], home["blog"],
+        for text in [home["note"], *home["paragraphs"], home["languages"],
                      *home["quotes"], *home["links"]]:
             self.assertIn(text, result)
-        for title in home["communities"]:
+        for title, image in home["communities"]:
             self.assertIn(title, result)
+            self.assertIn(f'<img src="{sync.site_url()}/{image}" alt="" width="32" height="32" />', result)
         for label in ("**Focus:**", "**Lang:**", "**Motto:**"):
             self.assertIn(label, result)
         for dt, _, _ in sync.read_post_entries():
@@ -40,7 +41,7 @@ class ReadmeTests(unittest.TestCase):
         self.assertNotIn("Powered by", result)
         ordered=["**Homepage**:",home["note"],*home["paragraphs"],
                  home["languages"],home["motto_label"],
-                 *home["quotes"],home["blog"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
+                 *home["quotes"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
         positions=[result.index(text) for text in ordered]
         self.assertEqual(positions,sorted(positions))
 
