@@ -294,6 +294,8 @@
   const searchInput = document.getElementById('blog-search');
   if (searchInput) {
     const dialog = document.getElementById('search-dialog');
+    dialog.tabIndex = -1;
+    dialog.autofocus = true;
     const openButton = document.querySelector('.search-open');
     const results = document.getElementById('search-results');
     const syncScrollHint = addScrollHint(results, dialog);
@@ -306,7 +308,7 @@
     const openSearch = () => {
       positionSearch();
       dialog.showModal();
-      searchInput.focus();
+      searchInput.focus({ preventScroll: true });
       syncScrollHint();
     };
     openButton.addEventListener('click', openSearch);
@@ -316,7 +318,7 @@
       searchInput.value = '';
       results.replaceChildren();
       syncScrollHint();
-      openButton.focus();
+      openButton.focus({ preventScroll: true });
     });
     dialog.querySelector('.search-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
