@@ -1,5 +1,4 @@
 (() => {
-  document.documentElement.classList.add('js');
   const root = document.documentElement;
   const themeControl = document.querySelector('.theme-control');
   const themes = ['system', 'light', 'dark'];
