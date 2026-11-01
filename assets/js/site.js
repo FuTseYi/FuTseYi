@@ -50,7 +50,18 @@
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href]');
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
-    if (link.origin === location.origin && (link.pathname !== location.pathname || link.search !== location.search)) navigationProgress.classList.add('is-loading');
+    if (link.origin === location.origin && (link.pathname !== location.pathname || link.search !== location.search)) {
+      navigationProgress.classList.add('is-loading');
+      if (header.classList.contains('menu-open')) {
+        header.classList.add('nav-reset');
+        header.classList.remove('menu-open');
+        const menuButton = header.querySelector('.nav-toggle');
+        menuButton?.setAttribute('aria-expanded', 'false');
+        menuButton?.setAttribute('aria-label', 'Open navigation menu');
+        const menu = document.getElementById('primary-navigation');
+        if (menu) menu.inert = window.innerWidth <= 860;
+      }
+    }
   }, true);
   window.addEventListener('pageshow', () => {
     navigationProgress.classList.remove('is-loading');
