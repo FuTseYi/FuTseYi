@@ -1,6 +1,7 @@
-/* WebGL atmosphere inspired by DeepSeek Harness.
-   Simplex noise: Copyright (C) 2011 Ashima Arts, MIT.
-   See webgl-noise-LICENSE.txt. */
+/* Blue-grey noise atmosphere. Independent WebGL implementation informed by the
+   DeepSeek Harness landing page's fluid layering, lighting and fade treatment.
+   Simplex noise: Copyright (C) 2011 Ashima Arts, MIT; see webgl-noise-LICENSE.txt.
+   Uses the original noise constants; the light palette is a site adaptation. */
 (() => {
   const layer = document.createElement('div');
   layer.className = 'atmosphere';
@@ -26,6 +27,7 @@
     uniform vec2 resolution;
     uniform float time;
     uniform float dark;
+    uniform float touch;
     out vec4 pixel;
     vec3 mod289(vec3 x) {
       return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -110,22 +112,28 @@
       p+=vec2(-slope.y,slope.x)*.036;
       float flow=field(p);
       float cloud=noise(vec3(p*.8+flow*1.5,0.)+travel(4200.,.00595,false))*.5+.5;
-      // A shared moving atmosphere with restrained contrast across both themes.
-      float depth=flow*.5+.5;
-      float detail=noise(vec3(p*1.35+flow*.42,time*.018))*.5+.5;
-      float mass=depth*.56+cloud*.32+detail*.12;
-      float cloudBody=smoothstep(.37,.64,mass);
-      float cloudCore=smoothstep(.52,.77,mass);
-      float opening=smoothstep(.09,.62,uv.y);
-      float shadow=1.-smoothstep(.31,.54,mass);
-      vec3 col=mix(vec3(7.,14.,25.),vec3(24.,53.,91.),cloudBody*opening)/255.;
-      col+=vec3(.21,.34,.51)*cloudCore*opening*.25;
-      col+=vec3(.12,.20,.32)*cloudBody*(1.-cloudCore)*opening*.10;
-      col*=1.-shadow*(1.-smoothstep(.15,.78,uv.y))*.32;
-      float veil=opening*(cloudBody*.14+cloudCore*.22);
-      vec3 paper=mix(vec3(1.),vec3(.62,.81,1.),veil);
-      paper-=vec3(.045,.025,0.)*cloudCore*opening*.15;
-      pixel=vec4(mix(paper,col,dark),1.);
+      float blue=smoothstep(.35,.65,flow*.5+.5+cloud*.25);
+      float mist=smoothstep(.6,.85,cloud)*.55;
+      vec3 col=mix(vec3(0.),vec3(32.,74.,126.)/255.,blue);
+      col=mix(col,vec3(206.,200.,187.)/255.,mist);
+      col*=1.-smoothstep(.5,.8,(flow*.5+.5)*cloud)*.35;
+      float brightness=dot(col,vec3(.299,.587,.114));
+      col+=(col*.85+vec3(.15,.145,.13))*smoothstep(.43,.79,brightness)*.4;
+      float distanceToLight=length((uv-vec2(.89,.46))*vec2(aspect,1.));
+      col+=(vec3(1.,.97,.9)*exp(-distanceToLight*distanceToLight*4.5)*.14+
+        vec3(.72,.8,1.)*exp(-distanceToLight*1.8)*.2)*(1.-touch);
+      col*=1.-.38*smoothstep(.35,.75,length(uv-.5));
+      vec2 grainCell=floor((uv*resolution+(p-(vec2(uv.x*aspect,uv.y)*1.19-vec2(1.24,.48)))*resolution.y)/5.);
+      vec3 seed=fract(vec3(grainCell.xyx)*.1031);
+      seed+=dot(seed,seed.yzx+33.33);
+      float grain=fract((seed.x+seed.y)*seed.z)*2.-1.;
+      // Both themes share the same moving field; only the color mapping differs.
+      float ribbon=smoothstep(.32,.78,cloud);
+      float left=exp(-pow((uv.x-.17)*2.4,2.))*(.25+.75*ribbon);
+      float right=exp(-pow((uv.x-.81)*2.1,2.))*(.3+.7*smoothstep(.25,.75,flow*.5+.5));
+      float tint=clamp((left*.38+right*.48)*smoothstep(0.,.55,uv.y),0.,.58);
+      vec3 paper=mix(vec3(1.),vec3(.65,.83,1.),tint);
+      pixel=vec4(mix(paper,col+grain*.005,dark),1.);
     }`);
   const program = gl.createProgram();
   const buffer = gl.createBuffer();
@@ -145,13 +153,15 @@
   const position = gl.getAttribLocation(program, 'position');
   gl.enableVertexAttribArray(position);
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const uniforms = Object.fromEntries(['resolution','time','dark'].map(name => [name, gl.getUniformLocation(program, name)]));
+  const uniforms = Object.fromEntries(['resolution','time','dark','touch'].map(name => [name, gl.getUniformLocation(program, name)]));
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const system = matchMedia('(prefers-color-scheme: dark)');
+  const coarse = matchMedia('(pointer: coarse)');
   let visible = true, lost = false, frame = 0, last = 0, elapsed = 0;
   const draw = () => {
     const theme = document.documentElement.dataset.theme;
     gl.uniform1f(uniforms.dark, theme === 'dark' || (theme !== 'light' && system.matches) ? 1 : 0);
+    gl.uniform1f(uniforms.touch, coarse.matches ? 1 : 0);
     gl.uniform1f(uniforms.time, elapsed);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -184,7 +194,7 @@
   resize.observe(layer);
   new IntersectionObserver(entries => { visible = entries[0].isIntersecting; refresh(); }).observe(layer);
   new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  [reduced, system].forEach(query => query.addEventListener('change', refresh));
+  [reduced, system, coarse].forEach(query => query.addEventListener('change', refresh));
   document.addEventListener('visibilitychange', refresh);
   canvas.addEventListener('webglcontextlost', event => {
     event.preventDefault(); lost = true; cancelAnimationFrame(frame); layer.classList.remove('is-ready');
