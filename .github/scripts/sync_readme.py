@@ -42,11 +42,10 @@ def read_home():
     content={
         "paragraphs":[md(x) for x in re.findall(r'<p\b[^>]*>(.*?)</p>',bio,re.S)],
         "note":md(note), "languages":md(languages),
-        "blog":md(required(r'<p class="profile-blog">(.*?)</p>',"recent blog link")[1]),
         "motto_label":md(required(r'<h3 class="motto-heading">(.*?)</h3>',"motto label")[1]),
         "quotes":[md(x) for x in re.findall(r'<p>(.*?)</p>',motto,re.S)],
         "links":[md(x) for x in re.findall(r'<a\b[^>]*>.*?</a>',links,re.S)],
-        "communities":[md(title) for title in re.findall(r'<h3>(.*?)</h3>',community,re.S)],
+        "communities":[(md(title),image) for image,title in re.findall(r'<article class="project-item">\s*<img[^>]*src="([^"]+)"[^>]*>.*?<h3>(.*?)</h3>',community,re.S)],
         "badge":re.sub(r' loading="lazy"',"",badge),
     }
     for field in ("paragraphs","quotes","links","communities"):
@@ -82,11 +81,10 @@ def render():
       +home["languages"]+'\n\n'
       +home["motto_label"]+'\n\n'
       +'\n\n'.join(f'*{quote}*' for quote in home["quotes"])+'\n\n'
-      +home["blog"]+'\n\n'
       +' · '.join(home["links"])+'\n\n'
       +home["badge"]+'\n\n'
       +'## Active In\n\n'
-      +'\n'.join(f'- {title}' for title in home["communities"])+'\n\n'
+      +'\n'.join(f'- <img src="{site}/{image}" alt="" width="32" height="32" /> {title}' for title,image in home["communities"])+'\n\n'
       +'## Recent Blog\n\n'
       +('\n'.join(f'- [{title}]({site}/blog/{slug}/)' for _,slug,title in posts)
          if posts else 'No published articles yet.')+'\n\n'
@@ -115,11 +113,11 @@ def update_site():
         raise ValueError("Missing homepage Latest Posts slot")
     entries=[]
     posts=read_post_entries(limit=None)
-    for dt,slug,title in posts[:3]:
+    for dt,slug,title in posts[:6]:
         url=f"{SITE}/blog/{slug}/"
         entries.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.isoformat()}">{dt:%Y.%m.%d}</time><div><h3><a href="{html_escape(url,quote=True)}"><span class="link-label">{html_escape(title[:-2])}<span class="title-tail">{html_escape(title[-2:])}&nbsp;<span class="link-arrow" aria-hidden="true"></span></span></span></a></h3></div></article>')
     content='<div class="project-list" id="latest-posts">'+"".join(entries)+'</div>'
-    if len(posts)>3 or not posts:
+    if len(posts)>6 or not posts:
         label="View all articles" if posts else "Browse recent articles"
         content+=f'<a class="list-toggle" href="{SITE}/blog/">{label} <span class="link-arrow" aria-hidden="true"></span></a>'
     html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: content,html,flags=re.S)
