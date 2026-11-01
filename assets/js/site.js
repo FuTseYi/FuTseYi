@@ -54,12 +54,7 @@
       navigationProgress.classList.add('is-loading');
       if (header.classList.contains('menu-open')) {
         header.classList.add('nav-reset');
-        header.classList.remove('menu-open');
-        const menuButton = header.querySelector('.nav-toggle');
-        menuButton?.setAttribute('aria-expanded', 'false');
-        menuButton?.setAttribute('aria-label', 'Open navigation menu');
-        const menu = document.getElementById('primary-navigation');
-        if (menu) menu.inert = window.innerWidth <= 860;
+        setOpen(false);
       }
     }
   }, true);
