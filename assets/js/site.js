@@ -118,8 +118,17 @@
   };
   const inlineToc = document.querySelector('.article-toc-inline');
   if (inlineToc) {
+    const button = inlineToc.querySelector('.article-toc-toggle');
+    const panel = inlineToc.querySelector('.article-toc-panel');
     const syncInlineHint = addScrollHint(inlineToc.querySelector('nav'), inlineToc);
-    inlineToc.addEventListener('toggle', syncInlineHint);
+    const setTocOpen = (open) => {
+      inlineToc.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      panel.inert = !open;
+      syncInlineHint();
+    };
+    setTocOpen(false);
+    button.addEventListener('click', () => setTocOpen(!inlineToc.classList.contains('is-open')));
   }
   const toc = document.querySelector('.page-toc');
   const tocContent = toc && document.createElement('div');
