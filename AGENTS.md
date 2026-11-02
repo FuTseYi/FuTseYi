@@ -1,6 +1,6 @@
 # Repository Guide
 
-A lightweight personal website built with HTML, CSS, JavaScript, and a Python-generated blog, deployed through GitHub Pages.
+A lightweight static personal website built with HTML, CSS, JavaScript, and a Python-generated blog.
 
 **Core principle: Every line of code should justify its existence.**
 
@@ -46,7 +46,7 @@ Generated outputs, including `blog/`, `_site/`, `sitemap.xml`, and activity snap
 ## Verification
 
 - Keep core site generation portable across repository names, visibility settings, domains, and static hosts. Treat deployment credentials and platform-specific settings as adapters, not build inputs.
-- Reuse the same verified build entry point for local development, PR previews, and production.
+- Reuse the same verified build entry point across development, verification, and deployment environments.
 - Keep optional third-party integrations separate from portable core generation; avoid configuration layers unless a concrete migration or feature needs them.
 - Match verification to the scope and risk of each change.
 - Review affected code paths and run relevant existing tests before considering a change complete.
