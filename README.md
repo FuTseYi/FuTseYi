@@ -23,7 +23,7 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 ## Active In
 
 <p>
-<span><img src="https://www.futseyi.com/assets/images/active-in/datawhale.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://github.com/datawhalechina">Datawhale</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/hai-hkust.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://hai-hkust.github.io/">HAI-HKUST</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://github.com/bytedance.png?size=96" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://www.bytedance.com/">ByteDance</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/uem-stu.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://uem-stu.github.io/">UEM Stu</a></span>
+<span><img src="https://www.futseyi.com/assets/images/active-in/datawhale.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://github.com/datawhalechina">Datawhale</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/hai-hkust.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://hai-hkust.github.io/">HAI-HKUST</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/ByteDance.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://www.bytedance.com/">ByteDance</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/uem-stu.png" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://uem-stu.github.io/">UEM Stu</a></span>
 </p>
 
 ## Recent Blog
