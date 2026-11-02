@@ -1,6 +1,10 @@
-# Local preview
+# Development & Preview
 
-Requires Python 3.10 or later.
+The website is built from source into a portable static directory, `_site/`. The current local preview uses Python 3.10 or newer.
+
+## Getting Started
+
+From the repository root:
 
 ```powershell
 # Windows
@@ -12,35 +16,28 @@ py -3 preview.py
 python3 preview.py
 ```
 
-Open <http://127.0.0.1:8765/> for the homepage or <http://127.0.0.1:8765/blog/> for the Blog. The preview builds the site, indexes search, checks links, and watches for changes. Refresh the browser after each successful rebuild; stop with Ctrl+C.
+Open <http://127.0.0.1:8765/> or <http://127.0.0.1:8765/blog/>. Saving a source file triggers a rebuild; refresh your browser to see the result. Stop with Ctrl+C, and run only one preview process per checkout.
 
-Build dependencies are declared in `requirements.txt`. On first use, the script installs them in a project-local `.venv` (or an already active virtual environment). When the current interpreter already satisfies the requirements, no virtual environment is created. Internet access and Python's `venv`/`pip` support are required. It does not install packages into the system Python.
+Dependencies come from `requirements.txt`. If needed, the command installs them into a project-local `.venv` (or the active virtual environment), not the system Python. Initial setup requires internet access and working `venv`/`pip` support. The preview retains the previous successful build if a rebuild fails.
 
-The preview serves generated files from `_site/`. A failed rebuild leaves the last working preview available. Local links are adjusted only in the temporary build; repository source files are unchanged. Public contributions come from a recent snapshot when available, otherwise from GitHub.
+## Building & Output
 
-Useful options:
+```sh
+python3 preview.py --build-only
+python3 preview.py --build-only --refresh-activity
+```
 
-- `--build-only` builds and validates the full site without serving it. No HTTP port is opened.
-- `--refresh-activity` updates public GitHub contribution data during a build (used for production releases).
-- `--port 8766` uses a different port if the default is occupied when serving.
+On Windows, substitute `py -3` for `python3`.
 
-Run only one preview process per checkout. The build and generated files are excluded from Git.
+- `--build-only`: Generate and verify `_site/` without serving it.
+- `--refresh-activity`: Fetch fresh public contribution data instead of reusing an available snapshot.
+- `--port 8766`: Choose another local preview port.
 
-## Portable site builds
+The same build entry point is used for verification and the current publishing workflow. It generates the blog and search index, synchronizes staged homepage content, and checks the output. Generated `blog/`, `_site/`, and `sitemap.xml` are ignored by Git.
 
-Run `python3 preview.py --build-only --refresh-activity` to reproduce the current production build locally, or omit `--refresh-activity` to reuse the latest available activity snapshot. The build produces a portable static site in `_site/`; generated output is not committed.
+The canonical origin in `index.html` determines generated article URLs, sitemap entries, and README links. Internal navigation uses root-relative paths. Hosting, domain, and credential settings belong outside the portable build.
 
-The homepage canonical URL in `index.html` is the production origin for generated blog pages, sitemap, robots sitemap declaration, README links and site validation. Internal navigation uses root-relative paths. A future custom domain or renamed/private source repository does not require changing the core generators; hosting access, DNS, and optional cross-repository README permissions are deployment settings.
-
-## Persistent navigation
-
-The site remains a set of complete, independently accessible HTML documents. When JavaScript and Swup are available, same-origin links replace only `#main`; the shared navigation, footer, and WebGL atmosphere remain mounted. The Swup 4.10.0 URL is pinned; review the pinned release and dependency policy explicitly before upgrading. If the CDN script cannot load, ordinary browser navigation still works. The CDN remains a runtime availability dependency; vendoring is an optional future improvement, not a reason to add a build tool. Keep the script version pinned and review upgrades explicitly.
-
-Page-dependent behavior in `assets/js/site.js` must be initialized when new content becomes visible and cleaned up before replacement. New global listeners, ResizeObservers, and dialogs must not outlive the page they belong to. The mobile navigation closes before a content visit, and the normal scroll-driven header sizing remains independent of content replacement.
-
-When changing navigation or page generation, test direct article URLs, same-page and cross-page anchors, Back/Forward, Blog search, article contents and code copying, light/dark themes, and mobile menu transitions. Do not add whole-page fade overlays to hide rendering defects.
-
-## Publishing an article
+## Writing & Publishing
 
 Create `posts/my-note/index.md`:
 
@@ -54,14 +51,20 @@ tags: Notes, Website
 Article text goes here.
 ```
 
-`title` and `date` are required; `tags` and `lang` (`zh-CN` or `en`) are optional. The frontmatter title is the sole page H1; body headings render one level lower without changing their source anchors. Every post is published when its changes reach `main`; dates control display order, not publication scheduling.
+`title` and `date` are required; `tags` and `lang` (`zh-CN` or `en`) are optional. The article title becomes the page H1; headings in the body are shifted down one level while retaining their anchors. Dates determine display order, not scheduled publication.
 
-Put images and other files in `posts/my-note/assets/`, referencing them as `assets/example.webp`. Describe informative images with meaningful alt text; use empty alt text only for decorative images. For a captioned image, use semantic HTML `<figure>` and `<figcaption>`. The folder name is the public URL slug (`/blog/my-note/`); keep it stable after publication.
+Keep article media beside its source in `posts/my-note/assets/` and link to files such as `assets/example.webp`. Use meaningful alt text for informative images, empty alt text for decorative images, and `<figure>`/`<figcaption>` when a caption is needed. The folder name forms the public URL (`/blog/my-note/`), so avoid changing it after publishing.
 
-The same push deploys the Blog and updates the website/Profile READMEs.
+Under the current workflows, changes reaching `main` publish the site and trigger README synchronization.
 
-## Article regression checks
+## Browser Verification
 
-Run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`) before publishing layout or rendering changes. The existing build verification checks generated article language, one page-level H1, code markup, table scroll containers, image loading hints and in-page contents links, in addition to local links and the sitemap.
+Run the build check above for site or publishing changes. The repository's PR workflow additionally runs Python unit tests and Chromium browser smoke tests.
 
-The static checks do not replace browser testing. Review a code-heavy post, an image-heavy post and a table-heavy post at narrow and wide widths, in light and dark themes. Verify keyboard access to the contents, code copying, homepage navigation, search, and theme switching in a secure browser context before merging interaction changes.
+Static checks cover generated pages and links but cannot establish visual or interaction correctness. For relevant changes, verify narrow and wide layouts, both color themes, keyboard use, reduced motion, and direct page loads. Exercise same-page and cross-page links, browser Back/Forward, the mobile menu, Blog search, article contents, and code copying. Inspect representative image-, table-, and code-heavy articles when rendering changes.
+
+## Implementation Notes
+
+The generated blog reuses header/footer markup from `index.html`, while `style.css` and `site.js` serve the site as a whole. When Swup is available, same-origin navigation replaces `#main` while shared UI and the WebGL atmosphere remain mounted. Ordinary document navigation remains the fallback if Swup is unavailable.
+
+Page-specific interactions in `site.js` must initialize for incoming content and clean up when that content is replaced. Review listeners, observers, timers, and dialogs for lifecycle leaks when changing navigation. Refer to the source for pinned dependency versions and implementation details rather than duplicating them here.
