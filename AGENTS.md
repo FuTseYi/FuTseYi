@@ -4,63 +4,47 @@ A lightweight static personal website built with HTML, CSS, JavaScript, and a Py
 
 **Core principle: Every line of code should justify its existence.**
 
-Treat the repository as one coherent, evolving system. Prioritize architectural integrity, consistent design, simplicity, performance, and long-term maintainability over isolated optimizations or minimal diffs.
+Treat the site as one coherent system. Prefer sound architecture, consistent design, performance, accessibility, and long-term maintainability over isolated fixes or artificially small diffs.
 
-## Project Structure
+## Architecture
 
-- `index.html`: Homepage content and shared header/footer for generated blog pages.
-- `assets/css/style.css`: Shared styles, responsive layouts, and themes.
-- `assets/js/site.js`: Navigation, theme switching, search, and page interactions.
-- `assets/js/atmosphere.js`: WebGL background animation and reduced-motion support.
-- `posts/<slug>/index.md`: Blog sources, with article assets stored alongside each post.
-- `.github/scripts/`: Site generation, README and activity synchronization, verification, and tests.
-- `.github/workflows/`: Deployment, pull request validation, and Profile README synchronization.
-- `preview.py`: Local build and preview entry point.
-- `PREVIEW.md`: Local development and article publishing instructions.
+- `index.html`: Homepage and source of shared header/footer markup for generated pages.
+- `assets/css/style.css`: Shared presentation, themes, and responsive styles.
+- `assets/js/site.js`: Navigation, themes, search, and page interactions.
+- `assets/js/atmosphere.js`: WebGL atmosphere and reduced-motion behavior.
+- `posts/<slug>/index.md`: Article source; keep accompanying media in each post's `assets/`.
+- `.github/scripts/`: Generation, synchronization, verification, and tests.
+- `.github/workflows/`: Current CI, publication, and README synchronization adapters.
+- `preview.py`: Shared local preview and verified static-build entry point.
 
-Generated outputs, including `blog/`, `_site/`, `sitemap.xml`, and activity snapshots, must not be committed.
+See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do not commit generated `blog/`, `_site/`, `sitemap.xml`, or activity snapshots.
 
 ## Engineering Principles
 
-- Understand the relevant architecture, dependencies, design patterns, and existing behavior before making changes.
-- Approach each task from a system-wide perspective. Maintain consistency across related components, pages, interactions, and workflows.
-- Address root causes rather than accumulating patches, overrides, special cases, or compensating logic.
-- Reconsider and restructure existing implementations when necessary. Do not preserve an inadequate design merely to minimize the diff.
-- Favor cohesive solutions, clear responsibilities, appropriate reuse, and the simplest effective implementation.
-- Consolidate duplicated logic and remove obsolete code, unused dependencies, and superseded implementations when making related changes.
-- Avoid unnecessary abstractions, speculative safeguards, premature optimization, and complexity without demonstrated value.
-- Keep changes focused on the intended objective without sacrificing architectural integrity or introducing unrelated refactoring.
-- Preserve established functionality, visual consistency, accessibility, compatibility, and user experience unless the task explicitly requires otherwise.
-- Ensure each change leaves the affected system at least as coherent, efficient, and maintainable as before.
+- Read relevant code, dependencies, and established behavior before editing; assess effects across pages, themes, devices, and workflows.
+- Fix root causes. Reorganize inadequate implementations when warranted instead of stacking patches, overrides, or special cases.
+- Prefer clear ownership, necessary reuse, and the simplest effective design. Remove redundant or obsolete code when addressing related areas.
+- Avoid speculative abstractions, defensive complexity without evidence, and unrelated refactoring.
+- Preserve existing functionality, accessibility, visual consistency, and compatibility unless explicitly changing them.
+- Keep site generation portable. Treat hosts, deployment credentials, and optional integrations as replaceable adapters, not core build dependencies.
 
 ## Change Management
 
-- Use pull requests for significant engineering changes that benefit from independent review, validation, or a lasting record of technical decisions.
-- Use direct commits for routine, low-risk maintenance and content updates when repository permissions and protection rules allow.
-- Organize changes by coherent engineering objectives rather than arbitrary implementation steps.
-- Keep commits meaningful and reviewable. Avoid redundant pull requests, fragmented history, and unnecessary procedural overhead.
-- Prefer testing coherent changes before pushing; clean up temporary branches after merged PRs while retaining PR history.
-- Follow explicit task instructions and repository rules when choosing, merging, or publishing changes.
-- Do not rewrite shared history or remove existing work without explicit authorization.
+- Group work by coherent objectives. Use PRs when review, validation, or a durable engineering record is useful; use direct commits for routine, low-risk updates where permitted.
+- Keep history meaningful; avoid fragmented PRs and procedural overhead. Verify before publishing and clean up merged temporary branches when appropriate.
+- Follow explicit task instructions. Never rewrite shared history or discard existing work without authorization.
 
 ## Verification
 
-- Keep core site generation portable across repository names, visibility settings, domains, and static hosts. Treat deployment credentials and platform-specific settings as adapters, not build inputs.
-- Reuse the same verified build entry point across development, verification, and deployment environments.
-- Keep optional third-party integrations separate from portable core generation; avoid configuration layers unless a concrete migration or feature needs them.
-- Match verification to the scope and risk of each change.
-- Review affected code paths and run relevant existing tests before considering a change complete.
-- For Python script changes, run `python -m unittest discover -s .github/scripts -p 'test_*.py' -v`.
-- For site, asset, generation, or deployment changes, run `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
-- Verify responsive layouts, light/dark themes, accessibility, browser behavior, and reduced-motion support when relevant.
-- Confirm that obsolete code and redundant implementations have not been left behind.
-- Do not claim successful verification without running the corresponding checks. Clearly report any limitations or unverified behavior.
+- Match checks to the change's scope and risk; inspect affected code paths and report what was actually tested.
+- For Python script changes: `python -m unittest discover -s .github/scripts -p 'test_*.py' -v`.
+- For site, asset, generation, or deployment changes: `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
+- For relevant UI changes, review responsive layouts, light/dark modes, keyboard accessibility, browser navigation, and reduced-motion behavior.
+- Confirm no obsolete implementation remains. Never claim a check passed unless it ran successfully.
 
-## Documentation and Content
+## Documentation
 
-- Treat the implementation and workflows as the source of truth.
-- Update relevant documentation when architecture, dependencies, commands, or publishing behavior changes.
-- Maintain the existing homepage-to-README synchronization model. Modify source content rather than generated README sections.
-- Keep public content factual. Do not introduce private information, inferred credentials, or unsupported claims.
-- Keep `AGENTS.md` concise and limited to durable repository-wide guidance. Refer to existing documentation instead of duplicating it.
-- Avoid unrelated documentation rewrites or cosmetic changes that provide no practical improvement.
+- Treat code and workflows as the source of truth; update affected guidance when behavior, commands, or architecture changes.
+- Preserve homepage-to-README generation: edit source content rather than generated sections.
+- Keep published claims factual and protect private information and credentials.
+- Keep repository-wide rules here and operational detail in [PREVIEW.md](PREVIEW.md); avoid duplicated or speculative documentation.
