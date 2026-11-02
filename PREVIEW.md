@@ -26,9 +26,9 @@ Useful options:
 
 Run only one preview process per checkout. The build and generated files are excluded from Git.
 
-## Portable production builds
+## Portable site builds
 
-Run `python3 preview.py --build-only --refresh-activity` to reproduce the GitHub Pages build locally, or omit `--refresh-activity` to reuse the latest available activity snapshot. GitHub Pages and Vercel both publish the resulting `_site/` directory; generated output is not committed.
+Run `python3 preview.py --build-only --refresh-activity` to reproduce the current production build locally, or omit `--refresh-activity` to reuse the latest available activity snapshot. The build produces a portable static site in `_site/`; generated output is not committed.
 
 The homepage canonical URL in `index.html` is the production origin for generated blog pages, sitemap, robots sitemap declaration, README links and site validation. Internal navigation uses root-relative paths. A future custom domain or renamed/private source repository does not require changing the core generators; hosting access, DNS, and optional cross-repository README permissions are deployment settings.
 
@@ -39,10 +39,6 @@ The site remains a set of complete, independently accessible HTML documents. Whe
 Page-dependent behavior in `assets/js/site.js` must be initialized when new content becomes visible and cleaned up before replacement. New global listeners, ResizeObservers, and dialogs must not outlive the page they belong to. The mobile navigation closes before a content visit, and the normal scroll-driven header sizing remains independent of content replacement.
 
 When changing navigation or page generation, test direct article URLs, same-page and cross-page anchors, Back/Forward, Blog search, article contents and code copying, light/dark themes, and mobile menu transitions. Do not add whole-page fade overlays to hide rendering defects.
-
-## PR preview deployment
-
-Vercel uses `vercel.json` to build `_site/` for GitHub pull requests; the `main` branch is not deployed there. Its isolated build installs the same `requirements.txt` dependencies using a version-pinned uv installer without requiring the host Python's `ensurepip`. The resulting preview is marked `noindex`. GitHub Pages remains the production host.
 
 ## Publishing an article
 
