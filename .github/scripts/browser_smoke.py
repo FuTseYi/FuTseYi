@@ -65,6 +65,16 @@ def check_site_navigation(page, width):
     selected = theme.get_attribute("data-mode")
     assert page.evaluate("localStorage.getItem('site-theme')") == selected
 
+    page.evaluate("""() => {
+        window.__persistentHeader = document.querySelector('#site-header');
+        window.__persistentCanvas = document.querySelector('.atmosphere canvas');
+    }""")
+    page.evaluate("""() => {
+        window.__scrollHistory = [];
+        window.addEventListener('scroll', () => window.__scrollHistory.push(window.scrollY), {passive: true});
+    }""")
+    page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
+    assert page.evaluate("window.scrollY > 100")
     if width <= 860:
         toggle = page.locator(".nav-toggle")
         assert toggle.is_visible()
@@ -80,7 +90,48 @@ def check_site_navigation(page, width):
     else:
         page.locator("#primary-navigation a[href='/blog/']").click()
     page.wait_for_url("**/blog/")
-    assert page.locator(".blog-entry").count() > 0
+    page.locator(".blog-entry").first.wait_for()
+    page.wait_for_function("window.scrollY < 2")
+    assert page.evaluate("""() => {
+        const samples = window.__scrollHistory || [];
+        return !samples.some(y => y > 15 && y < 600);
+    }"""), "Cross-page navigation visibly animated the scroll position"
+    page.wait_for_function("""() => {
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        return !document.documentElement.classList.contains('is-navigating') &&
+            getComputedStyle(document.documentElement).scrollBehavior === (reduced ? 'auto' : 'smooth');
+    }""")
+    assert page.evaluate("""() => Boolean(window.Swup) &&
+        document.querySelector('#site-header') === window.__persistentHeader &&
+        document.querySelector('.atmosphere canvas') === window.__persistentCanvas
+    """)
+    if width <= 860:
+        assert page.locator(".nav-toggle").get_attribute("aria-expanded") == "false"
+    page.go_back()
+    page.wait_for_url("http://127.0.0.1:8766/")
+    page.locator("main h1").wait_for()
+    assert page.evaluate("""() => !window.Swup || (
+        document.querySelector('#site-header') === window.__persistentHeader &&
+        document.querySelector('.atmosphere canvas') === window.__persistentCanvas
+    )""")
+    page.go_forward()
+    page.wait_for_url("**/blog/")
+    page.locator(".blog-entry").first.wait_for()
+    assert page.evaluate("document.querySelector('#site-header') === window.__persistentHeader")
+    for _ in range(2):
+        page.locator("#site-header .brand").click()
+        page.wait_for_url("http://127.0.0.1:8766/")
+        page.locator("main h1").wait_for()
+        page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
+        page.wait_for_function("window.scrollY > 100")
+        page.evaluate("window.__scrollHistory = []")
+        if width <= 860:
+            page.locator(".nav-toggle").click()
+        page.locator("#primary-navigation a[href='/blog/']").click()
+        page.wait_for_url("**/blog/")
+        page.locator(".blog-entry").first.wait_for()
+        page.wait_for_function("window.scrollY < 2")
+        assert page.evaluate("""() => !(window.__scrollHistory || []).some(y => y > 15 && y < 600)"""), "Repeated navigation animated the scroll position"
 
 
 def check_search(page):
@@ -124,6 +175,9 @@ def main():
                     for slug in ("astro-waline-comments", "pytorch-quickstart-neural-networks", "hkust-elpa-serverless-github-native-cms"):
                         check(page, slug, width)
                     context.close()
+            context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="no-preference")
+            check_site_navigation(context.new_page(), 390)
+            context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
             context.close()

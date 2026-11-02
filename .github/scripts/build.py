@@ -52,14 +52,11 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
     header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
     header = header.replace('href="/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
-    if url == f"{SITE}/blog/":
-        header = header.replace('href="/blog/" class="is-active"', 'href="#main" class="is-active"')
     footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
-    footer = footer.replace('href="#about"', 'href="#main"')
     css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
     theme_init = re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0]
     year_font = '<link rel="preload" href="/assets/fonts/bodoni-moda-numerals.ttf" as="font" type="font/ttf" crossorigin>\n' if url == f"{SITE}/blog/" else ""
-    scripts = '\n'.join(f'<script src="/{src}" defer></script>' for src in re.findall(r'<script src="([^"]+)"', home))
+    scripts = '\n'.join(f'<script src="{src if src.startswith("https://") else "/" + src}" defer></script>' for src in re.findall(r'<script src="([^"]+)"', home))
 
     return f"""<!doctype html>
 <html lang="{lang}">

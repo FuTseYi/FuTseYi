@@ -32,6 +32,14 @@ Run `python3 preview.py --build-only --refresh-activity` to reproduce the GitHub
 
 The homepage canonical URL in `index.html` is the production origin for generated blog pages, sitemap, robots sitemap declaration, README links and site validation. Internal navigation uses root-relative paths. A future custom domain or renamed/private source repository does not require changing the core generators; hosting access, DNS, and optional cross-repository README permissions are deployment settings.
 
+## Persistent navigation
+
+The site remains a set of complete, independently accessible HTML documents. When JavaScript and Swup are available, same-origin links replace only `#main`; the shared navigation, footer, and WebGL atmosphere remain mounted. The Swup 4.10.0 URL is pinned; review the pinned release and dependency policy explicitly before upgrading. If the CDN script cannot load, ordinary browser navigation still works. The CDN remains a runtime availability dependency; vendoring is an optional future improvement, not a reason to add a build tool. Keep the script version pinned and review upgrades explicitly.
+
+Page-dependent behavior in `assets/js/site.js` must be initialized when new content becomes visible and cleaned up before replacement. New global listeners, ResizeObservers, and dialogs must not outlive the page they belong to. The mobile navigation closes before a content visit, and the normal scroll-driven header sizing remains independent of content replacement.
+
+When changing navigation or page generation, test direct article URLs, same-page and cross-page anchors, Back/Forward, Blog search, article contents and code copying, light/dark themes, and mobile menu transitions. Do not add whole-page fade overlays to hide rendering defects.
+
 ## PR preview deployment
 
 Vercel uses `vercel.json` to build `_site/` for GitHub pull requests; the `main` branch is not deployed there. Its isolated build installs the same `requirements.txt` dependencies using a version-pinned uv installer without requiring the host Python's `ensurepip`. The resulting preview is marked `noindex`. GitHub Pages remains the production host.

@@ -31,6 +31,7 @@
     uniform vec2 resolution;
     uniform float time;
     uniform float dark;
+    uniform float entrance;
     uniform vec2 seed;
     out vec4 pixel;
     vec3 mod289(vec3 x) {
@@ -127,8 +128,8 @@
       vec2 a=normalize(vec2(-.83,-.55));
       vec2 b=normalize(vec2(.85,.53));
       vec2 c=normalize(vec2(.55,-.83));
-      float high=plume(swept,vec2(aspect*1.04,.94),a,.20,.98);
-      float low=plume(swept,vec2(-aspect*.08,.03),b,.23,1.05);
+      float high=plume(swept,vec2(aspect*1.04,.94),a,.23,1.05);
+      float low=plume(swept,vec2(-aspect*.08,.03),b,.27,1.13);
       float side=plume(swept,vec2(aspect*.18,1.13),c,.12,.73);
       float opposing=max(high,low*.88);
       float sources=max(opposing,side*.52);
@@ -136,15 +137,21 @@
       float collision=min(high,low);
       float turbulence=noise(vec3(p*2.05+warp*.64+fine*.18,phase*.59+7.))*.5+.5;
       float broad=noise(vec3(p*.85+warp*.2,phase*.31+2.))*.5+.5;
-      float density=clamp(sources*(.48+.53*broad+.39*turbulence)+collision*.22,0.,1.);
-      float ridge=smoothstep(.46,.79,turbulence)*sources;
+      float density=clamp(sources*(.36+.68*broad+.46*turbulence)+collision*.24,0.,1.);
+      float ridge=smoothstep(.52,.82,turbulence)*sources;
       float core=smoothstep(.48,.9,density);
       float shadow=collision*(1.-turbulence)*.24;
+      // One shared envelope raises every plume together; no travelling reveal front.
+      float reveal=smoothstep(0.,.84,entrance);
+      density*=reveal;
+      ridge*=reveal;
+      core*=reveal;
+      shadow*=reveal;
       // Shared density and lighting, with separate dark/light color ramps.
       vec3 darkBase=vec3(.012,.026,.058);
-      vec3 darkBody=vec3(.085,.22,.42);
-      vec3 darkLight=vec3(.47,.69,.87);
-      vec3 night=mix(darkBase,darkBody,smoothstep(.08,.68,density));
+      vec3 darkBody=vec3(.065,.18,.37);
+      vec3 darkLight=vec3(.54,.74,.91);
+      vec3 night=mix(darkBase,darkBody,smoothstep(.12,.71,density));
       night=mix(night,darkLight,clamp(core*.62+ridge*.24,0.,.75));
       night*=1.-shadow;
       vec3 dayBase=vec3(.995,.998,1.);
@@ -177,15 +184,18 @@
   const position = gl.getAttribLocation(program, 'position');
   gl.enableVertexAttribArray(position);
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const uniforms = Object.fromEntries(['resolution','time','dark','seed'].map(name => [name, gl.getUniformLocation(program, name)]));
+  const uniforms = Object.fromEntries(['resolution','time','dark','seed','entrance'].map(name => [name, gl.getUniformLocation(program, name)]));
   gl.uniform2f(uniforms.seed, offset[0], offset[1]);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const system = matchMedia('(prefers-color-scheme: dark)');
   let visible = true, lost = false, frame = 0, last = 0, elapsed = 0;
+  const started = performance.now();
   const draw = () => {
     const theme = document.documentElement.dataset.theme;
     gl.uniform1f(uniforms.dark, theme === 'dark' || (theme !== 'light' && system.matches) ? 1 : 0);
     gl.uniform1f(uniforms.time, elapsed);
+    const progress = Math.min((performance.now() - started) / 1850, 1);
+    gl.uniform1f(uniforms.entrance, reduced.matches ? 1 : progress * progress * (3 - 2 * progress));
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     layer.classList.add('is-ready');
