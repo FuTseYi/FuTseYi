@@ -40,7 +40,7 @@ class SitePortabilityTests(unittest.TestCase):
                 shutil.copytree(ROOT / name, root / name)
             home = root / "index.html"
             home.write_text(home.read_text(encoding="utf-8").replace(
-                'href="https://futseyi.github.io/"',
+                'href="' + site_url(root) + '/"',
                 'href="https://portable.example.org/"', 1), encoding="utf-8")
             snapshot = root / "_site/contributions.json"
             snapshot.parent.mkdir()
