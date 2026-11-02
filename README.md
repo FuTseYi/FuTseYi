@@ -18,7 +18,7 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 
 [Email](mailto:hello@futseyi.com) · [GitHub](https://github.com/FuTseYi) · [LinkedIn](https://www.linkedin.com/in/futseyi) · [X](https://x.com/FuTseYi)
 
-<a class="visitor-counter" href="https://visit-counter.futseyi.workers.dev/status?path=https%3A%2F%2Ffutseyi.github.io%2F" target="_blank" rel="noopener noreferrer"><img src="https://visit-counter.futseyi.workers.dev/api/combined?path=https%3A%2F%2Ffutseyi.github.io%2F" alt="Visitor badge"></a>
+<a class="visitor-counter" href="https://visit.futseyi.com/status?path=https%3A%2F%2Fwww.futseyi.com%2F" target="_blank" rel="noopener noreferrer"><img src="https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fwww.futseyi.com%2F" alt="Visitor badge"></a>
 
 ## Active In
 
