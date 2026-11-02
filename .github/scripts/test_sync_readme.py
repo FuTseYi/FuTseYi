@@ -66,8 +66,8 @@ class ReadmeTests(unittest.TestCase):
     def test_website_urls_ignore_repository_name(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
             result = sync.render()
-        self.assertIn("**Homepage**: [futseyi.github.io](https://futseyi.github.io/)", result)
-        self.assertIn("https://futseyi.github.io/blog/", result)
+        self.assertIn(f"**Homepage**: [www.futseyi.com]({sync.site_url()}/)", result)
+        self.assertIn(f"{sync.site_url()}/blog/", result)
 
     def test_local_website_url_follows_canonical(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(sync.os.environ, {}, clear=True):
