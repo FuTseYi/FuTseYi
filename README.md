@@ -23,7 +23,7 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 ## Active In
 
 <p>
-<a href="https://github.com/datawhalechina"><img src="https://github.com/datawhalechina.png?size=96" alt="" width="32" height="32" align="middle" />&#8288;&nbsp;Datawhale</a> &nbsp;&nbsp;&nbsp; <a href="https://hai-hkust.github.io/"><img src="https://github.com/HAI-HKUST.png?size=96" alt="" width="32" height="32" align="middle" />&#8288;&nbsp;HAI-HKUST</a> &nbsp;&nbsp;&nbsp; <a href="https://www.bytedance.com/"><img src="https://github.com/bytedance.png?size=96" alt="" width="32" height="32" align="middle" />&#8288;&nbsp;ByteDance</a> &nbsp;&nbsp;&nbsp; <a href="https://uem-stu.github.io/"><img src="https://github.com/UEM-Stu.png?size=96" alt="" width="32" height="32" align="middle" />&#8288;&nbsp;UEM Stu</a>
+<span><img src="https://github.com/datawhalechina.png?size=96" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://github.com/datawhalechina">Datawhale</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://github.com/HAI-HKUST.png?size=96" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://hai-hkust.github.io/">HAI-HKUST</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://github.com/bytedance.png?size=96" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://www.bytedance.com/">ByteDance</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://github.com/UEM-Stu.png?size=96" alt="" width="32" height="32" align="middle" />&nbsp;<a href="https://uem-stu.github.io/">UEM Stu</a></span>
 </p>
 
 ## Recent Blog
