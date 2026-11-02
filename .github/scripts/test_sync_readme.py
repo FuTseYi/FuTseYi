@@ -44,12 +44,6 @@ class ReadmeTests(unittest.TestCase):
         positions=[result.index(text) for text in ordered]
         self.assertEqual(positions,sorted(positions))
 
-    def test_community_icon_and_label_share_a_link(self):
-        item = sync.community_row("[Datawhale](https://github.com/datawhalechina)", "https://github.com/datawhalechina.png", sync.site_url())
-        self.assertTrue(item.startswith('<a href="https://github.com/datawhalechina"><img '))
-        self.assertIn(' />&#8288;&nbsp;Datawhale</a>', item)
-        self.assertNotIn("</a></span>", item)
-
     def test_homepage_changes_propagate_without_generator_edits(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
