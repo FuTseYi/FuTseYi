@@ -6,9 +6,9 @@ tags: GitHub, README, SVG, Troubleshooting
 
 # 1 问题现象
 
-最近在维护个人网站和 GitHub Profile README 时，我把 Active In 区域的组织 Logo 改成了本地托管的透明图片。网页中显示正常，VS Code 的 Markdown 预览也没有异常，但 GitHub 仓库和个人主页上的 README，却给图片加上了一层浅灰色背景。
+在 GitHub README 中展示透明 Logo 时，有时会遇到一个不太直观的问题：图片文件本身没有丢失透明通道，在普通网页和编辑器预览中也显示正常，到了 GitHub 页面却出现了灰色背景。
 
-最初看起来像是透明通道丢失，或者 GitHub 的图片代理缓存了旧资源。不过，图片下载到本地后仍然透明，网页中的同一张图片也正常显示，问题便不太像出在文件本身。
+我是在整理 README 中的组织 Logo 时碰到这个现象的。最初我怀疑是图片代理缓存或资源格式问题，但对比原图、网页和 README 的渲染结果后，才把排查重点转向 GitHub 最终处理的 HTML 属性。
 
 # 2 定位到 README 的图片属性
 
