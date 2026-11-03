@@ -104,7 +104,6 @@
 a,button,summary,[role="button"]{-webkit-tap-highlight-color:transparent}
 
 html {
-    overscroll-behavior-y: contain;
     scroll-behavior: auto;
     scroll-padding-top: calc(var(--nav-h) + var(--nav-offset) + 16px);
   }
