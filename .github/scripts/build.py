@@ -18,32 +18,23 @@ from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 import markdown
 from asset_urls import version_assets, site_url
+from post_metadata import get_post as parse_post, post_slug
+from site_metadata import load_site_metadata, render_social_metadata
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
 SITE = site_url(ROOT)
+SITE_METADATA = load_site_metadata(ROOT)
 
 def get_post(path: Path) -> tuple[dict[str, str], str]:
-    raw = path.read_text(encoding="utf-8")
-    match = re.match(r"\A---\r?\n(.*?)\r?\n---\r?\n", raw, re.S)
-    if not match:
-        raise ValueError(f"{path}: Missing --- frontmatter")
-    meta: dict[str, str] = {}
-    for line in match.group(1).splitlines():
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        if ":" not in line:
-            raise ValueError(f"{path}: Invalid metadata line {line!r}")
-        key, value = line.split(":", 1)
-        meta[key.strip()] = value.strip().strip('"').strip("'")
-    for key in ("title", "date"):
-        if not meta.get(key):
-            raise ValueError(f"{path}: Missing {key}")
-    date.fromisoformat(meta["date"])
-    return meta, raw[match.end():]
+    """Compatibility export for existing repository scripts."""
+    return parse_post(path)
 
-def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page", lang: str = "en") -> str:
+
+def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page",
+           lang: str = "en", social_type: str = "website", tags: list[str] | None = None) -> str:
+    social_meta = render_social_metadata(SITE_METADATA, title, description, url, lang, social_type, tags)
     title, description, url = (escape(value, quote=True) for value in (title, description, url))
     lang = escape(lang, quote=True)
     home = version_assets((ROOT / "index.html").read_text(encoding="utf-8"), ROOT)
@@ -63,6 +54,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="{description}">
+{social_meta}
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
 <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
 <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
@@ -79,6 +71,17 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 {footer}
 </body></html>
 """
+
+
+def article_description(article: str, fallback: str) -> str:
+    match = re.search(r"<p\b[^>]*>(.*?)</p>", article, re.S)
+    if not match:
+        return fallback
+    summary = unescape(re.sub(r"<[^>]+>", " ", match[1]))
+    summary = " ".join(summary.split())
+    if len(summary) > 180:
+        summary = summary[:177].rstrip() + "…"
+    return summary or fallback
 
 
 def pretty_date(value: str) -> str:
@@ -155,9 +158,7 @@ def main() -> None:
     # Validate article metadata before replacing generated pages.
     source_posts: list[tuple[str, dict[str, str], str]] = []
     for path in sorted(SOURCE.glob("*/index.md")):
-        slug = path.parent.name
-        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
-            raise ValueError(f"Post directory must be a lowercase URL slug: {slug}")
+        slug = post_slug(path)
         meta, source = get_post(path)
         source_posts.append((slug, meta, source))
 
@@ -192,7 +193,14 @@ def main() -> None:
         assets = SOURCE / slug / "assets"
         if assets.is_dir():
             shutil.copytree(assets, destination / "assets")
-        (destination / "index.html").write_text(layout(item["title"], item["title"], SITE + url, content, body_class="blog-page article-page", lang=meta.get("lang", "zh-CN" if re.search(r"[\u3400-\u9fff]", meta["title"] + source) else "en")), encoding="utf-8")
+        page_lang = meta.get("lang", "zh-CN" if re.search(r"[\u3400-\u9fff]", meta["title"] + source) else "en")
+        description = meta.get("description") or article_description(article, item["title"])
+        (destination / "index.html").write_text(
+            layout(item["title"], description, SITE + url, content,
+                   body_class="blog-page article-page", lang=page_lang,
+                   social_type="article", tags=item["tags"]),
+            encoding="utf-8"
+        )
         posts.append(item)
 
     entries = []

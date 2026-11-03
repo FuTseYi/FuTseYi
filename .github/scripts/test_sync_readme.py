@@ -76,6 +76,17 @@ class ReadmeTests(unittest.TestCase):
             with patch.object(sync, "ROOT", root):
                 self.assertEqual(sync.site_url(), "https://another.github.io")
 
+    def test_recent_posts_use_shared_frontmatter_validation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            post = root / "posts" / "invalid" / "index.md"
+            post.parent.mkdir(parents=True)
+            post.write_text("---\ntitle: Invalid\ndate: 2099-01-01\nmalformed metadata\n---\nText",
+                            encoding="utf-8")
+            with patch.object(sync, "ROOT", root):
+                with self.assertRaisesRegex(ValueError, "Invalid metadata line"):
+                    sync.read_post_entries()
+
     def test_recent_posts_sort_by_date_without_publication_gates(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

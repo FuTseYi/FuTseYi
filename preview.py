@@ -165,6 +165,7 @@ def assemble(root, refresh_activity=False):
     site.mkdir(exist_ok=True)
     for name in ("index.html", "robots.txt", "sitemap.xml"):
         shutil.copy2(root / name, site / name)
+    log += run(root, "site_metadata.py", "--update-homepage")
     for name in ("assets", "blog"):
         shutil.copytree(root / name, site / name)
     (site / ".nojekyll").touch()

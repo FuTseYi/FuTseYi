@@ -2,11 +2,13 @@
 """Verify generated static pages and local references before deployment."""
 from __future__ import annotations
 import json
+import re
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree
 from asset_urls import version_assets, site_url
+from site_metadata import SOCIAL_REQUIRED_META, load_site_metadata
 
 ROOT = Path(__file__).resolve().parents[2] / "_site"
 ORIGIN = site_url(ROOT.parent)
@@ -17,11 +19,23 @@ class Page(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.ids: set[str] = set()
         self.links: list[str] = []
+        self.meta: dict[str, str] = {}
+        self.lang = ""
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "html":
+            self.lang = attrs.get("lang", "")
+        if tag == "link" and "canonical" in attrs.get("rel", "").split():
+            self.meta["canonical"] = attrs.get("href", "")
         if attrs.get("id"):
             self.ids.add(attrs["id"])
+        if tag == "meta":
+            key = attrs.get("property") or attrs.get("name")
+            if key:
+                self.meta[key] = attrs.get("content", "")
+                if key in ("og:image", "twitter:image") and self.meta[key]:
+                    self.links.append(self.meta[key])
         if tag in ("a", "link") and attrs.get("href"):
             self.links.append(attrs["href"])
         if tag in ("img", "source", "script") and attrs.get("src"):
@@ -136,6 +150,54 @@ def main():
         pages[file.resolve()] = parsed
 
     errors = []
+    source_metadata = load_site_metadata(ROOT.parent)
+    home_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    toc = re.search(r'<nav class="page-toc"[^>]*>(.*?)</nav>', home_html, re.S)
+    actual_toc = re.findall(r'<a\s+href="#([^"]+)"[^>]*>(.*?)</a>', toc[1], re.S) if toc else []
+    actual_toc = [(section_id, re.sub(r"<[^>]+>", "", label).strip()) for section_id, label in actual_toc]
+    if actual_toc != source_metadata["toc_entries"]:
+        errors.append(f"Homepage On This Page entries are {actual_toc}, expected {source_metadata['toc_entries']}")
+
+    for file, parsed in pages.items():
+        name = file.relative_to(ROOT)
+        for key in SOCIAL_REQUIRED_META:
+            if not parsed.meta.get(key):
+                errors.append(f"{name}: missing social metadata {key}")
+        if parsed.meta.get("og:image") != source_metadata["image"] or parsed.meta.get("twitter:image") != source_metadata["image"]:
+            errors.append(f"{name}: social image does not follow the About portrait")
+        for key, expected in (
+            ("og:site_name", source_metadata["site_name"]),
+            ("og:image:type", source_metadata["image_type"]),
+            ("og:image:width", source_metadata["image_width"]),
+            ("og:image:height", source_metadata["image_height"]),
+            ("og:image:alt", source_metadata["image_alt"]),
+            ("twitter:site", source_metadata["twitter_site"]),
+            ("twitter:image:alt", source_metadata["image_alt"]),
+        ):
+            if parsed.meta.get(key) != expected:
+                errors.append(f"{name}: {key} does not match homepage source data")
+        if parsed.meta.get("og:title") != parsed.meta.get("twitter:title"):
+            errors.append(f"{name}: Open Graph and X titles do not match")
+        if parsed.meta.get("og:description") != parsed.meta.get("twitter:description") or parsed.meta.get("og:description") != parsed.meta.get("description"):
+            errors.append(f"{name}: social descriptions do not match")
+        if parsed.meta.get("og:url") != parsed.meta.get("canonical"):
+            errors.append(f"{name}: social URL does not match the canonical URL")
+        if parsed.meta.get("twitter:card") != "summary":
+            errors.append(f"{name}: expected a summary card for the portrait image")
+        if parsed.meta.get("og:type") not in ("website", "article"):
+            errors.append(f"{name}: invalid Open Graph type")
+        expected_locale = "zh_CN" if parsed.lang.lower().startswith("zh") else "en_US"
+        if parsed.meta.get("og:locale") != expected_locale:
+            errors.append(f"{name}: social locale does not match the page language")
+        if file == (ROOT / "index.html").resolve():
+            if parsed.meta.get("og:title") != source_metadata["title"] or parsed.meta.get("og:description") != source_metadata["description"]:
+                errors.append("Homepage social title or description does not match its source metadata")
+            if parsed.meta.get("og:url") != source_metadata["origin"] + "/" or parsed.meta.get("og:type") != "website":
+                errors.append("Homepage social URL or Open Graph type is incorrect")
+        elif len(name.parts) == 3 and name.parts[0] == "blog" and name.parts[1] != "tags":
+            if parsed.meta.get("og:type") != "article":
+                errors.append(f"{name}: article page Open Graph type must be article")
+
     for post_page in (ROOT / "blog").glob("*/index.html"):
         if post_page.parent.name == "tags":
             continue

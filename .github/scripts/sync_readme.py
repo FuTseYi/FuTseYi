@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate mirrored READMEs from index.html and published posts. Standard library only."""
+"""Generate mirrored READMEs from the homepage and shared article metadata."""
 import argparse
 import base64
 import json
@@ -10,6 +10,7 @@ from html import unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
 from asset_urls import version_assets, site_url as production_url
+from post_metadata import get_post, post_slug
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -50,17 +51,10 @@ def read_home():
 def read_post_entries(limit=6):
     found=[]
     for file in (ROOT/"posts").glob("*/index.md"):
-        raw=file.read_text(encoding="utf-8")
-        fm=re.match(r"\A---\r?\n(.*?)\r?\n---\r?\n",raw,re.S)
-        if not fm: raise ValueError(f"{file.name}: missing frontmatter")
-        fields={}
-        for line in fm[1].splitlines():
-            if ":" in line and not line.lstrip().startswith("#"):
-                k,v=line.split(":",1);fields[k.strip()]=v.strip().strip("'\"")
-        if not fields.get("title") or not fields.get("date"):raise ValueError(f"{file.name}: missing title or date")
+        fields, _ = get_post(file)
         dt=date.fromisoformat(fields["date"])
-        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",file.parent.name):raise ValueError(f"Invalid article slug: {file.parent.name}")
-        found.append((dt,file.parent.name,fields["title"]))
+        slug=post_slug(file)
+        found.append((dt,slug,fields["title"]))
     found.sort(reverse=True)
     return found[:limit]
 
