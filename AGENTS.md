@@ -2,7 +2,7 @@
 
 A lightweight static personal website built with HTML, CSS, JavaScript, and a Python-generated blog.
 
-**Core principle: Every line of code should justify its existence.**
+**Core principles: Every line of code should justify its existence. Define once. Reuse everywhere.**
 
 Treat the site as one coherent system. Prefer sound architecture, consistent design, performance, accessibility, and long-term maintainability over isolated fixes or artificially small diffs.
 
@@ -23,8 +23,10 @@ See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do no
 
 - Read relevant code, dependencies, and established behavior before editing; assess effects across pages, themes, devices, and workflows.
 - Fix root causes. Reorganize inadequate implementations when warranted instead of stacking patches, overrides, or special cases.
-- Prefer clear ownership, necessary reuse, and the simplest effective design. Remove redundant or obsolete code when addressing related areas.
-- Avoid speculative abstractions, defensive complexity without evidence, and unrelated refactoring.
+- Establish one authoritative source for shared information, rules, configuration, and behavior. Reuse it or generate dependent outputs rather than maintaining parallel copies; prefer automatic propagation over repeated manual synchronization.
+- Reuse implementations when their responsibilities and semantics genuinely match. Preserve intentional duplication when it improves clarity, isolation, or independence.
+- Prefer the simplest effective design. Do not introduce abstractions, dependencies, or indirection merely to eliminate superficial repetition.
+- Remove redundant or obsolete code when addressing related areas; avoid speculative abstractions, defensive complexity without evidence, and unrelated refactoring.
 - Preserve existing functionality, accessibility, visual consistency, and compatibility unless explicitly changing them.
 - Keep site generation portable. Treat hosts, deployment credentials, and optional integrations as replaceable adapters, not core build dependencies.
 
@@ -44,16 +46,22 @@ See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do no
 
 ## Documentation
 
-- Treat code and workflows as the source of truth; update affected guidance when behavior, commands, or architecture changes.
+Each document has one authoritative responsibility. Keep rules in their owning document and reference them elsewhere instead of maintaining parallel versions:
+
+- `AGENTS.md` governs repository-wide engineering principles, architecture, change management, verification, and document boundaries.
+- [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md) governs editorial purpose, writing, research, article metadata decisions, privacy, and content review.
+- [PREVIEW.md](PREVIEW.md) explains development, preview, build, publishing, and operational procedures.
+- `BLOG_INDEX.json` is a generated discovery index, not an independent source of editorial policy or article content.
+
+When behavior, commands, or architecture change, update the implementation and the relevant owning guidance. Keep cross-document references concise and update them only when their meaning or destination changes. Do not duplicate instructions simply to make each document self-contained.
+
 - Preserve homepage-to-README generation: edit source content rather than generated sections.
 - Keep published claims factual and protect private information and credentials.
-- Keep repository-wide rules here and operational detail in [PREVIEW.md](PREVIEW.md); avoid duplicated or speculative documentation.
 
 ## Blog Content
 
 - For tasks that create, edit, review, reorganize, or classify articles under `posts/`, read [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md) and [BLOG_INDEX.json](BLOG_INDEX.json) before making editorial decisions.
-- `BLOG_GUIDELINES.md` is the authoritative source for editorial policy, research, writing, metadata, and content review. Keep editorial rules there; do not duplicate them in this file.
-- `BLOG_INDEX.json` is generated from Markdown sources. Never edit it manually; regenerate with `python .github/scripts/blog_index.py --write` and verify with `python .github/scripts/blog_index.py --check`.
 - Use the index for quick topic and tag discovery, then read relevant Markdown sources before relying on their details. The archive is context, not a limit on future subjects, formats, or depth.
-- Website engineering tasks that do not touch blog content do not need to load the editorial guide. Mixed tasks must follow both this file and the editorial guide.
-- Repository engineering and verification rules remain governed by this file; editorial decisions remain governed by `BLOG_GUIDELINES.md`. Follow explicit user instructions where applicable, without overriding factual accuracy, privacy, licensing, or publication safeguards.
+- `BLOG_INDEX.json` is generated from Markdown sources. Never edit it manually; regenerate with `python .github/scripts/blog_index.py --write` and verify with `python .github/scripts/blog_index.py --check`.
+- Website engineering tasks that do not touch blog content do not need to load the editorial guide. Mixed tasks must follow both documents within their respective scopes: repository engineering and verification follow this file; editorial decisions follow [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md).
+- Follow explicit user instructions where applicable, without overriding factual accuracy, privacy, licensing, or publication safeguards.
