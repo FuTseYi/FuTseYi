@@ -1,7 +1,7 @@
 ---
 title: GitHub README 透明图片出现灰底的解决方法
 date: 2026-11-02
-tags: GitHub, Web Development, Troubleshooting
+tags: GitHub, README, SVG, Troubleshooting
 ---
 
 # 1 问题现象

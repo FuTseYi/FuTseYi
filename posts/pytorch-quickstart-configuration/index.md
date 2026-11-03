@@ -1,7 +1,7 @@
 ---
 title: PyTorch 入门 01：环境配置
 date: 2025-07-13
-tags: pytorch, 学习笔记, 深度学习
+tags: PyTorch, Deep Learning, Tutorial
 ---
 
 > 教程视频见 B 站 up 主 [小土堆](https://www.bilibili.com/video/BV1hE411t7RN?p=9&vd_source=db1ba321ac57d0740e3f5bc3b365ddff)

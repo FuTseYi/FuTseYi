@@ -1,7 +1,7 @@
 ---
 title: 使用 Cloudflare 与 PicList 搭建图床
 date: 2025-05-12
-tags: Piclist, Blog, Tool, Cloudflare
+tags: Cloudflare, PicList, Image Hosting
 ---
 
 # 1 提前准备

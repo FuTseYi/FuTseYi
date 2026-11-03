@@ -1,7 +1,7 @@
 ---
 title: PyTorch 入门 03：神经网络
 date: 2025-07-15
-tags: pytorch, 学习笔记, 深度学习
+tags: PyTorch, Deep Learning, Tutorial
 ---
 
 # 第 03 讲 神经网络📝

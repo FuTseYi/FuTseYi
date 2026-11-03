@@ -1,7 +1,7 @@
 ---
 title: Zotero 配置备份与恢复：Tara 插件
 date: 2025-07-21
-tags: REPOST, Zotero
+tags: Zotero, Backup, Tara Plugin
 ---
 
 ![](./assets/logo.png)

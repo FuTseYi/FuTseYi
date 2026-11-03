@@ -1,7 +1,7 @@
 ---
 title: Jetson Orin Nano 系统烧录指南
 date: 2025-07-09
-tags: Jetson, Jetson-Orin-Nano, 系统烧录
+tags: Jetson Orin Nano, NVIDIA, Linux
 ---
 
 # 1 前言

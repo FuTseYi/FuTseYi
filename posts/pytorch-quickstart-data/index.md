@@ -1,7 +1,7 @@
 ---
 title: PyTorch 入门 02：数据处理
 date: 2025-07-14
-tags: pytorch, 学习笔记, 深度学习
+tags: PyTorch, Deep Learning, Tutorial
 ---
 
 # 第 02 讲 数据📝

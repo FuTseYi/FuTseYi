@@ -1,7 +1,7 @@
 ---
 title: Waline 邮件通知配置：iCloud 与 Gmail
 date: 2025-10-12
-tags: Blog, Waline评论系统
+tags: Waline, Email, iCloud, Gmail
 ---
 
 # 使用 Waline 实现 iCloud 和 Gmail 邮件通知的完整配置教程

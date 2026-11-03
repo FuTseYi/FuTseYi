@@ -1,7 +1,7 @@
 ---
 title: 土耳其 Apple ID 注册与跨区家庭共享实践
 date: 2026-05-16
-tags: 土耳其AppleID, 外区AppleID, ChatGPTPlus订阅, 土区礼品卡, 跨区Apple家庭共享, iCloud订阅
+tags: Apple ID, ChatGPT, iCloud, Cross-Region
 ---
 
 最近重新折腾了一遍土耳其区 Apple ID，并成功完成：

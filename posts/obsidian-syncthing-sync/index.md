@@ -1,7 +1,7 @@
 ---
 title: Obsidian 跨设备同步：Syncthing 实践
 date: 2025-07-20
-tags: Obsidian, Syncthing, 局域网, 广域网
+tags: Obsidian, Syncthing, Synchronization
 ---
 
 > 或许这就是最好的 Obsidian 全平台同步方案，甚至在国内可能优于官方的同步，因为它的同步速度取决于你内网带宽！并且它不局限于同步 Obsidian，也可以同步其他基于文件的的资料或者照片以及视频。

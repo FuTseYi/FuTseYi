@@ -1,7 +1,7 @@
 ---
 title: Ubuntu 新机初始化与开发环境配置
 date: 2025-07-17
-tags: Linux
+tags: Ubuntu, Linux, Development
 ---
 
 ![](assets/linux.gif)

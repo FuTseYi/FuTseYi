@@ -1,7 +1,7 @@
 ---
 title: VS Code 配置与扩展推荐
 date: 2025-09-17
-tags: VSCode
+tags: VS Code, Development Tools
 ---
 
 # VSCode 优化使用体验篇（设置 | 插件）

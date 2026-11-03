@@ -1,7 +1,7 @@
 ---
 title: YOLOv7 目标检测模型训练与 RKNN 适配
 date: 2025-07-08
-tags: 目标检测, RKNN
+tags: YOLOv7, RKNN, Edge AI
 ---
 
 ![](assets/rk3588s.jpg)

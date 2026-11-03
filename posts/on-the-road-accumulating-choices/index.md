@@ -1,7 +1,7 @@
 ---
 title: 我们都还在路上：在不确定中攒出自己的选择权
 date: 2026-05-13
-tags: EMU个人分享会
+tags: Personal Reflection
 ---
 
 > **不要等到机会出现时，才开始准备自己。**

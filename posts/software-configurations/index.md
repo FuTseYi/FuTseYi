@@ -1,7 +1,7 @@
 ---
 title: 我的常用软件与配置
 date: 2025-07-02
-tags: 装机必备, Tool
+tags: Windows, Software, Setup
 ---
 
 > 该文章会持续更新

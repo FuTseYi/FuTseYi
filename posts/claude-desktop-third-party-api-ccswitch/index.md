@@ -1,7 +1,7 @@
 ---
 title: Claude Desktop 第三方模型接入：CC Switch 配置实践
 date: 2026-04-30
-tags: ClaudeDesktop, cc-switch, DeepSeek, 第三方模型API, 踩坑记录
+tags: Claude Desktop, CC Switch, DeepSeek, LLM
 ---
 
 # Claude Desktop 接入 ccswitch：第三方模型 API 配置与踩坑记录

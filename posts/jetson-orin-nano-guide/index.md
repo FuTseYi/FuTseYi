@@ -1,7 +1,7 @@
 ---
 title: Jetson Orin Nano 开发指南
 date: 2025-07-08
-tags: Jetson, Orin-Nano
+tags: Jetson Orin Nano, Edge AI, Development
 ---
 
 ![](assets/jetson-orin-nano-qtr-numbered.jpg)

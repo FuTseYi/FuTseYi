@@ -1,7 +1,7 @@
 ---
 title: 通过局域网主机共享代理：以 Jetson 为例
 date: 2025-07-10
-tags: 局域网, VPN
+tags: Network, Proxy, Jetson
 ---
 
 > **Jetson 等设备不会自动继承主机的代理规则**

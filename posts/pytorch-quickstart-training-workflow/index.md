@@ -1,7 +1,7 @@
 ---
 title: PyTorch 入门 04：模型训练流程
 date: 2025-07-16
-tags: pytorch, 学习笔记, 深度学习
+tags: PyTorch, Deep Learning, Tutorial
 ---
 
 ![](assets/padding-strides-odd.gif)

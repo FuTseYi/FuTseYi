@@ -1,7 +1,7 @@
 ---
 title: YOLO11 在 RK3588 上的部署与多线程优化
 date: 2025-07-26
-tags: RKNN, YOLO
+tags: YOLO11, RK3588, RKNN, Edge AI
 ---
 
 ![](assets/rk3588s.jpg)

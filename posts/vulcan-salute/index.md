@@ -1,7 +1,7 @@
 ---
 title: 瓦肯举手礼
 date: 2025-06-18
-tags: 瓦肯举手礼
+tags: Vulcan Salute, Pop Culture
 ---
 
 ![](assets/e3e5403b0a09aeeaba15949b44956a22.jpg)

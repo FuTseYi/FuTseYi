@@ -1,7 +1,7 @@
 ---
 title: 使用 Biome 进行代码检查
 date: 2025-06-07
-tags: biome, Blog
+tags: Biome, Code Quality, Tooling
 ---
 
 > Biome 检测到多个 `.astro` 和 `.svelte` 文件的格式问题，主要是 **代码缩进和换行不一致**。Biome 会尝试自动修复这些问题，但你需要手动确认或调整配置。
