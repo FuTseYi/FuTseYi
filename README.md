@@ -31,8 +31,8 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 - [GitHub README 透明图片出现灰底的解决方法](https://www.futseyi.com/blog/github-readme-transparent-image-background/)
 - [把 GitHub 变成内容后台：HKUST-ELPA 的 Serverless 实践](https://www.futseyi.com/blog/hkust-elpa-serverless-github-native-cms/)
 - [Cloudflare Email Routing：自有域名邮件转发实践](https://www.futseyi.com/blog/cloudflare-email-routing-outlook-forwarding/)
-- [土耳其 Apple ID 注册与跨区家庭共享实践](https://www.futseyi.com/blog/turkey-foreign-apple-id-chatgpt-plus-cross-region-family-sharing/)
-- [我们都还在路上：在不确定中攒出自己的选择权](https://www.futseyi.com/blog/on-the-road-accumulating-choices/)
-- [Claude Desktop 第三方模型接入：CC Switch 配置实践](https://www.futseyi.com/blog/claude-desktop-third-party-api-ccswitch/)
+- [Git 仓库与百度网盘同步冲突排查](https://www.futseyi.com/blog/git-baidu-netdisk-sync-conflict/)
+- [百度网盘与 OneDrive 的文件同步与备份实践](https://www.futseyi.com/blog/baidu-netdisk-onedrive-sync-backup/)
+- [使用 Raindrop.io 统一管理跨浏览器书签](https://www.futseyi.com/blog/raindrop-cross-browser-bookmarks/)
 
 [View all articles](https://www.futseyi.com/blog/)
