@@ -445,6 +445,7 @@
   let pendingPage = false;
   const syncNavigation = () => {
     const home = location.pathname === '/' || location.pathname === '/index.html';
+    header.querySelector('.brand')?.toggleAttribute('data-no-swup', home);
     header.querySelectorAll('.nav-links a').forEach(link => {
       const active = link.pathname === '/blog/' && !home;
       link.classList.toggle('is-active', active);

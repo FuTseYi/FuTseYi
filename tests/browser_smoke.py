@@ -75,6 +75,13 @@ def check_site_navigation(page, width):
     }""")
     page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
     assert page.evaluate("window.scrollY > 100")
+    page.locator('#site-header .brand').click()
+    page.wait_for_function('window.scrollY < 2')
+    assert page.evaluate("document.querySelector('#site-header') === window.__persistentHeader")
+    if page.evaluate("!matchMedia('(prefers-reduced-motion: reduce)').matches"):
+        assert page.evaluate("(window.__scrollHistory || []).some(y => y > 15 && y < 600)"), "Homepage logo must scroll smoothly instead of being overridden by navigation"
+    page.evaluate("window.scrollTo({top: 700, behavior: 'instant'}); window.__scrollHistory = []")
+    assert page.evaluate("window.scrollY > 100")
     if width <= 860:
         toggle = page.locator(".nav-toggle")
         assert toggle.is_visible()
