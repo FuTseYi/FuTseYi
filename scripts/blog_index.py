@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from post_metadata import get_post, post_slug
+from post_metadata import post_tags, read_posts
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -15,21 +15,15 @@ ROOT = Path(__file__).resolve().parents[1]
 def build_index(root: Path = ROOT) -> list[dict[str, object]]:
     """Read article metadata from the Markdown sources."""
     articles = []
-    for path in (root / "posts").glob("*/index.md"):
-        slug = post_slug(path)
-
-        metadata, _ = get_post(path)
-        tags = list(dict.fromkeys(
-            tag.strip() for tag in metadata.get("tags", "").split(",") if tag.strip()
-        ))
+    for slug, metadata, _ in read_posts(root):
         articles.append({
             "slug": slug,
             "title": metadata["title"],
             "date": metadata["date"],
-            "tags": tags,
+            "tags": post_tags(metadata),
         })
 
-    return sorted(articles, key=lambda item: (item["date"], item["slug"]), reverse=True)
+    return articles
 
 
 def render_index(root: Path = ROOT) -> str:

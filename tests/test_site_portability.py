@@ -6,7 +6,7 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from asset_urls import site_url
+from site_metadata import site_url
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,7 +30,7 @@ class SitePortabilityTests(unittest.TestCase):
 
     def test_full_build_uses_alternate_origin(self):
         # A new checkout name and unrelated HTTPS origin must not change the build.
-        import preview
+        from scripts import site_build
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "renamed-private-website"
             root.mkdir()
@@ -47,7 +47,7 @@ class SitePortabilityTests(unittest.TestCase):
             snapshot.write_text(json.dumps({
                 "updated_at": datetime.now(timezone.utc).isoformat(), "entries": []
             }), encoding="utf-8")
-            preview.assemble(root)
+            site_build.assemble(root)
             site = root / "_site"
             self.assertIn('https://portable.example.org/', (site / "index.html").read_text(encoding="utf-8"))
             self.assertIn('https://portable.example.org/blog/', (site / "blog/index.html").read_text(encoding="utf-8"))

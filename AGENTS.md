@@ -8,14 +8,16 @@ Treat the site as one coherent system. Prefer sound architecture, consistent des
 
 ## Architecture
 
-- `index.html`: Homepage and source of shared header/footer markup for generated pages.
+- `index.html`: Directly editable homepage and source of shared header/footer markup for generated pages.
 - `assets/css/style.css`: Shared presentation, themes, and responsive styles.
 - `assets/js/site.js`: Navigation, themes, search, and page interactions.
 - `assets/js/atmosphere.js`: WebGL atmosphere and reduced-motion behavior.
 - `posts/<slug>/index.md`: Article source; keep accompanying media in each post's `assets/`.
-- `scripts/`: Generation, synchronization, verification, and tests.
+- `scripts/`: Generation, synchronization, and verification.
+- `tests/`: Regression and browser checks.
 - `.github/workflows/`: Current CI, publication, and README synchronization adapters.
-- `preview.py`: Shared local preview and verified static-build entry point.
+- `preview.py`: Build verification and local preview. `scripts/site_build.py` owns this site's isolated blog, activity and search pipeline. Keep UI and business choices local to this repository.
+- `vercel.json`: Vercel adapter for the same `_site/` output used by GitHub Pages; never maintain a second site builder.
 
 See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do not commit generated `blog/`, `_site/`, `sitemap.xml`, or activity snapshots.
 
@@ -30,6 +32,8 @@ See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do no
 - Preserve existing functionality, accessibility, visual consistency, and compatibility unless explicitly changing them.
 - Keep site generation portable. Treat hosts, deployment credentials, and optional integrations as replaceable adapters, not core build dependencies.
 
+- Treat cross-project alignment as a quality baseline, not a fixed repository template. Prefer familiar, purpose-driven organization; reuse proven logic only when it suits this project. Each site may evolve its UI, dependencies and structure independently.
+
 ## Change Management
 
 - Group work by coherent objectives. Use PRs when review, validation, or a durable engineering record is useful; use direct commits for routine, low-risk updates where permitted.
@@ -39,7 +43,7 @@ See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do no
 ## Verification
 
 - Match checks to the change's scope and risk; inspect affected code paths and report what was actually tested.
-- For Python script changes: `python -m unittest discover -s scripts -p 'test_*.py' -v`.
+- For Python changes: `python -m unittest discover -s tests -t . -p 'test_*.py' -v`. Keep regression and browser checks in `tests/`; `scripts/` owns generation and validation.
 - For site, asset, generation, or deployment changes: `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
 - For relevant UI changes, review responsive layouts, light/dark modes, keyboard accessibility, browser navigation, and reduced-motion behavior.
 - Confirm no obsolete implementation remains. Never claim a check passed unless it ran successfully.
@@ -52,6 +56,7 @@ Each document has one authoritative responsibility. Keep rules in their owning d
 - [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md) governs editorial purpose, writing, research, article metadata decisions, privacy, and content review.
 - [PREVIEW.md](PREVIEW.md) explains development, preview, build, publishing, and operational procedures.
 - `BLOG_INDEX.json` is a generated discovery index, not an independent source of editorial policy or article content.
+- Recent Blog in the homepage and README must derive ordering and metadata from `scripts/blog_index.py`; do not introduce another independently sorted Markdown scanner.
 
 When behavior, commands, or architecture change, update the implementation and the relevant owning guidance. Keep cross-document references concise and update them only when their meaning or destination changes. Do not duplicate instructions simply to make each document self-contained.
 

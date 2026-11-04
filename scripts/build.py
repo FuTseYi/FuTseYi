@@ -18,7 +18,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 import markdown
 from asset_urls import version_assets
-from post_metadata import get_post as parse_post, post_slug
+from post_metadata import post_tags, read_posts
 from site_metadata import load_site_metadata, render_social_metadata
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,11 +26,6 @@ SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
 SITE_METADATA = load_site_metadata(ROOT)
 SITE = SITE_METADATA["origin"]
-
-def get_post(path: Path) -> tuple[dict[str, str], str]:
-    """Compatibility export for existing repository scripts."""
-    return parse_post(path)
-
 
 def shared_layout() -> dict[str, str]:
     """Read homepage-owned chrome and asset references once per build."""
@@ -169,13 +164,7 @@ def article_toc(tokens: list[dict]) -> tuple[str, str]:
 
 def main() -> None:
     # Validate article metadata before replacing generated pages.
-    source_posts: list[tuple[str, dict[str, str], str]] = []
-    for path in sorted(SOURCE.glob("*/index.md")):
-        slug = post_slug(path)
-        meta, source = get_post(path)
-        source_posts.append((slug, meta, source))
-
-    source_posts.sort(key=lambda post: (post[1]["date"], post[0]), reverse=True)
+    source_posts = read_posts(ROOT)
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir(parents=True)
@@ -185,7 +174,7 @@ def main() -> None:
                                extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
     for position, (slug, meta, source) in enumerate(source_posts):
         url = f"/blog/{slug}/"
-        item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=[t.strip() for t in meta.get("tags", "").split(",") if t.strip()])
+        item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=post_tags(meta))
         parser.reset()
         article = size_article_images(parser.convert(source), SOURCE / slug)
         # The frontmatter title is the page H1; preserve existing TOC IDs while shifting body headings.

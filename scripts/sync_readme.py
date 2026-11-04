@@ -9,8 +9,9 @@ from datetime import date
 from html import unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
-from asset_urls import version_assets, site_url as production_url
-from post_metadata import get_post, post_slug
+from asset_urls import version_assets
+from site_metadata import site_url as production_url
+from blog_index import build_index
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -49,14 +50,10 @@ def read_home():
     return content
 
 def read_post_entries(limit=6):
-    found=[]
-    for file in (ROOT/"posts").glob("*/index.md"):
-        fields, _ = get_post(file)
-        dt=date.fromisoformat(fields["date"])
-        slug=post_slug(file)
-        found.append((dt,slug,fields["title"]))
-    found.sort(reverse=True)
-    return found[:limit]
+    """Use the same ordered article metadata as BLOG_INDEX.json."""
+    articles=build_index(ROOT)
+    return [(date.fromisoformat(item["date"]),item["slug"],item["title"])
+            for item in articles[:limit]]
 
 def community_row(title,image,site):
     match=re.fullmatch(r'\[(.*?)\]\((.*?)\)',title)

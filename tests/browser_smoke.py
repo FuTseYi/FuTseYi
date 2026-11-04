@@ -205,7 +205,7 @@ def main():
             expected = page.locator(".article-code").first.locator("pre").inner_text()
             copy.click()
             actual = page.evaluate("navigator.clipboard.readText()")
-            assert actual.strip() == expected.strip()
+            assert actual.replace("\r\n", "\n").strip() == expected.strip()
             context.close()
             browser.close()
             print("Chromium smoke checks passed: homepage navigation, mobile menu, search, themes, articles, no-JS, clipboard.")
