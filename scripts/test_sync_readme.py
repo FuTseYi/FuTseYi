@@ -87,6 +87,12 @@ class ReadmeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Invalid metadata line"):
                     sync.read_post_entries()
 
+    def test_recent_posts_share_the_canonical_editorial_index(self):
+        from blog_index import build_index
+        expected = [(sync.date.fromisoformat(item["date"]),item["slug"],item["title"])
+                    for item in build_index(sync.ROOT)[:6]]
+        self.assertEqual(sync.read_post_entries(), expected)
+
     def test_recent_posts_sort_by_date_without_publication_gates(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
