@@ -29,7 +29,7 @@ class PreviewTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         config = json.loads((root / "vercel.json").read_text(encoding="utf-8"))
         self.assertIsNone(config["framework"])
-        self.assertEqual(config["buildCommand"], "python3 preview.py --build-only")
+        self.assertEqual(config["buildCommand"], "python3 preview.py --build-only --refresh-activity")
         self.assertEqual(config["outputDirectory"], "_site")
         workflows = "\n".join(path.read_text(encoding="utf-8") for path in (root / ".github/workflows").glob("*.yml"))
         self.assertIn("python preview.py --build-only", workflows)
