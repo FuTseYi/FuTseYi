@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "installCommand": "",
+  "installCommand": "uv venv --seed .venv",
   "buildCommand": "python3 preview.py --build-only",
   "outputDirectory": "_site"
 }
