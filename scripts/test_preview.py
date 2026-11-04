@@ -11,14 +11,14 @@ import time
 import unittest
 from unittest.mock import patch
 
-spec = importlib.util.spec_from_file_location("preview", Path(__file__).resolve().parents[2] / "preview.py")
+spec = importlib.util.spec_from_file_location("preview", Path(__file__).resolve().parents[1] / "preview.py")
 preview = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(preview)
 
 
 class PreviewTests(unittest.TestCase):
     def preview_root(self, root):
-        for name in ("assets", "posts", ".github/scripts", "_site"):
+        for name in ("assets", "posts", "scripts", "_site"):
             (root / name).mkdir(parents=True)
         (root / "index.html").write_text("source")
         (root / "robots.txt").write_text("robots")
@@ -176,14 +176,14 @@ class PreviewTests(unittest.TestCase):
     def test_source_changes_include_additions_deletions_but_not_outputs(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(preview, "ROOT", Path(directory)):
             root = Path(directory)
-            for folder in ("posts", "assets", ".github/scripts", "_site", "blog", ".venv", ".git"):
+            for folder in ("posts", "assets", "scripts", "_site", "blog", ".venv", ".git"):
                 (root / folder).mkdir(parents=True, exist_ok=True)
             (root / "index.html").write_text("home")
             original = preview.source_state()
             for filename in ("_site/index.html", "blog/index.html", "sitemap.xml", ".git/config", ".venv/test.py"):
                 (root / filename).write_text("generated")
             self.assertEqual(preview.source_state(), original)
-            for filename in ("posts/new/index.md", "posts/new/assets/image.png", "assets/css/style.css", ".github/scripts/build.py", "robots.txt"):
+            for filename in ("posts/new/index.md", "posts/new/assets/image.png", "assets/css/style.css", "scripts/build.py", "robots.txt"):
                 file = root / filename
                 file.parent.mkdir(parents=True, exist_ok=True)
                 file.write_text("source")

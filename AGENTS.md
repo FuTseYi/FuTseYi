@@ -13,7 +13,7 @@ Treat the site as one coherent system. Prefer sound architecture, consistent des
 - `assets/js/site.js`: Navigation, themes, search, and page interactions.
 - `assets/js/atmosphere.js`: WebGL atmosphere and reduced-motion behavior.
 - `posts/<slug>/index.md`: Article source; keep accompanying media in each post's `assets/`.
-- `.github/scripts/`: Generation, synchronization, verification, and tests.
+- `scripts/`: Generation, synchronization, verification, and tests.
 - `.github/workflows/`: Current CI, publication, and README synchronization adapters.
 - `preview.py`: Shared local preview and verified static-build entry point.
 
@@ -39,7 +39,7 @@ See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do no
 ## Verification
 
 - Match checks to the change's scope and risk; inspect affected code paths and report what was actually tested.
-- For Python script changes: `python -m unittest discover -s .github/scripts -p 'test_*.py' -v`.
+- For Python script changes: `python -m unittest discover -s scripts -p 'test_*.py' -v`.
 - For site, asset, generation, or deployment changes: `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
 - For relevant UI changes, review responsive layouts, light/dark modes, keyboard accessibility, browser navigation, and reduced-motion behavior.
 - Confirm no obsolete implementation remains. Never claim a check passed unless it ran successfully.
@@ -62,6 +62,6 @@ When behavior, commands, or architecture change, update the implementation and t
 
 - For tasks that create, edit, review, reorganize, or classify articles under `posts/`, read [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md) and [BLOG_INDEX.json](BLOG_INDEX.json) before making editorial decisions.
 - Use the index for quick topic and tag discovery, then read relevant Markdown sources before relying on their details. The archive is context, not a limit on future subjects, formats, or depth.
-- `BLOG_INDEX.json` is generated from Markdown sources. Never edit it manually; regenerate with `python .github/scripts/blog_index.py --write` and verify with `python .github/scripts/blog_index.py --check`.
+- `BLOG_INDEX.json` is generated from Markdown sources. Never edit it manually; regenerate with `python scripts/blog_index.py --write` and verify with `python scripts/blog_index.py --check`.
 - Website engineering tasks that do not touch blog content do not need to load the editorial guide. Mixed tasks must follow both documents within their respective scopes: repository engineering and verification follow this file; editorial decisions follow [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md).
 - Follow explicit user instructions where applicable, without overriding factual accuracy, privacy, licensing, or publication safeguards.

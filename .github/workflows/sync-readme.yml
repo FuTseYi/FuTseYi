@@ -21,9 +21,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Generate README from homepage and posts
-        run: python .github/scripts/sync_readme.py
+        run: python scripts/sync_readme.py
       - name: Verify shared homepage and README content
-        run: python -m unittest discover -s .github/scripts -p test_sync_readme.py -v
+        run: python -m unittest discover -s scripts -p test_sync_readme.py -v
       - name: Commit website README if changed
         run: |
           if git diff --quiet -- README.md; then
@@ -37,7 +37,7 @@ jobs:
           fi
       - name: Synchronize GitHub Profile README
         if: ${{ env.PROFILE_README_TOKEN != '' }}
-        run: python .github/scripts/sync_readme.py --sync-profile
+        run: python scripts/sync_readme.py --sync-profile
       - name: Explain missing cross-repository authorization
         if: ${{ env.PROFILE_README_TOKEN == '' }}
         run: echo "::warning::Set the repository secret PROFILE_README_TOKEN (fine-grained token with FuTseYi/FuTseYi Contents write) to enable future automatic cross-repo synchronization."

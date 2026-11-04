@@ -17,37 +17,50 @@ from html import escape, unescape
 from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 import markdown
-from asset_urls import version_assets, site_url
+from asset_urls import version_assets
 from post_metadata import get_post as parse_post, post_slug
 from site_metadata import load_site_metadata, render_social_metadata
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
-SITE = site_url(ROOT)
 SITE_METADATA = load_site_metadata(ROOT)
+SITE = SITE_METADATA["origin"]
 
 def get_post(path: Path) -> tuple[dict[str, str], str]:
     """Compatibility export for existing repository scripts."""
     return parse_post(path)
 
 
-def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page",
-           lang: str = "en", social_type: str = "website", tags: list[str] | None = None) -> str:
-    social_meta = render_social_metadata(SITE_METADATA, title, description, url, lang, social_type, tags)
-    title, description, url = (escape(value, quote=True) for value in (title, description, url))
-    lang = escape(lang, quote=True)
+def shared_layout() -> dict[str, str]:
+    """Read homepage-owned chrome and asset references once per build."""
     home = version_assets((ROOT / "index.html").read_text(encoding="utf-8"), ROOT)
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
     header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
     header = header.replace('href="/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
-    footer = re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0]
-    css = '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1]
-    theme_init = re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0]
+    return {
+        "header": header,
+        "footer": re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0],
+        "css": '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1],
+        "theme_init": re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0],
+        "scripts": '\n'.join(
+            f'<script src="{src if src.startswith("https://") else "/" + src}" defer></script>'
+            for src in re.findall(r'<script src="([^"]+)"', home)
+        ),
+    }
+
+
+def layout(title: str, description: str, url: str, content: str, body_class: str = "blog-page",
+           lang: str = "en", social_type: str = "website", tags: list[str] | None = None,
+           *, shared: dict[str, str]) -> str:
+    social_meta = render_social_metadata(SITE_METADATA, title, description, url, lang, social_type, tags)
+    title, description, url = (escape(value, quote=True) for value in (title, description, url))
+    lang = escape(lang, quote=True)
+    header, footer = shared["header"], shared["footer"]
+    css, theme_init, scripts = shared["css"], shared["theme_init"], shared["scripts"]
     year_font = '<link rel="preload" href="/assets/fonts/bodoni-moda-numerals.ttf" as="font" type="font/ttf" crossorigin>\n' if url == f"{SITE}/blog/" else ""
-    scripts = '\n'.join(f'<script src="{src if src.startswith("https://") else "/" + src}" defer></script>' for src in re.findall(r'<script src="([^"]+)"', home))
 
     return f"""<!doctype html>
 <html lang="{lang}">
@@ -167,6 +180,7 @@ def main() -> None:
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir(parents=True)
     posts: list[dict] = []
+    shared = shared_layout()
     parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "codehilite"],
                                extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
     for position, (slug, meta, source) in enumerate(source_posts):
@@ -198,7 +212,7 @@ def main() -> None:
         (destination / "index.html").write_text(
             layout(item["title"], description, SITE + url, content,
                    body_class="blog-page article-page", lang=page_lang,
-                   social_type="article", tags=item["tags"]),
+                   social_type="article", tags=item["tags"], shared=shared),
             encoding="utf-8"
         )
         posts.append(item)
@@ -228,7 +242,7 @@ def main() -> None:
     search_icon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>'
     search = '<dialog class="search-dialog" id="search-dialog" aria-label="Search articles"><div class="search-field">' + search_icon + '<input id="blog-search" type="search" placeholder="Search articles..." aria-label="Search articles" autocomplete="off" aria-controls="search-results"><button type="button" class="search-close" aria-label="Close search">×</button></div><div id="search-results" aria-live="polite"></div></dialog>'
     index = search + '<div class="blog-layout"><h1 class="blog-title">Blog<span style="color:var(--accent)">.</span></h1><div class="blog-actions"><button type="button" class="search-open" aria-keyshortcuts="Control+K Meta+K" aria-label="Search articles">' + search_icon + '<span class="search-label">Search</span><kbd>⌘/Ctrl K</kbd></button><a class="blog-tags-mobile" href="/blog/tags/">All tags <span class="link-arrow" aria-hidden="true"></span></a></div>' + archive_toc + '<div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>' + sidebar + '</div>'
-    (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index), encoding="utf-8")
+    (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index, shared=shared), encoding="utf-8")
     tag_groups = []
     for tag, matches in sorted_tags:
         links = ''.join(f'<li><a href="{escape(post["url"], quote=True)}">{escape(post["title"])}</a></li>' for post in matches)
@@ -236,7 +250,7 @@ def main() -> None:
     tags_content = '<a class="back-link" href="/blog/"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><h1>All Tags</h1><div class="tag-groups">' + ''.join(tag_groups) + '</div>'
     tags_output = OUTPUT / "tags"
     tags_output.mkdir()
-    (tags_output / "index.html").write_text(layout("All Tags", "Browse blog posts by tag", SITE + "/blog/tags/", tags_content), encoding="utf-8")
+    (tags_output / "index.html").write_text(layout("All Tags", "Browse blog posts by tag", SITE + "/blog/tags/", tags_content, shared=shared), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     urls = [SITE + "/", SITE + "/blog/", SITE + "/blog/tags/"] + [SITE + post["url"] for post in posts]
     sitemap = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{xml_escape(url)}</loc></url>\n" for url in urls) + "</urlset>\n"

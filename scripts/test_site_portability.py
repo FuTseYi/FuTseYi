@@ -8,7 +8,7 @@ from pathlib import Path
 
 from asset_urls import site_url
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class SitePortabilityTests(unittest.TestCase):
@@ -36,7 +36,7 @@ class SitePortabilityTests(unittest.TestCase):
             root.mkdir()
             for name in ("index.html", "robots.txt"):
                 shutil.copy2(ROOT / name, root / name)
-            for name in ("posts", "assets", ".github/scripts"):
+            for name in ("posts", "assets", "scripts"):
                 shutil.copytree(ROOT / name, root / name)
             home = root / "index.html"
             home.write_text(home.read_text(encoding="utf-8").replace(

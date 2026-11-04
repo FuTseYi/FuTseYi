@@ -2,9 +2,11 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+import site_metadata
 from site_metadata import load_site_metadata, render_homepage, render_social_metadata, site_url
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class SiteMetadataTests(unittest.TestCase):
@@ -14,6 +16,13 @@ class SiteMetadataTests(unittest.TestCase):
         self.assertEqual(metadata["image_alt"], "FuTseYi's profile photo")
         self.assertEqual([item[0] for item in metadata["toc_entries"]],
                          ["about", "recent-blog", "education", "active-in", "contributions"])
+
+    def test_load_site_metadata_parses_homepage_only_once(self):
+        with patch.object(site_metadata, "_parse_homepage",
+                          wraps=site_metadata._parse_homepage) as parse:
+            metadata = load_site_metadata(ROOT)
+        self.assertEqual(metadata["origin"], site_url(ROOT))
+        parse.assert_called_once_with(ROOT)
 
     def test_homepage_generation_uses_source_order_and_portrait(self):
         with tempfile.TemporaryDirectory() as directory:

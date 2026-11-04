@@ -11,7 +11,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 from asset_urls import site_url
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 USER = "FuTseYi"
 SITE = site_url(ROOT)
 MAX_REPOSITORIES = 12

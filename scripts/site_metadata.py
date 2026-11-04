@@ -62,9 +62,8 @@ def _parse_homepage(root: Path) -> HomepageParser:
     return parser
 
 
-def site_url(root: Path) -> str:
-    """Return the HTTPS origin declared by the homepage canonical URL."""
-    canonical = _parse_homepage(root).canonical
+def _validated_origin(canonical: str) -> str:
+    """Validate the homepage canonical URL without reparsing its HTML."""
     if not canonical:
         raise ValueError("index.html: missing canonical URL")
     url = canonical.rstrip("/")
@@ -74,10 +73,15 @@ def site_url(root: Path) -> str:
     return url
 
 
+def site_url(root: Path) -> str:
+    """Return the HTTPS origin declared by the homepage canonical URL."""
+    return _validated_origin(_parse_homepage(root).canonical)
+
+
 def load_site_metadata(root: Path) -> dict:
     """Read shared identity and sharing data from the homepage and its About portrait."""
     parser = _parse_homepage(root)
-    origin = site_url(root)
+    origin = _validated_origin(parser.canonical)
     portrait = parser.portrait
     if any(not portrait.get(key) for key in ("src", "alt", "width", "height")):
         raise ValueError("index.html: About portrait must define src, alt, width, and height")
@@ -194,7 +198,7 @@ def main() -> int:
     args = parser.parse_args()
     if not args.update_homepage:
         parser.error("choose --update-homepage")
-    update_homepage(Path(__file__).resolve().parents[2])
+    update_homepage(Path(__file__).resolve().parents[1])
     return 0
 
 

@@ -56,7 +56,7 @@ class BlogIndexTests(unittest.TestCase):
 
     def test_invalid_slug_is_rejected(self):
         self.add_post("Bad Slug", "Sample", "2026-11-03", "Notes")
-        with self.assertRaisesRegex(ValueError, "invalid article slug"):
+        with self.assertRaisesRegex(ValueError, "lowercase URL slug"):
             build_index(self.root)
 
 

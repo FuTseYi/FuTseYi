@@ -10,7 +10,7 @@ from xml.etree import ElementTree
 from asset_urls import version_assets, site_url
 from site_metadata import SOCIAL_REQUIRED_META, load_site_metadata
 
-ROOT = Path(__file__).resolve().parents[2] / "_site"
+ROOT = Path(__file__).resolve().parents[1] / "_site"
 ORIGIN = site_url(ROOT.parent)
 
 

@@ -5,7 +5,7 @@ from pathlib import Path
 from threading import Thread
 from playwright.sync_api import sync_playwright
 
-SITE = Path(__file__).resolve().parents[2] / "_site"
+SITE = Path(__file__).resolve().parents[1] / "_site"
 
 
 def check(page, name, width):

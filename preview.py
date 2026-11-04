@@ -150,7 +150,7 @@ class Progress:
 
 def run(root, script, *args):
     """Run a build step, reporting failures."""
-    result = subprocess.run([sys.executable, str(root / ".github/scripts" / script), *args],
+    result = subprocess.run([sys.executable, str(root / "scripts" / script), *args],
                             cwd=root, capture_output=True, encoding="utf-8", errors="replace")
     if result.returncode:
         sys.stderr.write(result.stdout + result.stderr)
@@ -195,7 +195,7 @@ def build(refresh_activity=False):
         candidate = Path(directory)
         for name in ("index.html", "robots.txt"):
             shutil.copy2(ROOT / name, candidate / name)
-        for name in ("assets", "posts", ".github/scripts"):
+        for name in ("assets", "posts", "scripts"):
             shutil.copytree(ROOT / name, candidate / name,
                             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
         snapshot = SITE / "contributions.json"
@@ -218,7 +218,7 @@ def build(refresh_activity=False):
 
 def source_state():
     files = [ROOT / "index.html", ROOT / "robots.txt", ROOT / "requirements.txt"]
-    for folder, pattern in (("posts", "*"), ("assets", "*"), (".github/scripts", "*.py")):
+    for folder, pattern in (("posts", "*"), ("assets", "*"), ("scripts", "*.py")):
         files.extend((ROOT / folder).rglob(pattern))
     state = {}
     for path in files:

@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 from asset_urls import version_assets, site_url as production_url
 from post_metadata import get_post, post_slug
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[1]
 
 def site_url():
     return production_url(ROOT)
