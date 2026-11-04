@@ -16,6 +16,7 @@ Treat the site as one coherent system. Prefer sound architecture, consistent des
 - `scripts/`: Generation, synchronization, verification, and tests.
 - `.github/workflows/`: Current CI, publication, and README synchronization adapters.
 - `preview.py`: Shared local preview and verified static-build entry point.
+- `vercel.json`: Vercel adapter for the same `_site/` output used by GitHub Pages; never maintain a second site builder.
 
 See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do not commit generated `blog/`, `_site/`, `sitemap.xml`, or activity snapshots.
 

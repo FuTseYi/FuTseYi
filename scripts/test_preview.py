@@ -24,6 +24,17 @@ class PreviewTests(unittest.TestCase):
         (root / "robots.txt").write_text("robots")
         (root / "_site/index.html").write_text("last good build")
 
+    def test_vercel_reuses_the_portable_static_build(self):
+        import json
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "vercel.json").read_text(encoding="utf-8"))
+        self.assertIsNone(config["framework"])
+        self.assertEqual(config["buildCommand"], "python3 preview.py --build-only")
+        self.assertEqual(config["outputDirectory"], preview.SITE.name)
+        pages = (root / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
+        self.assertIn("python preview.py --build-only --refresh-activity", pages)
+        self.assertIn("path: _site", pages)
+
     def test_build_only_does_not_bind_preview_port(self):
         with patch.object(preview.sys, "argv", ["preview.py", "--build-only"]), \
                 patch.object(preview, "ensure_dependencies"), \

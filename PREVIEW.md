@@ -33,6 +33,8 @@ On Windows, substitute `py -3` for `python3`.
 - `--refresh-activity`: Fetch fresh public contribution data instead of reusing an available snapshot.
 - `--port 8766`: Choose another local preview port.
 
+Vercel uses the repository-owned `vercel.json` to invoke `python3 preview.py --build-only` and publish `_site/`. GitHub Pages uses the same builder with `--refresh-activity` for its scheduled updates. Keep these hosts as adapters around the one build pipeline.
+
 The same build entry point is used for verification and the current publishing workflow. It generates the blog and search index, synchronizes staged homepage content, and checks the output. Generated `blog/`, `_site/`, and `sitemap.xml` are ignored by Git.
 
 The canonical origin in `index.html` determines generated article URLs, sitemap entries, and README links. Internal navigation uses root-relative paths. Hosting, domain, and credential settings belong outside the portable build.
