@@ -27,6 +27,10 @@
     syncTheme();
   });
   syncTheme();
+  const hashTargetId = () => {
+    try { return decodeURIComponent(location.hash.slice(1)); }
+    catch { return ''; }
+  };
   const currentYear = String(new Date().getFullYear());
   document.querySelectorAll('[data-current-year]').forEach((element) => {
     element.dateTime = currentYear;
@@ -262,8 +266,8 @@
     };
     listen(window, 'scroll', schedule, { passive: true });
     listen(window, 'resize', releaseTarget, { passive: true });
-    listen(window, 'hashchange', () => selectTarget(decodeURIComponent(location.hash.slice(1))));
-    if (location.hash) selectTarget(decodeURIComponent(location.hash.slice(1)));
+    listen(window, 'hashchange', () => selectTarget(hashTargetId()));
+    if (location.hash) selectTarget(hashTargetId());
     else schedule();
     document.querySelectorAll('[data-expandable]').forEach((list) => {
       const extra = [...list.querySelectorAll(':scope > .project-item')].slice(3);
@@ -302,7 +306,7 @@
     if (tagGroups.length) {
       tagGroups.forEach((group) => { group.open = false; });
       const openTag = () => {
-        const group = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        const group = document.getElementById(hashTargetId());
         if (!tagGroups.includes(group)) return;
         group.open = true;
         requestAnimationFrame(() => group.scrollIntoView({ behavior: 'instant', block: 'start' }));

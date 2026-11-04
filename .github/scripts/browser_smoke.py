@@ -181,6 +181,15 @@ def main():
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
             context.close()
+            context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="reduce")
+            page = context.new_page()
+            errors = []
+            page.on("pageerror", lambda error: errors.append(str(error)))
+            for route in ("/#%E0%A4%A", "/blog/astro-waline-comments/#%E0%A4%A"):
+                page.goto("http://127.0.0.1:8766" + route, wait_until="networkidle")
+                assert page.locator("#site-header").count() == 1
+            assert not errors, f"Malformed URL fragments must not break navigation: {errors}"
+            context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, java_script_enabled=False)
             page = context.new_page()
             page.goto("http://127.0.0.1:8766/blog/astro-waline-comments/")
