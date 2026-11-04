@@ -8,8 +8,6 @@ from importlib.metadata import PackageNotFoundError, version
 import itertools
 import os
 import venv
-import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,20 +15,14 @@ from threading import Event, RLock, Thread
 import time
 import unicodedata
 
+from scripts import site_build
+
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "_site"
 SERVING_LOCK = RLock()
 REQUIREMENTS = tuple(line.strip() for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
-                     if line.strip() and not line.lstrip().startswith("#"))
+                     if line.strip() and not line.lstrip().startswith("#")) if (ROOT / "requirements.txt").is_file() else ()
 CHECK_FLAG = "--check-dependencies"
-# Summarize routine build output; retain unrecognized messages.
-SUMMARY_RULES = (
-    (re.compile(r"^Blog: generated (\d+) article", re.MULTILINE), r"\1 篇文章 / articles"),
-    (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 个页面检查通过 / pages verified"),
-    (re.compile(r"^Rendered (\d+) public contribution repositories", re.MULTILINE), r"\1 个贡献仓库 / contribution repositories"),
-)
-ROUTINE_MESSAGES = re.compile(r"^(?:Injected latest blog posts|Website README unchanged|Generated website README"
-                              r"|Profile README already matches)")
 GREEN, RED, DIM, CYAN = "32", "31", "2", "36"
 ANSI_READY = None
 
@@ -54,8 +46,7 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             super().log_request(code, size)
 
     def end_headers(self):
-        versioned = re.fullmatch(r"/assets/(?:css/style\.css|js/site\.js)\?v=[0-9a-f]{12}", self.path)
-        self.send_header("Cache-Control", "public, max-age=31536000, immutable" if versioned else "no-store")
+        self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
     def send_head(self):
@@ -103,16 +94,6 @@ def mark(preferred, fallback):
     return preferred
 
 
-def summarize(log):
-    """Condense build output into counts, returning those parts plus anything unrecognized."""
-    parts = [match.expand(template) for pattern, template in SUMMARY_RULES
-             if (match := pattern.search(log))]
-    unexpected = [line.strip() for line in log.splitlines()
-                  if line.strip() and not ROUTINE_MESSAGES.match(line.strip())
-                  and not any(pattern.search(line) for pattern, _ in SUMMARY_RULES)]
-    return parts, unexpected
-
-
 class Progress:
     """Show build progress on interactive terminals."""
 
@@ -148,80 +129,48 @@ class Progress:
             self.stopping.wait(self.INTERVAL)
 
 
-def run(root, script, *args):
-    """Run a build step, reporting failures."""
-    result = subprocess.run([sys.executable, str(root / "scripts" / script), *args],
-                            cwd=root, capture_output=True, encoding="utf-8", errors="replace")
-    if result.returncode:
-        sys.stderr.write(result.stdout + result.stderr)
-        raise subprocess.CalledProcessError(result.returncode, script)
-    return result.stdout
-
-
-def assemble(root, refresh_activity=False):
-    """Reuse the deployment builders inside an isolated source copy, returning a one-line summary."""
-    site = root / "_site"
-    log = run(root, "build.py")
-    site.mkdir(exist_ok=True)
-    for name in ("index.html", "robots.txt", "sitemap.xml"):
-        shutil.copy2(root / name, site / name)
-    log += run(root, "site_metadata.py", "--update-homepage")
-    for name in ("assets", "blog"):
-        shutil.copytree(root / name, site / name)
-    (site / ".nojekyll").touch()
-    log += run(root, "sync_readme.py", "--update-site")
-    log += run(root, "sync_activity.py", *(("--refresh",) if refresh_activity else ()))
-    origin = re.search(r'<link rel="canonical" href="([^"]+)"',
-                       (root / "index.html").read_text(encoding="utf-8"))[1].rstrip("/")
-    robots = site / "robots.txt"
-    robots.write_text(robots.read_text(encoding="utf-8").rstrip("\n") +
-                      "\nSitemap: " + origin + "/sitemap.xml\n", encoding="utf-8")
-    for page in site.rglob("*.html"):
-        html = page.read_text(encoding="utf-8")
-        html = re.sub(r'(<a\b[^>]*\bhref=[\'"])' + re.escape(origin) + r'(?=/)', r'\1', html)
-        page.write_text(html, encoding="utf-8")
-    # Pagefind's banner and progress lines are noise on success; surface them on failure.
-    result = subprocess.run([sys.executable, "-m", "pagefind", "--site", str(site), "--force-language", "zh"],
-                            cwd=root, capture_output=True, encoding="utf-8", errors="replace")
-    if result.returncode:
-        sys.stderr.write(result.stdout + result.stderr)
-        raise subprocess.CalledProcessError(result.returncode, "pagefind")
-    return summarize(log + run(root, "verify.py"))
-
-
-def build(refresh_activity=False):
-    # Same filesystem as _site, so publishing uses directory renames, not copies.
-    with tempfile.TemporaryDirectory(prefix=".preview-", dir=ROOT) as directory:
+def build(options=None, destination=None):
+    """Build in isolation and replace the artifact only after successful validation."""
+    destination = (destination or SITE).resolve()
+    generated = SITE.resolve()
+    if destination == ROOT.resolve() or destination in ROOT.resolve().parents or (
+            ROOT.resolve() in destination.parents and destination != generated and
+            generated not in destination.parents):
+        raise ValueError("Refusing to replace source files")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".preview-", dir=destination.parent) as directory:
         candidate = Path(directory)
-        for name in ("index.html", "robots.txt"):
-            shutil.copy2(ROOT / name, candidate / name)
-        for name in ("assets", "posts", "scripts"):
-            shutil.copytree(ROOT / name, candidate / name,
-                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-        snapshot = SITE / "contributions.json"
-        if snapshot.is_file():
-            (candidate / "_site").mkdir()
-            shutil.copy2(snapshot, candidate / "_site/contributions.json")
-        summary = assemble(candidate, refresh_activity) if refresh_activity else assemble(candidate)
+        staged = candidate / "site"
+        summary = site_build.build(ROOT, staged, options or argparse.Namespace())
+        from scripts.asset_urls import version_assets
+        from scripts.site_verify import verify
+        for page in staged.rglob("*.html"):
+            page.write_text(version_assets(page.read_text(encoding="utf-8"), staged), encoding="utf-8")
+        verify(staged)
+        (staged / ".nojekyll").touch()
         with SERVING_LOCK:
             previous = candidate / "previous"
-            if SITE.exists():
-                SITE.rename(previous)
+            if destination.exists():
+                if not destination.is_dir():
+                    raise ValueError(f"Output is not a directory: {destination}")
+                destination.rename(previous)
             try:
-                (candidate / "_site").rename(SITE)
+                staged.rename(destination)
             except OSError:
                 if previous.exists():
-                    previous.rename(SITE)
+                    previous.rename(destination)
                 raise
         return summary
 
 
 def source_state():
-    files = [ROOT / "index.html", ROOT / "robots.txt", ROOT / "requirements.txt"]
-    for folder, pattern in (("posts", "*"), ("assets", "*"), ("scripts", "*.py")):
-        files.extend((ROOT / folder).rglob(pattern))
+    files = [ROOT / name for name in ("preview.py", "requirements.txt", *site_build.SOURCE_FILES)]
+    for folder in ("assets", "scripts", *site_build.SOURCE_DIRS):
+        files.extend((ROOT / folder).rglob("*"))
     state = {}
     for path in files:
+        if "__pycache__" in path.parts or path.suffix in (".pyc", ".pyo"):
+            continue
         try:
             if path.is_file():
                 stat = path.stat()
@@ -231,11 +180,11 @@ def source_state():
     return state
 
 
-def rebuild(initial=False, refresh_activity=False):
+def rebuild(initial=False, options=None, destination=None):
     """Report initial counts or a short update; return False on a failed build."""
     try:
         with Progress(mark("正在生成预览 / Building preview…", "Building preview...")):
-            parts, notes = build(refresh_activity) if refresh_activity else build()
+            parts, notes = build(options, destination)
     except (subprocess.CalledProcessError, OSError, ValueError) as error:
         print(paint(f"{mark('✗', 'x')} 生成失败 / Build failed: {error}", RED), flush=True)
         print(paint("  保留上次预览，修正文件并保存后重试。 / Previous preview kept; fix the source and save to retry.", DIM), flush=True)
@@ -251,13 +200,7 @@ def rebuild(initial=False, refresh_activity=False):
     return True
 
 
-def discard_stale_builds():
-    """Remove candidates orphaned by a killed preview; the bound port proves none is live."""
-    for path in ROOT.glob(".preview-*"):
-        shutil.rmtree(path, ignore_errors=True)
-
-
-def watch(previous):
+def watch(previous, options=None):
     pending = False
     while True:
         time.sleep(0.5)
@@ -267,11 +210,13 @@ def watch(previous):
             pending = True
         elif pending:
             pending = False
-            rebuild()
+            rebuild(options=options)
 
 
 def dependencies_valid():
     """Check installed distributions against the shared PEP 508 requirements."""
+    if not REQUIREMENTS:
+        return True
     try:
         from packaging.requirements import Requirement
         for entry in REQUIREMENTS:
@@ -284,7 +229,7 @@ def dependencies_valid():
 
 
 def dependencies_ready(interpreter):
-    """Report whether interpreter already provides what build.py and Pagefind need."""
+    """Probe the same dependency check in the selected interpreter."""
     if interpreter == Path(sys.executable):
         return dependencies_valid()
     # Probe the same script in the target environment, so the check lives in one place.
@@ -316,7 +261,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--build-only", action="store_true", help="Build and verify without starting a server")
-    parser.add_argument("--refresh-activity", action="store_true", help="Refresh public GitHub activity during the build")
+    parser.add_argument("--output", type=Path, default=SITE, help="Build destination (build-only)")
+    if hasattr(site_build, "configure_parser"):
+        site_build.configure_parser(parser)
     parser.add_argument(CHECK_FLAG, action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.check_dependencies:
@@ -328,26 +275,27 @@ def main():
     except (OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Dependency setup failed: {error}. Check network access and Python venv/pip support.\n")
     if args.build_only:
-        discard_stale_builds()
-        if not rebuild(initial=True, refresh_activity=args.refresh_activity):
+        if not rebuild(initial=True, options=args, destination=args.output):
             sys.exit(1)
         return
+    if args.output.resolve() != SITE.resolve():
+        parser.error("--output requires --build-only")
     handler = partial(PreviewHandler, directory=str(SITE))
     try:
         server = PreviewServer(("127.0.0.1", args.port), handler)
     except OSError as error:
         parser.exit(1, f"Cannot use port {args.port}: {error}. Stop the existing preview or use --port.\n")
     with server:
-        discard_stale_builds()
         previous = source_state()
-        rebuild(initial=True, refresh_activity=args.refresh_activity)
+        if not rebuild(initial=True, options=args, destination=args.output) and not (SITE / "index.html").is_file():
+            return 1
         print(paint(f"{mark('→', '->')} http://127.0.0.1:{args.port}/", CYAN), flush=True)
         print(paint("  保存文件后自动生成，浏览器需手动刷新。 / Saving rebuilds the site; refresh the browser manually.", DIM), flush=True)
         print(paint("  按 Ctrl+C 停止。 / Press Ctrl+C to stop.", DIM), flush=True)
         worker = Thread(target=server.serve_forever, daemon=True)
         worker.start()
         try:
-            watch(previous)
+            watch(previous, args)
         except KeyboardInterrupt:
             pass
         finally:
@@ -357,6 +305,6 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        sys.exit(main() or 0)
     except KeyboardInterrupt:
         sys.exit(130)

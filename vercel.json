@@ -1,5 +1,6 @@
 {
   "framework": null,
+  "installCommand": "python3 -m pip install -r requirements.txt",
   "buildCommand": "python3 preview.py --build-only",
   "outputDirectory": "_site"
 }

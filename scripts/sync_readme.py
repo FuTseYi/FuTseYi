@@ -9,7 +9,8 @@ from datetime import date
 from html import unescape
 from pathlib import Path
 from urllib.request import Request, urlopen
-from asset_urls import version_assets, site_url as production_url
+from asset_urls import version_assets
+from site_metadata import site_url as production_url
 from blog_index import build_index
 
 ROOT=Path(__file__).resolve().parents[1]

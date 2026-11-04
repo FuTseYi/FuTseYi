@@ -7,7 +7,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree
-from asset_urls import version_assets, site_url
+from asset_urls import version_assets
+from site_metadata import site_url
 from site_metadata import SOCIAL_REQUIRED_META, load_site_metadata
 
 ROOT = Path(__file__).resolve().parents[1] / "_site"

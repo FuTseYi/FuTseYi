@@ -17,12 +17,13 @@ jobs:
       - name: Install build dependencies
         run: python -m pip install -r requirements.txt
       - name: Check preview, README, and activity helpers
-        run: python -m unittest discover -s scripts -p 'test_*.py' -v
+        run: |
+          python -m unittest discover -s tests -t . -p 'test_*.py' -v
       - name: Build and verify complete website
         run: python preview.py --build-only
       - name: Install Chromium browser test tools
         run: |
-          python -m pip install "playwright==1.56.0"
+          python -m pip install -r requirements-dev.txt
           python -m playwright install --with-deps chromium
       - name: Test article layouts and interactions in Chromium
-        run: python scripts/browser_smoke.py
+        run: python tests/browser_smoke.py

@@ -70,3 +70,5 @@ Static checks cover generated pages and links but cannot establish visual or int
 The generated blog reuses header/footer markup from `index.html`, while `style.css` and `site.js` serve the site as a whole. When Swup is available, same-origin navigation replaces `#main` while shared UI and the WebGL atmosphere remain mounted. Ordinary document navigation remains the fallback if Swup is unavailable.
 
 Page-specific interactions in `site.js` must initialize for incoming content and clean up when that content is replaced. Review listeners, observers, timers, and dialogs for lifecycle leaks when changing navigation. Refer to the source for pinned dependency versions and implementation details rather than duplicating them here.
+
+Preview, article, README, activity and browser regression checks live in `tests/`; generation and validation stay in `scripts/`. The homepage is edited directly in root `index.html`; generated blog pages reuse its header/footer. `scripts/site_build.py` owns this site's isolated content pipeline. No separate template directory or cross-repository runtime is required.

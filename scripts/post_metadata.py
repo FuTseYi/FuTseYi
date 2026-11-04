@@ -32,3 +32,15 @@ def post_slug(path: Path) -> str:
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
         raise ValueError(f"{path}: Post directory must be a lowercase URL slug")
     return slug
+
+
+def read_posts(root: Path) -> list[tuple[str, dict[str, str], str]]:
+    """Read and order article sources once for every publication consumer."""
+    posts = [(post_slug(path), *get_post(path))
+             for path in (root / "posts").glob("*/index.md")]
+    return sorted(posts, key=lambda post: (post[1]["date"], post[0]), reverse=True)
+
+
+def post_tags(metadata: dict[str, str]) -> list[str]:
+    """Normalize article tags identically for discovery and rendered pages."""
+    return list(dict.fromkeys(tag.strip() for tag in metadata.get("tags", "").split(",") if tag.strip()))

@@ -9,7 +9,7 @@ from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
-from asset_urls import site_url
+from site_metadata import site_url
 
 ROOT = Path(__file__).resolve().parents[1]
 USER = "FuTseYi"
