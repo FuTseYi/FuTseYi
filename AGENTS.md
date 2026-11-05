@@ -45,7 +45,7 @@ See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do no
 - Match checks to the change's scope and risk; inspect affected code paths and report what was actually tested.
 - For Python changes: `python -m unittest discover -s tests -t . -p 'test_*.py' -v`. Keep regression and browser checks in `tests/`; `scripts/` owns generation and validation.
 - For site, asset, generation, or deployment changes: `python3 preview.py --build-only` (Windows: `py -3 preview.py --build-only`).
-- For relevant UI changes, review responsive layouts, light/dark modes, keyboard accessibility, browser navigation, and reduced-motion behavior.
+- For relevant UI changes, use Chromium and WebKit browser checks for navigation and responsive layouts, and review light/dark modes, keyboard accessibility, and reduced-motion behavior.
 - Confirm no obsolete implementation remains. Never claim a check passed unless it ran successfully.
 
 ## Documentation

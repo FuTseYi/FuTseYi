@@ -61,7 +61,7 @@ Under the current workflows, changes reaching `main` publish the site and trigge
 
 ## Browser Verification
 
-Run the build check above for site or publishing changes. The repository's PR workflow additionally runs Python unit tests and Chromium browser smoke tests.
+Run the build check above for site or publishing changes. The repository's PR workflow additionally runs Python unit tests and Chromium and WebKit browser smoke tests.
 
 Static checks cover generated pages and links but cannot establish visual or interaction correctness. For relevant changes, verify narrow and wide layouts, both color themes, keyboard use, reduced motion, and direct page loads. Exercise same-page and cross-page links, browser Back/Forward, the mobile menu, Blog search, article contents, and code copying. Inspect representative image-, table-, and code-heavy articles when rendering changes.
 

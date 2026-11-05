@@ -2,6 +2,13 @@ name: Publish website
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - README.md
+      - AGENTS.md
+      - PREVIEW.md
+      - BLOG_GUIDELINES.md
+      - tests/**
+      - .github/workflows/validate.yml
   workflow_dispatch:
   schedule:
     # Days 1 and 15 of each month, 09:17 Asia/Shanghai (01:17 UTC).

@@ -1,4 +1,4 @@
-"""Chromium smoke checks for generated article interactions and responsive layout."""
+"""Chromium and WebKit regressions for generated content and navigation."""
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -215,7 +215,26 @@ def main():
             assert actual.replace("\r\n", "\n").strip() == expected.strip()
             context.close()
             browser.close()
-            print("Chromium smoke checks passed: homepage navigation, mobile menu, search, themes, articles, no-JS, clipboard.")
+            # WebKit covers the mobile/desktop navigation and article path used by Safari.
+            safari = playwright.webkit.launch(headless=True)
+            try:
+                for width in (390, 1024):
+                    context = safari.new_context(viewport={"width": width, "height": 850},
+                                                 reduced_motion="reduce")
+                    page = context.new_page()
+                    errors = []
+                    page.on("pageerror", lambda error: errors.append(str(error)))
+                    check_site_navigation(page, width)
+                    page.goto("http://127.0.0.1:8766/blog/astro-waline-comments/",
+                              wait_until="networkidle")
+                    assert page.locator("article.article").count() == 1
+                    assert page.locator(".article-code button.code-copy").count() > 0
+                    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
+                    assert not errors, f"WebKit {width}px browser errors: {errors}"
+                    context.close()
+            finally:
+                safari.close()
+            print("Chromium and WebKit smoke checks passed: navigation, mobile layout, search, themes and articles.")
     finally:
         server.shutdown()
         server.server_close()
