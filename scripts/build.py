@@ -33,10 +33,10 @@ def shared_layout() -> dict[str, str]:
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
-    header = header.replace('src="assets/icons/favicon.svg"', 'src="/assets/icons/favicon.svg"')
     header = header.replace('href="/blog/"', 'href="/blog/" class="is-active" aria-current="page"')
     return {
         "header": header,
+        "icons": '\n'.join(re.findall(r'<link rel="(?:icon|apple-touch-icon|manifest)"[^>]*>', home)),
         "footer": re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0],
         "css": '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1],
         "theme_init": re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0],
@@ -55,6 +55,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
     lang = escape(lang, quote=True)
     header, footer = shared["header"], shared["footer"]
     css, theme_init, scripts = shared["css"], shared["theme_init"], shared["scripts"]
+    icons = shared["icons"]
     year_font = '<link rel="preload" href="/assets/fonts/bodoni-moda-numerals.ttf" as="font" type="font/ttf" crossorigin>\n' if url == f"{SITE}/blog/" else ""
 
     return f"""<!doctype html>
@@ -64,10 +65,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <meta name="description" content="{description}">
 {social_meta}
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
-<link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
-<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
-<link rel="manifest" href="/assets/icons/site.webmanifest">
+{icons}
 <link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
 {year_font}{theme_init}
 <link rel="stylesheet" href="{css}">{scripts}
