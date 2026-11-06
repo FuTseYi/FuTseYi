@@ -457,7 +457,10 @@
   if (window.Swup) {
     const swup = new Swup({ containers: ['#main'] });
     // Swup's cross-page reset must never inherit the site's in-page smooth-scroll rule.
-    swup.hooks.replace('scroll:top', () => window.scrollTo({ top: 0, behavior: 'instant' }));
+    swup.hooks.replace('scroll:top', () => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return true;
+    });
     swup.hooks.on('visit:start', async (visit) => {
       root.classList.add('is-navigating');
       visit.animation.animate = false;
