@@ -156,6 +156,15 @@ def check_search(page):
     result.first.wait_for(timeout=15000)
     assert result.first.get_attribute("href").startswith("/blog/")
     assert page.locator("#search-results").is_visible()
+    assert page.locator(".search-summary").is_visible()
+    assert page.locator("#search-results .link-label mark").first.inner_text() == "PyTorch"
+    search.fill("GitHub README")
+    page.locator("#search-results a").first.wait_for(timeout=15000)
+    assert page.locator("#search-results a").first.locator(".link-label mark").all_inner_texts() == ["GitHub", "README"]
+    search.fill("Anaconda")
+    body_match = page.locator("#search-results .search-match mark").first
+    body_match.wait_for(timeout=15000)
+    assert "anaconda" in body_match.inner_text().casefold()
     page.keyboard.press("Escape")
     assert not dialog.evaluate("(el) => el.open")
     assert search.input_value() == ""

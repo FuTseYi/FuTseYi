@@ -188,7 +188,7 @@ def main() -> None:
                 direction = '<i class="link-arrow link-arrow-left" aria-hidden="true"></i>Previous post' if offset == 1 else 'Next post<i class="link-arrow" aria-hidden="true"></i>'
                 neighbors.append(f'<a class="post-neighbor {css_class}" href="/blog/{other_slug}/"><span class="post-neighbor-label">{direction}</span><strong>{escape(other_meta["title"])}</strong></a>')
         sidebar_toc, inline_toc = article_toc(parser.toc_tokens)
-        content = '<div class="article-layout"><div data-pagefind-body>' + header + inline_toc + '<article class="article">' + article + '</article></div>' + sidebar_toc + '</div><nav class="post-neighbors" aria-label="Adjacent posts">' + ''.join(neighbors) + '</nav>'
+        content = '<div class="article-layout"><div class="article-main">' + header + inline_toc + '<article class="article" data-pagefind-body>' + article + '</article></div>' + sidebar_toc + '</div><nav class="post-neighbors" aria-label="Adjacent posts">' + ''.join(neighbors) + '</nav>'
         destination = OUTPUT / slug
         destination.mkdir(exist_ok=True)
         assets = SOURCE / slug / "assets"

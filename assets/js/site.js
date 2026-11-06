@@ -325,7 +325,10 @@
       const syncScrollHint = addScrollHint(results, dialog);
       let engine;
       let sequence = 0;
-      const loadSearch = () => engine ??= import('/pagefind/pagefind.js');
+      const loadSearch = () => engine ??= import('/pagefind/pagefind.js').then(async pagefind => {
+        await pagefind.options({ excerptLength: 18, excerptEllipsis: '…' });
+        return pagefind;
+      });
       const positionSearch = () => {
         dialog.style.setProperty('--search-top', `${Math.round(openButton.getBoundingClientRect().bottom + 12)}px`);
       };
@@ -381,12 +384,32 @@
             link.href = item.url;
             const label = document.createElement('span');
             label.className = 'link-label';
-            label.textContent = item.meta.title;
+            const title = item.meta.title;
+            const terms = [...new Set(query.split(/\s+/))].sort((a, b) => b.length - a.length);
+            const pattern = new RegExp(terms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'giu');
+            let end = 0;
+            for (const match of title.matchAll(pattern)) {
+              label.append(title.slice(end, match.index));
+              const mark = document.createElement('mark');
+              mark.textContent = match[0];
+              label.append(mark);
+              end = match.index + match[0].length;
+            }
+            label.append(title.slice(end));
             link.append(label);
+            if (item.excerpt?.includes('<mark>')) {
+              const excerpt = document.createElement('span');
+              excerpt.className = 'search-match';
+              excerpt.innerHTML = item.excerpt;
+              link.append(excerpt);
+            }
             row.append(link);
             list.append(row);
           });
-          results.append(list);
+          const summary = document.createElement('p');
+          summary.className = 'search-summary';
+          summary.textContent = `${items.length} ${items.length === 1 ? 'article' : 'articles'} found`;
+          results.append(summary, list);
           syncScrollHint();
         } catch (error) {
           if (!controller.signal.aborted && request === sequence) results.textContent = 'Search is unavailable. Please refresh and try again.';
