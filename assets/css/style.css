@@ -921,7 +921,7 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
   }
 .nav-links a,.theme-control{--underline-offset:2px}
 .nav-links a.is-active{--underline-width:100%}
-@media(max-width:860px){.nav-links a{background-image:none}}
+@media(max-width:860px){.nav-links a,.search-open{background-image:none}}
 @media(prefers-reduced-motion:reduce){
   :where(a,.theme-control,.list-toggle,.search-open,.link-label,.post-neighbor strong){transition:none}
   .article-toc-inline nav{animation:none}
