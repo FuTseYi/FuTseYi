@@ -1,5 +1,14 @@
 (() => {
   const root = document.documentElement;
+  const siteName = document.querySelector('meta[property="og:site_name"]')?.content;
+  const sourceUrl = document.querySelector('.footer-brand')?.href;
+  if (siteName && sourceUrl) {
+    const styles = getComputedStyle(root);
+    const accent = styles.getPropertyValue('--accent').trim();
+    console.info(`%c ${siteName} %c ${sourceUrl}`,
+      `background:${accent};color:${styles.getPropertyValue('--bg').trim()};font-weight:700;padding:5px 8px;border-radius:6px 0 0 6px`,
+      `background:${styles.getPropertyValue('--accent-soft').trim()};color:${accent};padding:5px 8px;border-radius:0 6px 6px 0`);
+  }
   const themeControl = document.querySelector('.theme-control');
   const themes = ['system', 'light', 'dark'];
   const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
