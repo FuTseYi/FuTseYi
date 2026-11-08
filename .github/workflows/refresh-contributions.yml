@@ -1,6 +1,11 @@
 name: Refresh versioned GitHub contributions
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/refresh_contributions.py
+      - .github/workflows/refresh-contributions.yml
   workflow_dispatch:
   schedule:
     - cron: '17 1 1,15 * *'
@@ -27,9 +32,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          test -n "$GITHUB_TOKEN" || { echo "::error::Set CONTRIBUTIONS_GITHUB_TOKEN with read:user access to the profile's contribution history"; exit 1; }
           python scripts/refresh_contributions.py
+      - name: Check for snapshot changes
+        id: changes
+        run: |
+          if git diff --quiet -- contributions.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Create short-lived source-write token
+        if: steps.changes.outputs.changed == 'true'
         id: app
         uses: actions/create-github-app-token@v2
         with:
@@ -39,15 +52,12 @@ jobs:
           repositories: FuTseYi-Site-Source
           permission-contents: write
       - name: Commit verified changes to canonical source
+        if: steps.changes.outputs.changed == 'true'
         env:
           APP_TOKEN: ${{ steps.app.outputs.token }}
         run: |
-          if git diff --quiet -- contributions.json; then
-            echo 'No new contributions'
-            exit 0
-          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add contributions.json
           git commit -m "data: refresh verified public contributions"
-          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' \"$APP_TOKEN\" | base64 -w0)" push origin HEAD:main
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)" push origin HEAD:main

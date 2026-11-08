@@ -1,105 +1,113 @@
-"""Regression tests for lifetime contribution preservation."""
+"""Regression checks for a versioned, offline contribution pipeline."""
 import json
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from urllib.error import URLError
-from datetime import datetime, timezone
+
 import sync_activity as activity
 from scripts import refresh_contributions as refresh
+
+
+def entry(name, date="2026-01-01T00:00:00Z", description=""):
+    return {"name": name, "date": date, "activity": "Commit",
+            "description": description, "language": "Python"}
 
 
 def snapshot(entries):
     return {"updated_at": "2026-11-08T04:36:39+00:00", "entries": entries}
 
 
-def entry(name, date="2026-01-01T00:00:00Z", activity_type="Commit"):
-    return {"name": name, "date": date, "activity": activity_type,
-            "description": "", "language": ""}
-
-
 class ActivityTests(unittest.TestCase):
-    def test_restored_history_has_full_coverage(self):
-        source = Path(__file__).resolve().parents[1] / "contributions.json"
-        data = json.loads(source.read_text(encoding="utf-8"))
+    def test_restored_history(self):
+        data = json.loads((Path(__file__).resolve().parents[1] / "contributions.json").read_text())
+        activity.validate_snapshot(data)
         self.assertGreaterEqual(len(data["entries"]), 29)
-        self.assertIn("fmhy/edit", [item["name"] for item in data["entries"]])
-        self.assertIn("datawhalechina/diy-llm", [item["name"] for item in data["entries"]])
+        self.assertIn("fmhy/edit", {x["name"] for x in data["entries"]})
+        self.assertIn("datawhalechina/diy-llm", {x["name"] for x in data["entries"]})
 
-    def test_partial_refresh_preserves_history(self):
-        old = snapshot([entry(f"org/project{i}") for i in range(29)])
-        new = snapshot([entry("org/project0", "2026-11-08T00:00:00Z", "Code push"),
-                        entry("org/new", "2026-11-08T01:00:00Z", "Pull request")])
-        result = activity.merge_snapshots(old, new)
-        self.assertEqual(len(result["entries"]), 30)
-        self.assertEqual(result["entries"][1]["name"], "org/project0")
-        self.assertEqual(result["entries"][1]["activity"], "Code push")
+    def test_schema_rejects_duplicate_names(self):
+        with self.assertRaisesRegex(ValueError, "Duplicate"):
+            activity.validate_snapshot(snapshot([entry("Org/Repo"), entry("org/repo")]))
 
-    def test_case_insensitive_deduplication(self):
-        result = activity.merge_snapshots(snapshot([entry("Org/Repo")]),
-                                          snapshot([entry("org/repo", "2026-11-08T00:00:00Z")]))
-        self.assertEqual(len(result["entries"]), 1)
-        self.assertEqual(result["entries"][0]["name"], "org/repo")
+    def test_schema_rejects_invalid_names(self):
+        for name in ("../secret", "org/repo?bad", "FuTseYi/futseyi.github.io"):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                activity.validate_snapshot(snapshot([entry(name)]))
 
-    def test_graphql_history_merge_preserves_old_entries(self):
-        old = [entry("fmhy/edit", "2025-01-01T00:00:00Z")]
-        new = [entry("datawhalechina/diy-llm", "2026-11-01T00:00:00Z")]
-        merged = refresh.merge(old + new)
-        self.assertEqual({item["name"] for item in merged},
-                         {"fmhy/edit", "datawhalechina/diy-llm"})
+    def test_schema_rejects_naive_and_future_dates(self):
+        for date in ("2026-01-01T00:00:00", "2999-01-01T00:00:00Z"):
+            with self.subTest(date=date), self.assertRaises(ValueError):
+                activity.validate_snapshot(snapshot([entry("org/repo", date)]))
 
-    def test_graphql_refresh_does_not_rewrite_unchanged_history(self):
+    def test_schema_rejects_missing_fields(self):
+        with self.assertRaises(ValueError):
+            activity.validate_snapshot(snapshot([{"name": "org/repo", "date": "2026-01-01T00:00:00Z"}]))
+
+    def test_render_escapes_untrusted_metadata(self):
+        html = activity.render(snapshot([entry("org/repo", description="<script>alert(1)</script>")]))
+        self.assertIn("&lt;script&gt;", html)
+        self.assertNotIn("<script>", html)
+        self.assertIn('datetime="2026-01-01"', html)
+
+    def test_offline_build_reads_canonical_snapshot_without_network(self):
         with tempfile.TemporaryDirectory() as directory:
-            source = Path(directory) / "contributions.json"
-            original = snapshot([entry("org/historical")])
-            source.write_text(json.dumps(original), encoding="utf-8")
-            before = source.read_bytes()
-            with patch.object(refresh, "SNAPSHOT", source), \
+            root = Path(directory)
+            (root / "_site").mkdir()
+            (root / "_site/index.html").write_text(activity.START + activity.END)
+            original = snapshot([entry("org/repo")])
+            (root / "contributions.json").write_text(json.dumps(original))
+            with patch.object(activity, "ROOT", root), \
+                 patch.object(activity, "SNAPSHOT", root / "contributions.json"), \
+                 patch.object(activity, "OUTPUT", root / "_site/contributions.json"):
+                activity.main()
+            self.assertEqual(json.loads((root / "_site/contributions.json").read_text()), original)
+            self.assertIn("org/repo", (root / "_site/index.html").read_text())
+
+    def test_bad_snapshot_cannot_replace_generated_page(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "_site").mkdir()
+            (root / "_site/index.html").write_text("last good build")
+            (root / "contributions.json").write_text('{"entries":[]}')
+            with patch.object(activity, "ROOT", root), \
+                 patch.object(activity, "SNAPSHOT", root / "contributions.json"):
+                with self.assertRaises(ValueError):
+                    activity.main()
+            self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+
+    def test_graphql_merge_preserves_history(self):
+        original = entry("fmhy/edit", "2025-01-01T00:00:00Z")
+        fresh = entry("datawhalechina/diy-llm", "2026-11-01T00:00:00Z")
+        merged = refresh.merge([original, fresh])
+        self.assertEqual({x["name"] for x in merged}, {"fmhy/edit", "datawhalechina/diy-llm"})
+
+    def test_graphql_merge_deduplicates_case_insensitively(self):
+        old = entry("Org/Repo", "2025-01-01T00:00:00Z")
+        new = entry("org/repo", "2026-11-01T00:00:00Z")
+        self.assertEqual([x["name"] for x in refresh.merge([old, new])], ["org/repo"])
+
+    def test_graphql_no_change_does_not_rewrite_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / "contributions.json"
+            old = snapshot([entry("org/historical")])
+            file.write_text(json.dumps(old))
+            previous = file.read_bytes()
+            with patch.object(refresh, "SNAPSHOT", file), \
                  patch.object(refresh, "collect", return_value=snapshot([entry("org/historical")])):
                 refresh.main()
-            self.assertEqual(source.read_bytes(), before)
+            self.assertEqual(file.read_bytes(), previous)
 
-    def test_graphql_refresh_rejects_empty_result(self):
+    def test_empty_graphql_result_cannot_erase_history(self):
         with tempfile.TemporaryDirectory() as directory:
-            source = Path(directory) / "contributions.json"
-            original = snapshot([entry("org/historical")])
-            source.write_text(json.dumps(original), encoding="utf-8")
-            with patch.object(refresh, "SNAPSHOT", source), \
+            file = Path(directory) / "contributions.json"
+            old = snapshot([entry("org/historical")])
+            file.write_text(json.dumps(old))
+            with patch.object(refresh, "SNAPSHOT", file), \
                  patch.object(refresh, "collect", return_value=snapshot([])):
                 with self.assertRaisesRegex(RuntimeError, "empty"):
                     refresh.main()
-            self.assertEqual(json.loads(source.read_text()), original)
-
-    def test_source_is_unchanged_after_refresh(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "_site").mkdir()
-            (root / "_site/index.html").write_text(activity.START + activity.END, encoding="utf-8")
-            original = snapshot([entry(f"org/project{i}") for i in range(29)])
-            source = root / "contributions.json"
-            source.write_text(json.dumps(original), encoding="utf-8")
-            with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", source), \
-                 patch.object(activity, "OUTPUT", root / "_site/contributions.json"), \
-                 patch.object(activity, "collect", return_value=snapshot([entry("org/new")])):
-                with patch("sys.argv", ["sync_activity.py", "--refresh"]):
-                    activity.main()
-            self.assertEqual(json.loads(source.read_text(encoding="utf-8")), original)
-            self.assertEqual(len(json.loads((root / "_site/contributions.json").read_text())["entries"]), 30)
-
-    def test_api_failure_retains_history(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "_site").mkdir()
-            (root / "_site/index.html").write_text(activity.START + activity.END, encoding="utf-8")
-            source = root / "contributions.json"
-            source.write_text(json.dumps(snapshot([entry("org/historical")])), encoding="utf-8")
-            with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", source), \
-                 patch.object(activity, "OUTPUT", root / "_site/contributions.json"), \
-                 patch.object(activity, "collect", side_effect=URLError("offline")), \
-                 patch("sys.argv", ["sync_activity.py", "--refresh"]):
-                activity.main()
-            self.assertEqual(len(json.loads((root / "_site/contributions.json").read_text())["entries"]), 1)
+            self.assertEqual(json.loads(file.read_text()), old)
 
 
 if __name__ == "__main__":

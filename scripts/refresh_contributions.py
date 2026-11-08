@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
+from sync_activity import validate_snapshot
 
 ROOT = Path(__file__).resolve().parents[1]
 USER = "FuTseYi"
@@ -186,7 +187,7 @@ def collect(now=None):
 
 
 def main():
-    previous = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    previous = validate_snapshot(json.loads(SNAPSHOT.read_text(encoding="utf-8")))
     fresh = collect()
     if not fresh["entries"]:
         raise RuntimeError("Refusing empty GraphQL contribution response")
@@ -196,6 +197,7 @@ def main():
         print("Contribution history unchanged")
         return
     fresh["entries"] = entries
+    validate_snapshot(fresh)
     SNAPSHOT.write_text(json.dumps(fresh, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Updated contribution history: {len(fresh['entries'])} repositories")
 

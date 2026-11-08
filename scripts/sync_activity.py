@@ -1,135 +1,60 @@
 #!/usr/bin/env python3
-"""Render public development activity into the staged homepage. Standard library only."""
-import argparse
+"""Render the Git-owned contribution snapshot; never fetch data during builds."""
 import json
-import os
 import re
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
-from site_metadata import site_url
 
 ROOT = Path(__file__).resolve().parents[1]
-USER = "FuTseYi"
-SITE = site_url(ROOT)
-MAX_REPOSITORIES = None  # Preserve all verified historical contributions.
-EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
-SNAPSHOT_ERRORS = (URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError)
-API = "https://api.github.com"
 SNAPSHOT = ROOT / "contributions.json"
 OUTPUT = ROOT / "_site/contributions.json"
 START = "<!-- CONTRIBUTIONS:START -->"
 END = "<!-- CONTRIBUTIONS:END -->"
+REPO_NAME = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
+EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
 
 
-def fetch(url):
-    headers = {"Accept": "application/vnd.github+json", "User-Agent": "FuTseYi-homepage"}
-    if url.startswith(API + "/"):
-        headers["X-GitHub-Api-Version"] = "2022-11-28"
-        token = os.environ.get("GITHUB_TOKEN")
-        if token:
-            headers["Authorization"] = "Bearer " + token
-    with urlopen(Request(url, headers=headers), timeout=20) as response:
-        return json.load(response)
+def timestamp(value):
+    if not isinstance(value, str):
+        raise ValueError("Contribution timestamp must be a string")
+    date = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if date.tzinfo is None:
+        raise ValueError("Contribution timestamp requires a timezone")
+    return date.astimezone(timezone.utc)
 
 
-def select_events(events):
-    """Count only the user's public pushes and authored, non-draft PR contributions."""
-    repos = {}
-    for event in sorted(events, key=lambda item: item["created_at"], reverse=True):
-        if not event.get("public") or event.get("actor", {}).get("login", "").lower() != USER.lower():
-            continue
-        kind = event.get("type")
-        payload = event.get("payload", {})
-        if kind == "PushEvent":
-            if not payload.get("ref", "").startswith("refs/heads/"):
-                continue
-            label = "Code push"
-        elif kind == "PullRequestEvent":
-            pr = payload.get("pull_request", {})
-            if (pr.get("user", {}).get("login", "").lower() != USER.lower()
-                    or pr.get("draft")
-                    or payload.get("action") not in ("opened", "reopened", "synchronize", "closed")
-                    or (payload.get("action") == "closed" and not pr.get("merged"))):
-                continue
-            label = "Pull request"
-        else:
-            continue
-        name = event.get("repo", {}).get("name", "")
-        if (not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name)
-                or name.lower() in EXCLUDED_REPOSITORIES):
-            continue
-        if name not in repos:
-            repos[name] = {"name": name, "date": event["created_at"], "activity": label}
-    return list(repos.values())
-
-
-def collect():
-    events = []
-    for page in range(1, 4):
-        batch = fetch(f"{API}/users/{USER}/events/public?per_page=100&page={page}")
-        events.extend(batch)
-        if len(batch) < 100:
-            break
-    entries = []
-    for event in select_events(events):
-        try:
-            repo = fetch(f"{API}/repos/{event['name']}")
-        except HTTPError as error:
-            if error.code == 404:
-                continue
-            raise
-        if repo.get("private") or repo.get("visibility", "public") != "public" or repo.get("archived") or repo.get("disabled"):
-            continue
-        entries.append({**event, "description": repo.get("description") or "",
-                        "language": repo.get("language") or ""})
-    return {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": entries}
-
-
-def previous_snapshot():
-    for load in (lambda: json.loads(SNAPSHOT.read_text(encoding="utf-8")),):
-        try:
-            snapshot = load()
-            updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
-            if updated.tzinfo is None or updated > datetime.now(timezone.utc):
-                raise ValueError("Invalid snapshot timestamp")
-            if not isinstance(snapshot["entries"], list):
-                raise ValueError("Invalid snapshot entries")
-            snapshot["entries"] = [entry for entry in snapshot["entries"]
-                                   if entry["name"].lower() not in EXCLUDED_REPOSITORIES]
-            render(snapshot)  # Validate before allowing a previous snapshot to replace the page.
-            return snapshot
-        except SNAPSHOT_ERRORS:
-            continue
-    return None
-
-
-def merge_snapshots(*snapshots):
-    """Preserve verified history while applying the newest activity per repository."""
-    entries = {}
-    for snapshot in snapshots:
-        if not snapshot:
-            continue
-        for entry in snapshot["entries"]:
-            name = entry["name"]
-            if name.lower() in EXCLUDED_REPOSITORIES:
-                continue
-            key = name.lower()
-            if key not in entries or entry["date"] > entries[key]["date"]:
-                entries[key] = entry
-    ordered = sorted(entries.values(), key=lambda item: item["date"], reverse=True)
-    return {"updated_at": max((snapshot["updated_at"] for snapshot in snapshots if snapshot), default=datetime.now(timezone.utc).isoformat()), "entries": ordered}
+def validate_snapshot(snapshot):
+    """Reject missing, malformed, duplicate, and future-dated records."""
+    if not isinstance(snapshot, dict) or not isinstance(snapshot.get("entries"), list):
+        raise ValueError("Invalid contribution snapshot")
+    if timestamp(snapshot.get("updated_at")) > datetime.now(timezone.utc):
+        raise ValueError("Future contribution snapshot timestamp")
+    names = set()
+    for item in snapshot["entries"]:
+        if not isinstance(item, dict) or not isinstance(item.get("name"), str):
+            raise ValueError("Invalid contribution entry")
+        name = item["name"]
+        if (not REPO_NAME.fullmatch(name) or name.lower() in EXCLUDED_REPOSITORIES
+                or any(part in (".", "..") for part in name.split("/"))):
+            raise ValueError("Invalid or excluded contribution repository")
+        if name.lower() in names:
+            raise ValueError("Duplicate contribution repository")
+        names.add(name.lower())
+        if timestamp(item.get("date")) > datetime.now(timezone.utc):
+            raise ValueError("Future contribution date")
+        for key in ("activity", "description", "language"):
+            if not isinstance(item.get(key), str):
+                raise ValueError(f"Invalid contribution {key}")
+    return snapshot
 
 
 def render(snapshot):
+    validate_snapshot(snapshot)
     rows = []
     for entry in snapshot["entries"]:
         name = entry["name"]
-        if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
-            raise ValueError("Invalid repository name")
-        dt = datetime.fromisoformat(entry["date"].replace("Z", "+00:00"))
+        dt = timestamp(entry["date"])
         description = f'<p>{escape(entry["description"])}</p>' if entry["description"] else ""
         tags = " · ".join(escape(value) for value in (entry["activity"], entry["language"]) if value)
         rows.append(f'<article class="project-item"><time class="contribution-date" datetime="{dt.date().isoformat()}">{dt:%Y.%m.%d}</time><div>'
@@ -138,32 +63,19 @@ def render(snapshot):
                     f'{description}<div class="project-tags"><span>{tags}</span></div></div></article>')
     if not rows:
         rows.append('<p class="section-lead">No verified public contributions available.</p>')
-    updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
+    updated = timestamp(snapshot["updated_at"])
     rows.append(f'<p class="activity-note">Activity snapshot · {updated:%Y.%m.%d} UTC</p>')
     return "\n".join(rows)
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--refresh", action="store_true", help="Fetch fresh public GitHub activity")
-    args = parser.parse_args()
+    snapshot = validate_snapshot(json.loads(SNAPSHOT.read_text(encoding="utf-8")))
     page = ROOT / "_site/index.html"
     html = page.read_text(encoding="utf-8")
     if html.count(START) != 1 or html.count(END) != 1:
         raise ValueError("Missing or duplicate contributions slot")
-    # Always start with Git-owned history; a partial Events response must never erase it.
-    snapshot = previous_snapshot()
-    if args.refresh:
-        try:
-            fresh = collect()
-            render(fresh)
-            snapshot = merge_snapshots(snapshot, fresh)
-        except SNAPSHOT_ERRORS as error:
-            print(f"::warning::Public activity unavailable ({type(error).__name__}); retaining history.")
-    if snapshot is None:
-        raise RuntimeError("No valid public activity snapshot is available")
-    content = render(snapshot)
-    html = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: START + "\n" + content + "\n" + END, html, flags=re.S)
+    html = re.sub(re.escape(START) + r".*?" + re.escape(END),
+                  lambda _: START + "\n" + render(snapshot) + "\n" + END, html, flags=re.S)
     page.write_text(html, encoding="utf-8")
     OUTPUT.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Rendered {len(snapshot['entries'])} public contribution repositories.")
