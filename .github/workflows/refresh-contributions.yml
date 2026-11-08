@@ -11,8 +11,7 @@ on:
     - cron: '17 1 1,15 * *'
 
 permissions:
-  contents: write
-  actions: write
+  contents: read
 
 concurrency:
   group: contribution-refresh
@@ -22,10 +21,26 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
+      - name: Create source update token
+        id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+          owner: FuTseYi
+          repositories: FuTseYi-Site-Source
+          permission-contents: write
       - uses: actions/checkout@v4
         with:
           ref: main
+          token: ${{ steps.app.outputs.token }}
           persist-credentials: true
+      - name: Resolve source bot identity
+        id: bot
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          APP_SLUG: ${{ steps.app.outputs.app-slug }}
+        run: echo "id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -44,13 +59,10 @@ jobs:
           fi
       - name: Commit verified changes to canonical source
         if: steps.changes.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name '${{ steps.app.outputs.app-slug }}[bot]'
+          git config user.email '${{ steps.bot.outputs.id }}+${{ steps.app.outputs.app-slug }}[bot]@users.noreply.github.com'
           git add contributions.json
           git commit -m "data: refresh verified public contributions"
+          # App-authored pushes trigger deploy.yml naturally; no extra dispatch.
           git push origin HEAD:main
-          # GITHUB_TOKEN pushes do not trigger workflows; dispatch is an explicit exception.
-          gh workflow run deploy.yml --ref main

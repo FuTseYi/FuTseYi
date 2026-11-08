@@ -90,7 +90,8 @@ def sync_profile(text,token):
     current=request("GET",url,token)
     if base64.b64decode(current["content"]).decode("utf-8")==text:
         print("Profile README already matches.");return
-    identity={"name":"github-actions[bot]","email":"41898282+github-actions[bot]@users.noreply.github.com"}
+    identity={"name":os.environ.get("PROFILE_COMMITTER_NAME","github-actions[bot]"),
+              "email":os.environ.get("PROFILE_COMMITTER_EMAIL","41898282+github-actions[bot]@users.noreply.github.com")}
     request("PUT",url,token,{"message":"docs: sync README from personal website","author":identity,"committer":identity,"branch":"main","sha":current["sha"],"content":base64.b64encode(text.encode("utf-8")).decode("ascii")})
     print("Updated FuTseYi/FuTseYi README")
 

@@ -32,6 +32,17 @@ class ReadmeTests(unittest.TestCase):
         self.assertEqual(body["author"],body["committer"])
         self.assertEqual(sync.base64.b64decode(body["content"]),b"new README")
 
+    def test_profile_readme_uses_configured_app_bot_identity(self):
+        current={"content":sync.base64.b64encode(b"old README").decode("ascii"),"sha":"previous"}
+        with patch.dict(sync.os.environ, {
+            "PROFILE_COMMITTER_NAME":"futseyi-site-automation[bot]",
+            "PROFILE_COMMITTER_EMAIL":"12345+futseyi-site-automation[bot]@users.noreply.github.com"
+        }), patch.object(sync,"request",side_effect=[current,{}]) as request:
+            sync.sync_profile("new README","test-token")
+        body=request.call_args.args[3]
+        self.assertEqual(body["author"]["name"], "futseyi-site-automation[bot]")
+        self.assertEqual(body["committer"]["email"], "12345+futseyi-site-automation[bot]@users.noreply.github.com")
+
     def test_sections_and_profile_content_match_homepage(self):
         home = sync.read_home()
         result = sync.render()

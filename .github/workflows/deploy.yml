@@ -59,6 +59,12 @@ jobs:
           owner: FuTseYi
           repositories: futseyi.github.io
           permission-contents: write
+      - name: Resolve publishing bot identity
+        id: bot
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          APP_SLUG: ${{ steps.app.outputs.app-slug }}
+        run: echo "id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
       - name: Check out static output repository
         uses: actions/checkout@v4
         with:
@@ -79,8 +85,8 @@ jobs:
           fi
           rsync -a --delete --exclude='.git/' _site/ published/
           cd published
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name '${{ steps.app.outputs.app-slug }}[bot]'
+          git config user.email '${{ steps.bot.outputs.id }}+${{ steps.app.outputs.app-slug }}[bot]@users.noreply.github.com'
           git add -A
           if git diff --cached --quiet; then
             echo 'Static output unchanged'

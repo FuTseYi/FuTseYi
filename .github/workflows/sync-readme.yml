@@ -37,7 +37,15 @@ jobs:
           owner: FuTseYi
           repositories: FuTseYi
           permission-contents: write
+      - name: Resolve profile bot identity
+        id: bot
+        env:
+          GH_TOKEN: ${{ steps.profile_token.outputs.token }}
+          APP_SLUG: ${{ steps.profile_token.outputs.app-slug }}
+        run: echo "id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
       - name: Synchronize GitHub Profile README
         env:
           PROFILE_README_TOKEN: ${{ steps.profile_token.outputs.token }}
+          PROFILE_COMMITTER_NAME: ${{ steps.profile_token.outputs.app-slug }}[bot]
+          PROFILE_COMMITTER_EMAIL: ${{ steps.bot.outputs.id }}+${{ steps.profile_token.outputs.app-slug }}[bot]@users.noreply.github.com
         run: python scripts/sync_readme.py --sync-profile
