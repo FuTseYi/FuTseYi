@@ -18,8 +18,7 @@ SUMMARY_RULES = (
     (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 个页面检查通过 / pages verified"),
     (re.compile(r"^Rendered (\d+) public contribution repositories", re.MULTILINE), r"\1 个贡献仓库 / contribution repositories"),
 )
-ROUTINE_MESSAGES = re.compile(r"^(?:Injected latest blog posts|Website README unchanged|Generated website README"
-                              r"|Profile README already matches)")
+ROUTINE_MESSAGES = re.compile(r"^(?:Injected latest blog posts|Profile README already matches)")
 
 def summarize(log):
     """Condense build output into counts, returning those parts plus anything unrecognized."""

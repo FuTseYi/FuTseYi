@@ -56,11 +56,11 @@ Each document has one authoritative responsibility. Keep rules in their owning d
 - [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md) governs editorial purpose, writing, research, article metadata decisions, privacy, and content review.
 - [PREVIEW.md](PREVIEW.md) explains development, preview, build, publishing, and operational procedures.
 - `BLOG_INDEX.json` is a generated discovery index, not an independent source of editorial policy or article content.
-- Recent Blog in the homepage and README must derive ordering and metadata from `scripts/blog_index.py`; do not introduce another independently sorted Markdown scanner.
+- Recent Blog in the homepage and GitHub profile README must derive ordering and metadata from `scripts/blog_index.py`; do not introduce another independently sorted Markdown scanner.
 
 When behavior, commands, or architecture change, update the implementation and the relevant owning guidance. Keep cross-document references concise and update them only when their meaning or destination changes. Do not duplicate instructions simply to make each document self-contained.
 
-- Preserve homepage-to-README generation: edit source content rather than generated sections.
+- Keep this repository's technical README manually maintained; the separate GitHub profile README follows homepage content.
 - Keep published claims factual and protect private information and credentials.
 
 ## Blog Content

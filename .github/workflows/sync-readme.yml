@@ -11,7 +11,7 @@ on:
       - scripts/sync_readme.py
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: readme-sync
   cancel-in-progress: false
@@ -26,21 +26,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -r requirements.txt
-      - name: Generate README from homepage and posts
-        run: python scripts/sync_readme.py
-      - name: Verify shared homepage and README content
+      - name: Verify profile content generated from homepage
         run: python -m unittest tests.test_sync_readme -v
-      - name: Commit website README if changed
-        run: |
-          if git diff --quiet -- README.md; then
-            echo "README unchanged"
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add README.md
-            git commit -m "docs: sync README from personal website"
-            git push
-          fi
       - name: Create short-lived profile token
         id: profile_token
         uses: actions/create-github-app-token@v2

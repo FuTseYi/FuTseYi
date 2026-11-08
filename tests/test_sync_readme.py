@@ -1,6 +1,7 @@
-"""Check that README content follows the homepage rather than a second template."""
+"""Check that the profile README follows homepage content."""
 from pathlib import Path
 import shutil
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -9,15 +10,25 @@ import sync_readme as sync
 
 
 class ReadmeTests(unittest.TestCase):
-    def test_both_readme_commits_use_the_same_identity_and_message(self):
+    def test_profile_sync_does_not_rewrite_source_readme(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            readme = root / "README.md"
+            readme.write_text("Technical guide\n", encoding="utf-8")
+            with patch.object(sync, "ROOT", root), \
+                 patch.object(sys, "argv", ["sync_readme.py", "--sync-profile"]), \
+                 patch.dict(sync.os.environ, {"PROFILE_README_TOKEN": "test-token"}), \
+                 patch.object(sync, "render", return_value="Profile content"), \
+                 patch.object(sync, "sync_profile") as publish:
+                sync.main()
+            self.assertEqual(readme.read_text(encoding="utf-8"), "Technical guide\n")
+            publish.assert_called_once_with("Profile content", "test-token")
+
+    def test_profile_readme_commit_uses_bot_identity(self):
         current={"content":sync.base64.b64encode(b"old README").decode("ascii"),"sha":"previous"}
         with patch.object(sync,"request",side_effect=[current,{}]) as request:
             sync.sync_profile("new README","test-token")
         body=request.call_args.args[3]
-        workflow=(sync.ROOT/".github/workflows/sync-readme.yml").read_text(encoding="utf-8")
-        self.assertIn('git commit -m "'+body["message"]+'"',workflow)
-        self.assertIn('git config user.name "'+body["author"]["name"]+'"',workflow)
-        self.assertIn('git config user.email "'+body["author"]["email"]+'"',workflow)
         self.assertEqual(body["author"],body["committer"])
         self.assertEqual(sync.base64.b64decode(body["content"]),b"new README")
 

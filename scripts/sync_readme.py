@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate mirrored READMEs from the homepage and shared article metadata."""
+"""Build homepage post links and synchronize the GitHub profile README."""
 import argparse
 import base64
 import json
@@ -122,12 +122,9 @@ def main():
     args=arg.parse_args()
     if args.update_site:
         update_site();return
-    text=render();path=ROOT/"README.md"
-    if not path.exists() or path.read_text(encoding="utf-8")!=text:
-        path.write_text(text,encoding="utf-8");print("Generated website README")
-    else:print("Website README unchanged")
-    if args.sync_profile:
-        token=os.environ.get("PROFILE_README_TOKEN","")
-        if not token:raise SystemExit("PROFILE_README_TOKEN is missing; configure a GitHub App token scoped to FuTseYi/FuTseYi with Contents:write")
-        sync_profile(text,token)
+    if not args.sync_profile:
+        arg.error("specify --update-site or --sync-profile")
+    token=os.environ.get("PROFILE_README_TOKEN","")
+    if not token:raise SystemExit("PROFILE_README_TOKEN is missing; configure a GitHub App token scoped to FuTseYi/FuTseYi with Contents:write")
+    sync_profile(render(),token)
 if __name__=="__main__":main()
