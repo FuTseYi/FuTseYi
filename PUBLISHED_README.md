@@ -13,4 +13,4 @@
 
 本仓库仅保存已构建完成的静态网站文件。源码仓库在验证通过后，将生成的 `_site/` 内容自动推送至本仓库的 `main` 分支，由 **GitHub Pages** 和 **Vercel** 使用同一份静态产物进行托管发布。
 
-构建与部署均由源码仓库统一管理，本仓库不重复构建。每次发布附带 `build-info.json`，用于追溯对应的源码提交和 GitHub Actions 运行记录。
+构建与部署均由源码仓库统一管理，本仓库不重复构建。跨仓库发布使用 **FuTseYi Site Automation** GitHub App 的短期授权，自动提交由该 App 的 Bot 身份署名。每次发布附带 `build-info.json`，用于追溯对应的源码提交和 GitHub Actions 运行记录。
