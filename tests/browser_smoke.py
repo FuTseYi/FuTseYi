@@ -141,6 +141,29 @@ def check_site_navigation(page, width):
         assert page.evaluate("""() => !(window.__scrollHistory || []).some(y => y > 15 && y < 600)"""), "Repeated navigation animated the scroll position"
 
 
+def check_contribution_year_expansion(page):
+    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    list_items = page.locator("#contribution-list .project-item")
+    assert list_items.count() >= 29
+    toggle = page.locator("#contribution-list + .list-toggle")
+    assert toggle.count() == 1
+    assert toggle.get_attribute("aria-expanded") == "false"
+    assert toggle.inner_text() == "Show more · 2026"
+    assert page.locator("#contribution-list .project-item:not([hidden])").count() == 3
+    toggle.click()
+    assert toggle.inner_text() == "Show more · 2025"
+    assert toggle.get_attribute("data-has-more") == "true"
+    assert page.locator("#contribution-list .project-item:not([hidden])").count() == 22
+    toggle.click()
+    assert toggle.inner_text() == "Show less"
+    assert toggle.get_attribute("data-has-more") == "false"
+    assert page.locator("#contribution-list .project-item:not([hidden])").count() >= 29
+    toggle.click()
+    assert toggle.get_attribute("aria-expanded") == "false"
+    assert toggle.inner_text() == "Show more · 2026"
+    assert page.locator("#contribution-list .project-item:not([hidden])").count() == 3
+
+
 def check_search(page):
     page.goto("http://127.0.0.1:8766/blog/", wait_until="networkidle")
     page.locator(".search-open").click()
@@ -188,6 +211,7 @@ def main():
                     context.add_init_script(f"localStorage.setItem('site-theme', '{theme}')")
                     page = context.new_page()
                     check_site_navigation(page, width)
+                    check_contribution_year_expansion(page)
                     for slug in ("astro-waline-comments", "pytorch-quickstart-neural-networks", "hkust-elpa-serverless-github-native-cms"):
                         check(page, slug, width)
                     context.close()

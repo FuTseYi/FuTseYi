@@ -699,9 +699,9 @@ section.section { padding: 32px 0; }
 .article-toc-inline{margin:0 0 30px;border-bottom:1px solid var(--line-soft)}
 .article-toc-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 6px;font:inherit;font-size:15px;font-weight:500;color:var(--ink-soft);background:none;border:0;text-align:left;cursor:pointer;transition:color .2s}
 .article-toc-toggle::after,.web-evolution-toggle::after,button.list-toggle::after{content:"";display:block;flex:none;width:7px;height:7px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .24s ease}
-.article-toc-inline.is-open .article-toc-toggle::after,.web-evolution.is-open .web-evolution-toggle::after,button.list-toggle[aria-expanded="true"]::after{transform:rotate(225deg)}
+.article-toc-inline.is-open .article-toc-toggle::after,.web-evolution.is-open .web-evolution-toggle::after,button.list-toggle[aria-expanded="true"][data-has-more="false"]::after{transform:rotate(225deg)}
 :is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:hover,:focus-visible)::after{transform:translateX(3px) rotate(45deg)}
-:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"]):is(:hover,:focus-visible)::after{transform:translateX(-3px) rotate(225deg)}
+:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"][data-has-more="false"]):is(:hover,:focus-visible)::after{transform:translateX(-3px) rotate(225deg)}
 .article-toc-toggle:is(:hover,:focus-visible),.article-toc-inline.is-open .article-toc-toggle,.article-toc-inline nav a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .article-toc-panel{display:grid;grid-template-rows:1fr}
 .js .article-toc-panel,.js .web-evolution-panel,.js .expandable-panel{grid-template-rows:0fr;transition:grid-template-rows .24s ease}
@@ -733,7 +733,7 @@ section.section { padding: 32px 0; }
 .web-evolution-stack p{font-size:13px;line-height:1.75;color:var(--ink-soft)}
 @media(max-width:680px){.web-evolution{margin-top:18px}.web-evolution-history li{grid-template-columns:82px minmax(0,1fr);gap:10px}}
 @media(prefers-reduced-motion:reduce){.web-evolution-panel,.web-evolution-toggle::after,.article-toc-toggle::after,button.list-toggle::after{transition:none}}
-@media(prefers-reduced-motion:reduce){:is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:hover,:focus-visible)::after{transform:rotate(45deg)}:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"]):is(:hover,:focus-visible)::after{transform:rotate(225deg)}}
+@media(prefers-reduced-motion:reduce){:is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:hover,:focus-visible)::after{transform:rotate(45deg)}:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"][data-has-more="false"]):is(:hover,:focus-visible)::after{transform:rotate(225deg)}}
 
 /* Blog: shared page width, navigation and footer. */
 .blog-page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
