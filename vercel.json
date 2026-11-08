@@ -1,6 +1,0 @@
-{
-  "framework": null,
-  "installCommand": "uv venv --seed .venv",
-  "buildCommand": "python3 preview.py --build-only --refresh-activity",
-  "outputDirectory": "_site"
-}

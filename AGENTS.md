@@ -15,9 +15,9 @@ Treat the site as one coherent system. Prefer sound architecture, consistent des
 - `posts/<slug>/index.md`: Article source; keep accompanying media in each post's `assets/`.
 - `scripts/`: Generation, synchronization, and verification.
 - `tests/`: Regression and browser checks.
-- `.github/workflows/`: Current CI, publication, and README synchronization adapters.
+- `.github/workflows/`: CI, single-build publication, and README synchronization adapters.
 - `preview.py`: Build verification and local preview. `scripts/site_build.py` owns this site's isolated blog, activity and search pipeline. Keep UI and business choices local to this repository.
-- `vercel.json`: Vercel adapter for the same `_site/` output used by GitHub Pages; never maintain a second site builder.
+- `FuTseYi/futseyi.github.io`: Published static output only; GitHub Pages and Vercel serve its files without building source.
 
 See [PREVIEW.md](PREVIEW.md) for commands, publishing, and browser checks. Do not commit generated `blog/`, `_site/`, `sitemap.xml`, or activity snapshots.
 

@@ -33,7 +33,9 @@ On Windows, substitute `py -3` for `python3`.
 - `--refresh-activity`: Fetch fresh public contribution data instead of reusing an available snapshot.
 - `--port 8766`: Choose another local preview port.
 
-Vercel uses the repository-owned `vercel.json` to invoke `python3 preview.py --build-only` and publish `_site/`. GitHub Pages uses the same builder with `--refresh-activity` for its scheduled updates. Keep these hosts as adapters around the one build pipeline.
+The private source repository runs `preview.py` once on `main` pushes and twice-monthly scheduled refreshes. After tests and build verification, its publisher copies the complete `_site/` to the public `FuTseYi/futseyi.github.io` repository. GitHub Pages publishes that repository's root; Vercel serves the same root as a static site with no build command. PRs run validation only and never publish.
+
+The publisher uses a GitHub App installation token limited to the public output repository with Contents write permission. Configure `PUBLISH_APP_ID` as a source-repository variable and `PUBLISH_APP_PRIVATE_KEY` as a source-repository secret. Install the App only on the output repository. Do not use a personal access token for site publishing. `build-info.json` in each release records the source commit and Actions run; the output repository's Git history preserves prior releases for rollback. The published `vercel.json` enables deployments only from `main`, so output-repository PR branches do not deploy. Before changing Pages or Vercel settings, verify the first output commit and keep the prior deployment available.
 
 The same build entry point is used for verification and the current publishing workflow. It generates the blog and search index, synchronizes staged homepage content, and checks the output. Generated `blog/`, `_site/`, and `sitemap.xml` are ignored by Git.
 
@@ -57,7 +59,7 @@ Article text goes here.
 
 Keep article media beside its source in `posts/my-note/assets/` and link to files such as `assets/example.webp`. Use meaningful alt text for informative images, empty alt text for decorative images, and `<figure>`/`<figcaption>` when a caption is needed. The folder name forms the public URL (`/blog/my-note/`), so avoid changing it after publishing.
 
-Under the current workflows, changes reaching `main` publish the site and trigger README synchronization.
+Under the current workflows, changes reaching source `main` publish the site and trigger README synchronization.
 
 ## Browser Verification
 

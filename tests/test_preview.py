@@ -25,15 +25,14 @@ class PreviewTests(unittest.TestCase):
         (root / "_site/index.html").write_text("last good build")
 
     def test_hosts_publish_the_same_portable_static_build(self):
-        import json
         root = Path(__file__).resolve().parents[1]
-        config = json.loads((root / "vercel.json").read_text(encoding="utf-8"))
-        self.assertIsNone(config["framework"])
-        self.assertEqual(config["buildCommand"], "python3 preview.py --build-only --refresh-activity")
-        self.assertEqual(config["outputDirectory"], "_site")
-        workflows = "\n".join(path.read_text(encoding="utf-8") for path in (root / ".github/workflows").glob("*.yml"))
-        self.assertIn("python preview.py --build-only", workflows)
-        self.assertIn("path: _site", workflows)
+        deploy = (root / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
+        self.assertIn("python preview.py --build-only --refresh-activity", deploy)
+        self.assertIn("rsync -a --delete --exclude='.git/' _site/ published/", deploy)
+        self.assertIn("repository: FuTseYi/futseyi.github.io", deploy)
+        self.assertIn("permission-contents: write", deploy)
+        self.assertIn("'deploymentEnabled': {'main': True, '*': False}", deploy)
+        self.assertFalse((root / "vercel.json").exists())
 
     def test_build_only_does_not_bind_preview_port(self):
         with patch.object(preview.sys, "argv", ["preview.py", "--build-only"]), \
