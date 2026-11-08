@@ -27,7 +27,11 @@ class PreviewTests(unittest.TestCase):
     def test_hosts_publish_the_same_portable_static_build(self):
         root = Path(__file__).resolve().parents[1]
         deploy = (root / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
-        self.assertIn("python preview.py --build-only --refresh-activity", deploy)
+        self.assertIn("python preview.py --build-only", deploy)
+        self.assertNotIn("python preview.py --build-only --refresh-activity", deploy)
+        refresh = (root / ".github/workflows/refresh-contributions.yml").read_text(encoding="utf-8")
+        self.assertIn("scripts/refresh_contributions.py", refresh)
+        self.assertIn("permission-contents: write", refresh)
         self.assertIn("rsync -a --delete --exclude='.git/' _site/ published/", deploy)
         self.assertIn("repository: FuTseYi/futseyi.github.io", deploy)
         self.assertIn("permission-contents: write", deploy)

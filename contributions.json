@@ -1,0 +1,208 @@
+{
+  "updated_at": "2026-11-08T04:36:39.615000+00:00",
+  "entries": [
+    {
+      "name": "fmhy/edit",
+      "date": "2026-11-07T13:45:12Z",
+      "activity": "Issue",
+      "description": "Make changes to FMHY",
+      "language": "JavaScript"
+    },
+    {
+      "name": "UEM-Feiyue/UEM-Feiyue.github.io",
+      "date": "2026-11-06T16:57:05Z",
+      "activity": "Pull request",
+      "description": "应急管理大学-飞跃手册",
+      "language": "Python"
+    },
+    {
+      "name": "FuTseYi/HKUST-ELPA",
+      "date": "2026-11-05T15:37:08Z",
+      "activity": "Pull request",
+      "description": "A HKUST & HKUST(GZ) ELPA speaking practice resource with question banks, mock drills, notes, and progress tracking.",
+      "language": "JavaScript"
+    },
+    {
+      "name": "HAI-HKUST/HAI-HKUST.github.io",
+      "date": "2026-11-05T08:37:52Z",
+      "activity": "Pull request",
+      "description": "香港科技大学前沿人工智能社团 / HKUST(GZ) Frontier AI Club 双语静态网站",
+      "language": "JavaScript"
+    },
+    {
+      "name": "FuTseYi/Cloudflare-D1-Visit-Counter",
+      "date": "2026-11-02T08:00:00Z",
+      "activity": "Commit",
+      "description": "A self-hosted visitor counter and SVG badge generator powered by Cloudflare Workers and D1, with a dashboard and history charts.",
+      "language": "JavaScript"
+    },
+    {
+      "name": "FuTseYi/Astro-Theme-Shyne",
+      "date": "2026-11-02T08:00:00Z",
+      "activity": "Commit",
+      "description": "A minimalist Astro theme for blogs and portfolios, featuring a Polaroid-style photo gallery, instant search, and SEO support.",
+      "language": "Astro"
+    },
+    {
+      "name": "FuTseYi/HKUST-CDA-ActNGuess",
+      "date": "2026-10-22T12:47:19Z",
+      "activity": "Repository",
+      "description": "An interactive charades game for HKUST(GZ) Career Development Association.职协 · 你比我猜",
+      "language": "HTML"
+    },
+    {
+      "name": "FuTseYi/IELTS-TOEFL-Lab",
+      "date": "2026-10-13T07:00:00Z",
+      "activity": "Commit",
+      "description": "A personal IELTS & TOEFL knowledge base featuring exam preparation experiences, study strategies, curated resources, and practical tips.",
+      "language": ""
+    },
+    {
+      "name": "FuTseYi/PulseBand",
+      "date": "2026-10-09T07:00:00Z",
+      "activity": "Commit",
+      "description": "STM32F103 wearable health-monitoring prototype with MAX30102, ADXL345, ESP8266 Wi-Fi, and an Android companion app.",
+      "language": "C"
+    },
+    {
+      "name": "FuTseYi/CropLens",
+      "date": "2026-10-09T07:00:00Z",
+      "activity": "Commit",
+      "description": "AI-powered crop disease detection with YOLO and optional DeepSeek assistance, built with Vue 3, Spring Boot, and Flask.",
+      "language": "Vue"
+    },
+    {
+      "name": "HAI-HKUST/.github",
+      "date": "2026-09-28T07:00:00Z",
+      "activity": "Commit",
+      "description": "",
+      "language": ""
+    },
+    {
+      "name": "datawhalechina/diy-llm",
+      "date": "2026-05-22T10:56:42Z",
+      "activity": "Pull request",
+      "description": "Covers pre-training data, Tokenizer, Transformer, MoE,distributed training, Scaling Laws, inference & alignment .6 progressive code assignments for full-stack LLM learning   |  涵盖预训练数据、分词器、Transformer、MoE、分布式训练、缩放定律、推理与对齐，6 项渐进代码作业，掌握 LLM 全栈知识 ",
+      "language": "Jupyter Notebook"
+    },
+    {
+      "name": "UEM-Stu/UEM-Stu-Portal",
+      "date": "2026-05-17T10:07:00Z",
+      "activity": "Review",
+      "description": "UEM-Stu 公开门户，用于展示实验室入口、项目索引、组织介绍和对外资源。",
+      "language": ""
+    },
+    {
+      "name": "UEM-Stu/UEM-Stu-Brand",
+      "date": "2026-05-17T07:00:00Z",
+      "activity": "Commit",
+      "description": "UEM-Stu 品牌资源库，用于存放组织 Logo、实验室 Logo、视觉素材和品牌规范。",
+      "language": ""
+    },
+    {
+      "name": "UEM-Stu/.github",
+      "date": "2026-05-17T07:00:00Z",
+      "activity": "Commit",
+      "description": "GitHub 组织主页，用于展示 UEM-Stu 的简介、Logo、实验室入口和项目导航。",
+      "language": ""
+    },
+    {
+      "name": "travellings-link/travellings",
+      "date": "2026-05-15T04:41:11Z",
+      "activity": "Issue",
+      "description": "「开往 Travellings」是一个友链接力项目，旨在通过网络跳转的方式将流量引入那些鲜为人知的独立站点。 每当用户访问加入该项目的网页时，点击该网页上的“开往”按钮将随机跳转到另一个加入该项目的网页。",
+      "language": "HTML"
+    },
+    {
+      "name": "timqian/chinese-independent-blogs",
+      "date": "2026-05-13T07:00:00Z",
+      "activity": "Commit",
+      "description": "中文独立博客列表",
+      "language": "JavaScript"
+    },
+    {
+      "name": "datawhalechina/vibe-vibe",
+      "date": "2026-02-07T08:00:00Z",
+      "activity": "Commit",
+      "description": "AI for All: The First Systematic Vibe Coding Tutorial | From Zero to Full-Stack, Bring Your Ideas to Life | Live at: www.vibevibe.cn   ；全民AI学习第一课，首个系统化 Vibe Coding 开源教程 | 零基础到全栈实战，让人人都能借助 AI 实现自己的想法与创意 | 在线地址：www.vibevibe.cn",
+      "language": "Dockerfile"
+    },
+    {
+      "name": "datawhalechina/easy-vibe",
+      "date": "2026-02-06T14:33:21Z",
+      "activity": "Pull request",
+      "description": "💻  Vibe Coding 101｜Your First Course For AI Product Builders.",
+      "language": "JavaScript"
+    },
+    {
+      "name": "datawhalechina/faster-git",
+      "date": "2026-01-14T08:00:00Z",
+      "activity": "Commit",
+      "description": "a chinese tutorial of git",
+      "language": ""
+    },
+    {
+      "name": "HAI-HKUST/HKUST-GZ-Templates-PPT",
+      "date": "2026-01-05T08:00:00Z",
+      "activity": "Commit",
+      "description": "updating",
+      "language": ""
+    },
+    {
+      "name": "HAI-HKUST/HKUST-GZ-Resume",
+      "date": "2026-01-05T08:00:00Z",
+      "activity": "Commit",
+      "description": "HKUST-GZ-Resume 香港科技大学(广州)简历模板",
+      "language": "TeX"
+    },
+    {
+      "name": "saicaca/fuwari",
+      "date": "2025-09-23T07:55:55Z",
+      "activity": "Issue",
+      "description": "✨A static blog template built with Astro. ",
+      "language": "Astro"
+    },
+    {
+      "name": "FuTseYi/Cloudflare-Pages-Cleanup",
+      "date": "2025-09-19T09:53:00Z",
+      "activity": "Repository",
+      "description": "Bulk-delete Cloudflare Pages deployment history via GitHub Actions while preserving the current production deployment.",
+      "language": "JavaScript"
+    },
+    {
+      "name": "FuTseYi/RK3588-Edge-AI",
+      "date": "2025-09-19T09:49:00Z",
+      "activity": "Repository",
+      "description": "RK3588 edge AI deployment guides and examples for YOLO11 with RKNN and DeepSeek-R1-Distill-Qwen-1.5B with RKLLM.",
+      "language": "Python"
+    },
+    {
+      "name": "AnubisNekhet/AnuPpuccin",
+      "date": "2025-07-18T11:45:05Z",
+      "activity": "Issue",
+      "description": "Personal theme for Obsidian",
+      "language": "CSS"
+    },
+    {
+      "name": "RSSNext/Folo",
+      "date": "2025-07-01T06:21:49Z",
+      "activity": "Issue",
+      "description": "🧡 Folo is the AI RSS Reader",
+      "language": "TypeScript"
+    },
+    {
+      "name": "Kuingsmile/PicList",
+      "date": "2025-06-18T07:34:27Z",
+      "activity": "Issue",
+      "description": "An image upload and manage tool, base on PicGo",
+      "language": "TypeScript"
+    },
+    {
+      "name": "Huxpro/huxpro.github.io",
+      "date": "2025-05-08T06:31:07Z",
+      "activity": "Issue",
+      "description": "My Blog / Jekyll Themes / PWA",
+      "language": "HTML"
+    }
+  ]
+}

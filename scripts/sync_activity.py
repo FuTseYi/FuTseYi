@@ -14,11 +14,12 @@ from site_metadata import site_url
 ROOT = Path(__file__).resolve().parents[1]
 USER = "FuTseYi"
 SITE = site_url(ROOT)
-MAX_REPOSITORIES = 12
+MAX_REPOSITORIES = None  # Preserve all verified historical contributions.
 EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
 SNAPSHOT_ERRORS = (URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError)
 API = "https://api.github.com"
-SNAPSHOT = ROOT / "_site/contributions.json"
+SNAPSHOT = ROOT / "contributions.json"
+OUTPUT = ROOT / "_site/contributions.json"
 START = "<!-- CONTRIBUTIONS:START -->"
 END = "<!-- CONTRIBUTIONS:END -->"
 
@@ -84,14 +85,11 @@ def collect():
             continue
         entries.append({**event, "description": repo.get("description") or "",
                         "language": repo.get("language") or ""})
-        if len(entries) == MAX_REPOSITORIES:
-            break
     return {"updated_at": datetime.now(timezone.utc).isoformat(), "entries": entries}
 
 
 def previous_snapshot():
-    for load in (lambda: json.loads(SNAPSHOT.read_text(encoding="utf-8")),
-                 lambda: fetch(SITE + "/contributions.json")):
+    for load in (lambda: json.loads(SNAPSHOT.read_text(encoding="utf-8")),):
         try:
             snapshot = load()
             updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
@@ -100,12 +98,29 @@ def previous_snapshot():
             if not isinstance(snapshot["entries"], list):
                 raise ValueError("Invalid snapshot entries")
             snapshot["entries"] = [entry for entry in snapshot["entries"]
-                                   if entry["name"].lower() not in EXCLUDED_REPOSITORIES][:MAX_REPOSITORIES]
+                                   if entry["name"].lower() not in EXCLUDED_REPOSITORIES]
             render(snapshot)  # Validate before allowing a previous snapshot to replace the page.
             return snapshot
         except SNAPSHOT_ERRORS:
             continue
     return None
+
+
+def merge_snapshots(*snapshots):
+    """Preserve verified history while applying the newest activity per repository."""
+    entries = {}
+    for snapshot in snapshots:
+        if not snapshot:
+            continue
+        for entry in snapshot["entries"]:
+            name = entry["name"]
+            if name.lower() in EXCLUDED_REPOSITORIES:
+                continue
+            key = name.lower()
+            if key not in entries or entry["date"] > entries[key]["date"]:
+                entries[key] = entry
+    ordered = sorted(entries.values(), key=lambda item: item["date"], reverse=True)
+    return {"updated_at": max((snapshot["updated_at"] for snapshot in snapshots if snapshot), default=datetime.now(timezone.utc).isoformat()), "entries": ordered}
 
 
 def render(snapshot):
@@ -122,7 +137,7 @@ def render(snapshot):
                     f'{escape(name)} <span class="link-arrow" aria-hidden="true"></span></a></h3>'
                     f'{description}<div class="project-tags"><span>{tags}</span></div></div></article>')
     if not rows:
-        rows.append('<p class="section-lead">No recent public code pushes or pull requests in the available activity window.</p>')
+        rows.append('<p class="section-lead">No verified public contributions available.</p>')
     updated = datetime.fromisoformat(snapshot["updated_at"].replace("Z", "+00:00"))
     rows.append(f'<p class="activity-note">Activity snapshot · {updated:%Y.%m.%d} UTC</p>')
     return "\n".join(rows)
@@ -136,22 +151,21 @@ def main():
     html = page.read_text(encoding="utf-8")
     if html.count(START) != 1 or html.count(END) != 1:
         raise ValueError("Missing or duplicate contributions slot")
-    snapshot = None if args.refresh else previous_snapshot()
-    if args.refresh or snapshot is None:
+    # Always start with Git-owned history; a partial Events response must never erase it.
+    snapshot = previous_snapshot()
+    if args.refresh:
         try:
             fresh = collect()
             render(fresh)
-            snapshot = fresh
+            snapshot = merge_snapshots(snapshot, fresh)
         except SNAPSHOT_ERRORS as error:
-            if args.refresh:
-                snapshot = previous_snapshot()
-            print(f"::warning::Public activity unavailable ({type(error).__name__}); using previous snapshot if available.")
+            print(f"::warning::Public activity unavailable ({type(error).__name__}); retaining history.")
     if snapshot is None:
         raise RuntimeError("No valid public activity snapshot is available")
     content = render(snapshot)
     html = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: START + "\n" + content + "\n" + END, html, flags=re.S)
     page.write_text(html, encoding="utf-8")
-    SNAPSHOT.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUTPUT.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Rendered {len(snapshot['entries'])} public contribution repositories.")
 
 

@@ -1,0 +1,53 @@
+name: Refresh versioned GitHub contributions
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 1 1,15 * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contribution-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Refresh lifetime public contributions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          test -n "$GITHUB_TOKEN" || { echo "::error::Set CONTRIBUTIONS_GITHUB_TOKEN with read:user access to the profile's contribution history"; exit 1; }
+          python scripts/refresh_contributions.py
+      - name: Create short-lived source-write token
+        id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+          owner: FuTseYi
+          repositories: FuTseYi-Site-Source
+          permission-contents: write
+      - name: Commit verified changes to canonical source
+        env:
+          APP_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          if git diff --quiet -- contributions.json; then
+            echo 'No new contributions'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add contributions.json
+          git commit -m "data: refresh verified public contributions"
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' \"$APP_TOKEN\" | base64 -w0)" push origin HEAD:main
