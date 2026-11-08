@@ -1,15 +1,9 @@
 name: Build and publish static site
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - README.md
-      - AGENTS.md
-      - PREVIEW.md
-      - BLOG_GUIDELINES.md
-      - tests/**
-      - .github/workflows/validate.yml
+  workflow_run:
+    workflows: ["Refresh versioned GitHub contributions"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -21,9 +15,12 @@ concurrency:
 
 jobs:
   publish:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -34,9 +31,11 @@ jobs:
         run: python preview.py --build-only
       - name: Record source and build run
         env:
-          SOURCE_SHA: ${{ github.sha }}
           SOURCE_RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          export SOURCE_SHA
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
           python - <<'PY'
           import json, os
           from datetime import datetime, timezone
@@ -74,8 +73,6 @@ jobs:
           path: published
           persist-credentials: true
       - name: Replace static output and publish
-        env:
-          SOURCE_SHA: ${{ github.sha }}
         run: |
           # Ignore volatile build metadata when deciding whether the site changed.
           # This avoids a new deployment for a workflow rerun with identical output.

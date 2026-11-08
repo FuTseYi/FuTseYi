@@ -46,73 +46,51 @@ Windows 可使用 `py -3` 替代 `python`。预览命令会按需在本地环境
 
 本项目通过 GitHub Actions 自动构建并发布。符合发布条件的变更进入 `main` 后，工作流会执行测试、离线构建及校验，再将完整的 `_site/` 静态产物推送至 [futseyi.github.io](https://github.com/FuTseYi/futseyi.github.io) 的 `main` 分支。
 
-### 部署流程
+### 部署与贡献更新
+
+每次向源码仓库 `main` 推送变更（包括 Blog），都会先运行贡献刷新。每月 1 日、15 日的定时任务与手动触发也会执行同一流程。仅 `contributions.json` 的自动提交不再次触发刷新，避免循环。
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Developer as 开发者
-    participant Source as 源码仓库
-    participant CI as PR 验证工作流
-    participant Deploy as 发布工作流
+    actor Author as 开发者
+    participant Source as Source / main
+    participant Refresh as 贡献刷新 Action
+    participant API as GitHub GraphQL
+    participant Build as 网站发布 Action
     participant App as GitHub App
-    participant Output as 静态发布仓库
+    participant Output as Published / main
     participant Pages as GitHub Pages
     participant Vercel as Vercel
 
-    Developer->>Source: 提交 Pull Request
-    Source->>CI: 触发 pull_request 验证
-    activate CI
-    Note over CI: 单元测试、静态构建及 Chromium / WebKit 测试
-    CI-->>Developer: 返回验证结果（不发布）
-    deactivate CI
-
-    Developer->>Source: 合并变更至 main
-    Note over Source,Deploy: 仅在满足发布工作流的路径条件时触发
-    Source->>Deploy: push 触发 deploy.yml
-    activate Deploy
-    Note over Deploy: 测试、离线构建并校验唯一 _site/
-    Deploy->>App: 申请限定发布仓库的短期 Token
-    App-->>Deploy: 返回 Contents 写入令牌
-    Deploy->>Output: 将 _site/ 推送至 main
-    deactivate Deploy
-
-    par GitHub Pages
-        Output->>Pages: main 更新触发静态站点发布
-    and Vercel
-        Output->>Vercel: main 更新触发生产部署
+    Author->>Source: 提交源码或 Blog
+    Note over Refresh: 也支持定时和手动运行
+    Source->>Refresh: push 触发（排除纯贡献数据提交）
+    Refresh->>API: 查询公开贡献
+    API-->>Refresh: 返回记录
+    alt 贡献记录有变化
+        Refresh->>App: 申请 Source 短期写入令牌
+        Refresh->>Source: App Bot 提交 contributions.json
+        Note over Source,Refresh: 数据提交不再次触发贡献刷新
+    else 数据未变化或 API 暂不可用
+        Note over Refresh: 保留上一次校验通过的快照
     end
-
-    Note over Pages,Vercel: 两个平台使用同一份已生成的静态产物
-```
-
-### 贡献数据同步
-
-贡献数据与网站构建相互独立。定时任务、手动触发或刷新逻辑更新时，`refresh-contributions.yml` 通过 GitHub GraphQL 获取记录，并校验、过滤和合并历史数据。
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Trigger as 定时 / 手动 / 代码更新
-    participant Refresh as 贡献刷新工作流
-    participant GraphQL as GitHub GraphQL
-    participant Source as 源码仓库 main
-    participant Deploy as 发布工作流
-
-    Trigger->>Refresh: 触发贡献更新
-    Refresh->>GraphQL: 查询公开贡献历史
-    GraphQL-->>Refresh: 返回贡献数据
-    Note over Refresh: 排除单纯 Fork 和指定仓库，保留真实贡献
-    Refresh->>Refresh: 校验并合并 contributions.json
-
-    alt 数据发生变化
-        Refresh->>Source: 使用 GITHUB_TOKEN 提交数据文件
-        Refresh->>Deploy: workflow_dispatch 触发 deploy.yml
-        Note over Deploy: 按上方发布流程构建并部署
-    else 数据未变化
-        Note over Refresh: 不提交，也不额外触发发布
+    Refresh->>Build: workflow_run（刷新流程完成后）
+    Note over Build: 单元测试、离线构建并验证 _site/
+    Build->>App: 申请 Published 短期写入令牌
+    App-->>Build: GitHub App Token
+    opt 静态文件有实质变化
+        Build->>Output: App Bot 推送 _site/ 到 main
+        par Pages
+            Output->>Pages: 直接发布静态文件
+        and Vercel
+            Output->>Vercel: 部署同一份产物
+        end
     end
 ```
+
+Pull Request 只运行独立的验证工作流，不发布到生产环境。发布工作流也可单独手动运行。
+
 
 ### 运行机制说明
 
@@ -120,7 +98,7 @@ sequenceDiagram
 - **自动验证**：Pull Request 运行测试和浏览器检查，不触发正式发布。
 - **短期授权**：跨仓库推送使用 GitHub App 临时令牌，不依赖长期个人访问令牌。
 - **离线构建**：构建使用已提交的 `contributions.json`，不在构建阶段实时请求 GitHub API。
-- **自动同步**：贡献数据更新时，以仓库自带的 `GITHUB_TOKEN` 提交并显式触发同一发布工作流。
+- **自动同步**：每次 Source 推送均先检查贡献数据；有变化时由 GitHub App Bot 提交，刷新工作流完成后才进行离线构建，避免额外 Dispatch 和重复发布。
 - **版本追溯**：每次发布生成 `build-info.json`，记录源码提交与 Actions 运行信息。
 
 发布仓库中的文件由本仓库自动生成，不应直接修改；其说明文档由 [PUBLISHED_README.md](PUBLISHED_README.md) 维护。
