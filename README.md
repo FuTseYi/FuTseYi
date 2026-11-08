@@ -1,104 +1,93 @@
 # FuTseYi-Site-Source
 
-个人网站源码与构建仓库。网站使用原生 HTML、CSS 和 JavaScript，并通过 Python 生成静态页面。所有内容修改、构建与发布流程均在本仓库维护。
+个人网站的唯一源码与构建仓库。基于原生 HTML、CSS、JavaScript 和 Python 生成静态网站；构建后的文件统一发布到 [FuTseYi.github.io](https://github.com/FuTseYi/FuTseYi.github.io)，供 GitHub Pages 和 Vercel 使用。
 
 ## 项目结构
 
 ```text
 FuTseYi-Site-Source/
-├── .github/workflows/       # 自动测试、贡献同步与跨仓库发布
-├── assets/                  # 样式、脚本、字体与图片
-├── posts/                   # Markdown 文章与配套资源
-├── scripts/                 # 静态构建、内容处理与校验
-├── tests/                   # 单元测试与浏览器回归测试
-├── contributions.json       # 经过校验的版本化贡献数据
-├── index.html               # 首页
-├── preview.py               # 本地预览与统一构建入口
-└── requirements.txt         # Python 构建依赖
+├── .github/workflows/  # 验证、贡献刷新、发布与 Profile 同步
+├── assets/             # 样式、脚本、字体与图片
+├── posts/              # Markdown 文章及其资源
+├── scripts/            # 内容生成、索引、同步与校验
+├── tests/              # 单元与浏览器回归测试
+├── BLOG_INDEX.json     # 由文章元数据生成的编辑检索索引
+├── contributions.json  # Git 跟踪的公开贡献数据快照
+├── index.html          # 可直接维护的首页
+├── preview.py          # 本地预览及唯一构建入口
+└── requirements.txt    # Python 构建依赖
 ```
 
 ## 技术栈
 
-- **HTML / CSS / JavaScript** — 原生页面、样式与交互，不使用前端框架
-- **Python** — Markdown 处理、静态构建与页面校验
-- **Pagefind** — 静态站内搜索
-- **GitHub GraphQL API** — 获取公开贡献记录，并写入版本化数据文件
-- **GitHub Actions** — 自动验证、构建与跨仓库部署
+- **HTML / CSS / JavaScript**：无前端构建框架的静态页面与交互
+- **Python / Markdown**：文章生成、首页同步及构建验证
+- **Pagefind**：构建时生成静态搜索索引
+- **GitHub GraphQL**：查询公开贡献记录
+- **GitHub Actions + GitHub App**：测试、刷新数据、同步 Profile 和跨仓库发布
 
 ## 本地开发
 
-运行前请确保安装 Python 3.10 或更高版本。
+要求 Python 3.10 或更新版本。
 
-```bash
-python preview.py              # 启动本地预览
-python preview.py --build-only # 构建并校验静态网站
-```
-
-运行单元测试：
-
-```bash
+```sh
+python preview.py
+python preview.py --build-only
 python -m unittest discover -s tests -t . -p "test_*.py"
 ```
 
-Windows 可使用 `py -3` 替代 `python`。预览命令会按需在本地环境安装依赖。详细说明参见 [PREVIEW.md](PREVIEW.md)。
+Windows 可使用 `py -3` 替代 `python`。预览、浏览器检查和环境设置见 [PREVIEW.md](PREVIEW.md)。
 
-## 自动部署
+## 构建与发布
 
-本项目通过 GitHub Actions 自动构建并发布。符合发布条件的变更进入 `main` 后，工作流会执行测试、离线构建及校验，再将完整的 `_site/` 静态产物推送至 [futseyi.github.io](https://github.com/FuTseYi/futseyi.github.io) 的 `main` 分支。
-
-### 部署与贡献更新
-
-每次向源码仓库 `main` 推送变更（包括 Blog），都会先运行贡献刷新。每月 1 日、15 日的定时任务与手动触发也会执行同一流程。仅 `contributions.json` 的自动提交不再次触发刷新，避免循环。
+**Source**（本仓库）是唯一维护入口；**Published**（`FuTseYi/FuTseYi.github.io`）仅保存由 Source 产生的静态成品。GitHub Pages 与 Vercel 使用 Published 的同一份文件，不重复生成网站。发布仓库的 `README.md` 由 [PUBLISHED_README.md](PUBLISHED_README.md) 复制生成。
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Author as 开发者
-    participant Source as Source / main
-    participant Refresh as 贡献刷新 Action
+    actor Maintainer as Maintainer
+    participant Source as Source main
+    participant Refresh as Refresh Action
     participant API as GitHub GraphQL
-    participant Build as 网站发布 Action
     participant App as GitHub App
-    participant Output as Published / main
-    participant Pages as GitHub Pages
-    participant Vercel as Vercel
+    participant Deploy as Publish Action
+    participant Published as Published main
+    participant Hosts as GitHub Pages / Vercel
 
-    Author->>Source: 提交源码或 Blog
-    Note over Refresh: 也支持定时和手动运行
-    Source->>Refresh: push 触发（排除纯贡献数据提交）
-    Refresh->>API: 查询公开贡献
-    API-->>Refresh: 返回记录
-    alt 贡献记录有变化
-        Refresh->>App: 申请 Source 短期写入令牌
-        Refresh->>Source: App Bot 提交 contributions.json
-        Note over Source,Refresh: 数据提交不再次触发贡献刷新
-    else 数据未变化或 API 暂不可用
-        Note over Refresh: 保留上一次校验通过的快照
+    alt Source main push（非仅 contributions.json）
+        Maintainer->>Source: Push / merge
+        Source->>Refresh: push
+    else 定时或手动刷新
+        Maintainer->>Refresh: schedule / workflow_dispatch
     end
-    Refresh->>Build: workflow_run（刷新流程完成后）
-    Note over Build: 单元测试、离线构建并验证 _site/
-    Build->>App: 申请 Published 短期写入令牌
-    App-->>Build: GitHub App Token
-    opt 静态文件有实质变化
-        Build->>Output: App Bot 推送 _site/ 到 main
-        par Pages
-            Output->>Pages: 直接发布静态文件
-        and Vercel
-            Output->>Vercel: 部署同一份产物
-        end
+
+    Refresh->>App: 使用 Source 中的 App 凭据申请写入 Token
+    App-->>Refresh: Source-scoped installation token
+    Refresh->>API: 用 GitHub 内置 GITHUB_TOKEN 查询贡献
+    API-->>Refresh: 公开贡献结果
+    opt 校验、合并后数据有变化
+        Refresh->>Source: App Bot 提交 contributions.json
+        Note over Source: 纯快照提交不再次触发 Refresh
+    end
+    Note over Refresh: API 失败则保留旧快照并发出 warning
+    Refresh-->>Deploy: workflow_run completed（成功）
+    Note over Deploy: checkout Source main，测试并离线构建 _site/
+    Deploy->>App: 申请 Published-scoped Token
+    App-->>Deploy: Installation token
+    opt 静态产物有变化
+        Deploy->>Published: App Bot 推送构建成品
+        Published->>Hosts: main 更新触发部署
     end
 ```
 
-Pull Request 只运行独立的验证工作流，不发布到生产环境。发布工作流也可单独手动运行。
+刷新工作流也可手动执行；网站发布工作流可独立手动运行。贡献刷新按每月 **1 日、15 日 UTC 01:17** 定时执行。普通 Source `main` Push 会先刷新，再由 `workflow_run` 触发构建；单纯 `contributions.json` 变化不会递归刷新。查询失败会保留最后一份已验证快照。构建只读取版本化数据，不在构建阶段访问 GraphQL；若静态产物没有变化，则不创建 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章变更同步到 `FuTseYi/FuTseYi`。
 
+## 文档
 
-### 运行机制说明
+- [AGENTS.md](AGENTS.md)：仓库工程原则与修改、验证边界
+- [PREVIEW.md](PREVIEW.md)：开发、构建、测试和自动发布操作
+- [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md)：博客编辑、研究与索引规范
+- [LICENSING.md](LICENSING.md)：代码、内容及第三方素材的许可说明
+- [PUBLISHED_README.md](PUBLISHED_README.md)：Published 仓库 README 的唯一来源
 
-- **唯一构建**：网站只在源码仓库生成 `_site/`，发布仓库及托管平台不重复构建。
-- **自动验证**：Pull Request 运行测试和浏览器检查，不触发正式发布。
-- **短期授权**：跨仓库推送使用 GitHub App 临时令牌，不依赖长期个人访问令牌。
-- **离线构建**：构建使用已提交的 `contributions.json`，不在构建阶段实时请求 GitHub API。
-- **自动同步**：每次 Source 推送均先检查贡献数据；有变化时由 GitHub App Bot 提交，刷新工作流完成后才进行离线构建，避免额外 Dispatch 和重复发布。
-- **版本追溯**：每次发布生成 `build-info.json`，记录源码提交与 Actions 运行信息。
-
-发布仓库中的文件由本仓库自动生成，不应直接修改；其说明文档由 [PUBLISHED_README.md](PUBLISHED_README.md) 维护。
+**Every line of code should justify its existence. Define once. Reuse everywhere.**

@@ -8,7 +8,7 @@ Copyright © 2026 FuTseYi (Shine). This repository separates website software fr
 | Original article text, homepage prose and original images authored by FuTseYi (Shine), unless otherwise marked | [Creative Commons Attribution 4.0 International](LICENSE-CONTENT) (CC BY 4.0) |
 | Third-party material, including quoted text, screenshots of others' work, logos, fonts and dependencies | Its respective license or rights holder's terms |
 
-The content license applies to the prose and original media embedded in HTML and Markdown; it does not replace the MIT license on the surrounding website implementation. Separately attributed code examples retain their stated licenses. Generated pages retain the licenses of their constituent material.
+The content license applies to the prose and original media embedded in HTML and Markdown; it does not replace the MIT license on the surrounding website implementation. Separately attributed code examples retain their stated licenses. Generated pages retain the licenses of their constituent material; publishing the same built files in the separate Published repository does not change those terms.
 
 ## Reusing content
 

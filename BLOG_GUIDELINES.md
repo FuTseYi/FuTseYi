@@ -38,7 +38,7 @@ This guide defines the editorial standard for articles in this repository. The b
 
 ## Working with the archive
 
-For blog tasks, read this guide and the generated `BLOG_INDEX.json` first. Use the index to find likely related subjects and tags, then inspect the relevant Markdown articles before drafting or changing their content. The index is a discovery aid only; Markdown files under `posts/` remain the sole source of truth.
+For blog tasks, read this guide and the generated `BLOG_INDEX.json` first. Use the index to find likely related subjects and tags, then inspect the relevant Markdown articles before drafting or changing their content. The index is a tracked discovery aid generated from article metadata, not an alternative editorial source; Markdown files under `posts/` remain authoritative. After article metadata changes, regenerate the index with `python scripts/blog_index.py --write` and verify with `python scripts/blog_index.py --check`.
 
 For a complete article task:
 
@@ -47,7 +47,7 @@ For a complete article task:
 3. Research and verify claims at a depth appropriate to the subject.
 4. Write or revise the article, choosing its title, date, and tags.
 5. Review the complete result for usefulness, voice, accuracy, privacy, licensing, and long-term readability.
-6. Regenerate and check the index, then run the relevant repository tests.
+6. Regenerate and check the index when metadata changes, then run the relevant repository tests.
 
 Do not change the author's substantive experience or opinion, publish sensitive information, or delete historically significant content without confirmation. Protect credentials, account identifiers, private contact details, and identifying information in screenshots, logs, and examples. Respect repository and third-party licenses.
 
