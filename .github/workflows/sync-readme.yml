@@ -18,8 +18,6 @@ concurrency:
 jobs:
   synchronize:
     runs-on: ubuntu-latest
-    env:
-      PROFILE_README_TOKEN: ${{ secrets.PROFILE_README_TOKEN }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,9 +41,16 @@ jobs:
             git commit -m "docs: sync README from personal website"
             git push
           fi
+      - name: Create short-lived profile token
+        id: profile_token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+          owner: FuTseYi
+          repositories: FuTseYi
+          permission-contents: write
       - name: Synchronize GitHub Profile README
-        if: ${{ env.PROFILE_README_TOKEN != '' }}
+        env:
+          PROFILE_README_TOKEN: ${{ steps.profile_token.outputs.token }}
         run: python scripts/sync_readme.py --sync-profile
-      - name: Explain missing cross-repository authorization
-        if: ${{ env.PROFILE_README_TOKEN == '' }}
-        run: echo "::warning::Set the repository secret PROFILE_README_TOKEN (fine-grained token with FuTseYi/FuTseYi Contents write) to enable future automatic cross-repo synchronization."

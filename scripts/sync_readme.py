@@ -128,6 +128,6 @@ def main():
     else:print("Website README unchanged")
     if args.sync_profile:
         token=os.environ.get("PROFILE_README_TOKEN","")
-        if not token:raise SystemExit("PROFILE_README_TOKEN is missing; configure one fine-grained token scoped to FuTseYi/FuTseYi with Contents:write")
+        if not token:raise SystemExit("PROFILE_README_TOKEN is missing; configure a GitHub App token scoped to FuTseYi/FuTseYi with Contents:write")
         sync_profile(text,token)
 if __name__=="__main__":main()
