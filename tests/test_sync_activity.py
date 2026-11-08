@@ -25,13 +25,14 @@ class ActivityTests(unittest.TestCase):
         self.assertGreaterEqual(len(data["entries"]), 29)
         self.assertIn("fmhy/edit", {x["name"] for x in data["entries"]})
         self.assertIn("datawhalechina/diy-llm", {x["name"] for x in data["entries"]})
+        self.assertNotIn("futseyi/futseyi-site-source", {x["name"].lower() for x in data["entries"]})
 
     def test_schema_rejects_duplicate_names(self):
         with self.assertRaisesRegex(ValueError, "Duplicate"):
             activity.validate_snapshot(snapshot([entry("Org/Repo"), entry("org/repo")]))
 
     def test_schema_rejects_invalid_names(self):
-        for name in ("../secret", "org/repo?bad", "FuTseYi/futseyi.github.io"):
+        for name in ("../secret", "org/repo?bad", "FuTseYi/futseyi.github.io", "FuTseYi/FuTseYi-Site-Source"):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 activity.validate_snapshot(snapshot([entry(name)]))
 
@@ -93,6 +94,12 @@ class ActivityTests(unittest.TestCase):
         fork_only = {"FuTseYi/xianyu-auto-reply", "FuTseYi/edit", "FuTseYi/easy-vibe"}
         self.assertFalse(fork_only & {entry["name"] for entry in data["entries"]})
         self.assertIn("fmhy/edit", {entry["name"] for entry in data["entries"]})
+
+    def test_site_source_is_filtered_from_graphql(self):
+        repo = {"nameWithOwner": "FuTseYi/FuTseYi-Site-Source", "visibility": "PUBLIC",
+                "isFork": False, "description": "", "primaryLanguage": None}
+        self.assertIsNone(refresh.contribution(repo, "2026-11-08T00:00:00Z", "Commit"))
+        self.assertEqual(refresh.merge([entry("FuTseYi/FuTseYi-Site-Source")]), [])
 
     def test_graphql_merge_preserves_history(self):
         original = entry("fmhy/edit", "2025-01-01T00:00:00Z")

@@ -6,13 +6,12 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
-from sync_activity import validate_snapshot
+from sync_activity import EXCLUDED_REPOSITORIES, validate_snapshot
 
 ROOT = Path(__file__).resolve().parents[1]
 USER = "FuTseYi"
 API = "https://api.github.com/graphql"
 SNAPSHOT = ROOT / "contributions.json"
-EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
 REPO_NAME = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 YEARS_QUERY = """
 query($login: String!) {
