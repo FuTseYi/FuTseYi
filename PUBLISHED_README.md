@@ -7,7 +7,7 @@
 
 ## 源码
 
-网站的源码、内容与构建流程统一维护在 **[FuTseYi-Site-Source 源码仓库](https://github.com/FuTseYi/FuTseYi-Site-Source)**（访问需具备仓库权限）。
+网站的源码、内容与构建流程统一维护在 **[FuTseYi-Site-Source 源码仓库](https://github.com/FuTseYi/FuTseYi-Site-Source)**。
 
 ## 运作机制
 

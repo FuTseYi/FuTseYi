@@ -71,6 +71,12 @@ jobs:
         env:
           SOURCE_SHA: ${{ github.sha }}
         run: |
+          # Ignore volatile build metadata when deciding whether the site changed.
+          # This avoids a new deployment for a workflow rerun with identical output.
+          if [ -z "$(rsync -rcni --delete --exclude='.git/' --exclude='build-info.json' _site/ published/)" ]; then
+            echo 'Website output unchanged; skipping metadata-only publish'
+            exit 0
+          fi
           rsync -a --delete --exclude='.git/' _site/ published/
           cd published
           git config user.name 'github-actions[bot]'
