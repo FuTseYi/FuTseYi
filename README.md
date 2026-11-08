@@ -54,33 +54,30 @@ sequenceDiagram
     participant Published as Published main
     participant Hosts as GitHub Pages / Vercel
 
-    alt Source main push（非仅 contributions.json）
-        Maintainer->>Source: Push / merge
-        Source->>Refresh: push
-    else 定时或手动刷新
+    opt 每月定时或手动刷新贡献
         Maintainer->>Refresh: schedule / workflow_dispatch
+        Refresh->>App: 申请 Source 写入 Token
+        App-->>Refresh: Installation token
+        Refresh->>API: 使用内置 GITHUB_TOKEN 查询
+        API-->>Refresh: 公开贡献数据
+        opt 贡献快照实际变化
+            Refresh->>Source: App Bot 提交 contributions.json
+        end
     end
-
-    Refresh->>App: 使用 Source 中的 App 凭据申请写入 Token
-    App-->>Refresh: Source-scoped installation token
-    Refresh->>API: 用 GitHub 内置 GITHUB_TOKEN 查询贡献
-    API-->>Refresh: 公开贡献结果
-    opt 校验、合并后数据有变化
-        Refresh->>Source: App Bot 提交 contributions.json
-        Note over Source: 纯快照提交不再次触发 Refresh
+    opt 日常代码或内容更新
+        Maintainer->>Source: Push / merge
     end
-    Note over Refresh: API 失败则保留旧快照并发出 warning
-    Refresh-->>Deploy: workflow_run completed（成功）
-    Note over Deploy: checkout Source main，测试并离线构建 _site/
-    Deploy->>App: 申请 Published-scoped Token
+    Source->>Deploy: main push
+    Note over Deploy: 测试并离线生成唯一 _site/
+    Deploy->>App: 申请 Published 写入 Token
     App-->>Deploy: Installation token
-    opt 静态产物有变化
-        Deploy->>Published: App Bot 推送构建成品
-        Published->>Hosts: main 更新触发部署
+    opt 静态文件实际变化
+        Deploy->>Published: App Bot 提交静态产物
+        Published->>Hosts: 使用同一份文件部署
     end
 ```
 
-刷新工作流也可手动执行；网站发布工作流可独立手动运行。贡献刷新按每月 **1 日、15 日 UTC 01:17** 定时执行。普通 Source `main` Push 会先刷新，再由 `workflow_run` 触发构建；单纯 `contributions.json` 变化不会递归刷新。查询失败会保留最后一份已验证快照。构建只读取版本化数据，不在构建阶段访问 GraphQL；若静态产物没有变化，则不创建 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章变更同步到 `FuTseYi/FuTseYi`。
+贡献刷新独立运行：每月 **1 日、15 日 UTC 01:17** 定时执行，也可手动触发；只有数据变化时，才由 GitHub App Bot 提交 `contributions.json`。Source `main` 上的任何 Push（包括 Bot 的贡献快照提交）都会触发网站发布，发布工作流也支持手动运行。构建只读取已提交的贡献快照，不调用 GraphQL；静态产物未变化时不会产生 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章相关变更同步到 `FuTseYi/FuTseYi`。
 
 ## 文档
 
