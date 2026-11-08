@@ -34,7 +34,7 @@ class SitePortabilityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "renamed-private-website"
             root.mkdir()
-            for name in ("index.html", "robots.txt"):
+            for name in site_build.SOURCE_FILES:
                 shutil.copy2(ROOT / name, root / name)
             for name in ("posts", "assets", "scripts"):
                 shutil.copytree(ROOT / name, root / name)
@@ -49,6 +49,8 @@ class SitePortabilityTests(unittest.TestCase):
             }), encoding="utf-8")
             site_build.assemble(root)
             site = root / "_site"
+            for name in ("LICENSE", "LICENSE-CONTENT", "LICENSING.md", "README.md"):
+                self.assertTrue((site / name).is_file(), name)
             self.assertIn('https://portable.example.org/', (site / "index.html").read_text(encoding="utf-8"))
             self.assertIn('https://portable.example.org/blog/', (site / "blog/index.html").read_text(encoding="utf-8"))
             self.assertIn('https://portable.example.org/blog/', (site / "sitemap.xml").read_text(encoding="utf-8"))

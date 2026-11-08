@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import sys
 
-SOURCE_FILES = ("index.html", "robots.txt")
+SOURCE_FILES = ("index.html", "robots.txt", "LICENSE", "LICENSE-CONTENT", "LICENSING.md", "PUBLISHED_README.md")
 SOURCE_DIRS = ("posts",)
 
 
@@ -48,6 +48,9 @@ def assemble(root, refresh_activity=False):
     site.mkdir(exist_ok=True)
     for name in ("index.html", "robots.txt", "sitemap.xml"):
         shutil.copy2(root / name, site / name)
+    for name in ("LICENSE", "LICENSE-CONTENT", "LICENSING.md"):
+        shutil.copy2(root / name, site / name)
+    shutil.copy2(root / "PUBLISHED_README.md", site / "README.md")
     log += run(root, "site_metadata.py", "--update-homepage")
     for name in ("assets", "blog"):
         shutil.copytree(root / name, site / name)
