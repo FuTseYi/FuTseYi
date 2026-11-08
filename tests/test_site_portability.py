@@ -1,6 +1,8 @@
 """Verify portable site generation under an unrelated repository name and domain."""
 import json
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from datetime import datetime, timezone
@@ -56,6 +58,14 @@ class SitePortabilityTests(unittest.TestCase):
             self.assertIn('https://portable.example.org/blog/', (site / "sitemap.xml").read_text(encoding="utf-8"))
             self.assertIn('Sitemap: https://portable.example.org/sitemap.xml',
                           (site / "robots.txt").read_text(encoding="utf-8"))
+            snapshot = site / "contributions.json"
+            data = json.loads(snapshot.read_text(encoding="utf-8"))
+            data["updated_at"] = "2020-01-01T00:00:00+00:00"
+            snapshot.write_text(json.dumps(data), encoding="utf-8")
+            check = subprocess.run([sys.executable, str(root / "scripts/verify.py")],
+                                   cwd=root, capture_output=True, text=True)
+            self.assertNotEqual(check.returncode, 0)
+            self.assertIn("Homepage contributions do not match contributions.json", check.stdout + check.stderr)
 
 
 if __name__ == "__main__":

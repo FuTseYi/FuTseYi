@@ -9,7 +9,7 @@ Source and build pipeline for [futseyi.com](https://www.futseyi.com/). The site 
 | Home and shared layout | `index.html`, `assets/` | `/index.html`, `/assets/` |
 | Articles | `posts/*/index.md` and adjacent media | `/blog/`, `/blog/posts.json` |
 | Search | Article pages | `/pagefind/` |
-| Public GitHub activity | `scripts/sync_activity.py` | `/contributions.json` |
+| Public GitHub activity | `scripts/sync_activity.py` | `/contributions.json` and homepage HTML |
 | Publication | `preview.py`, `.github/workflows/deploy.yml` | [futseyi.github.io](https://github.com/FuTseYi/futseyi.github.io) |
 
 `preview.py` assembles and verifies one `_site/` directory. The publishing workflow copies that directory to the public repository. GitHub Pages and Vercel serve the public repository without running another website build. Each release includes `build-info.json` with its source commit and workflow run; the public repository history provides previous releases for rollback.

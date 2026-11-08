@@ -75,7 +75,7 @@ class ActivityTests(unittest.TestCase):
             with patch.object(activity, "SNAPSHOT", cache), patch.object(activity, "fetch", return_value=snapshot):
                 self.assertEqual(activity.previous_snapshot()["entries"], [])
 
-    def test_invalid_snapshot_is_not_published_when_all_sources_fail(self):
+    def test_invalid_snapshot_stops_build_when_all_sources_fail(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "_site").mkdir()
@@ -87,8 +87,8 @@ class ActivityTests(unittest.TestCase):
             with patch.object(activity, "ROOT", root), patch.object(activity, "SNAPSHOT", cache), \
                     patch.object(activity, "fetch", side_effect=URLError("offline")), \
                     patch("sys.argv", ["sync_activity.py"]), contextlib.redirect_stdout(io.StringIO()):
-                activity.main()
-            self.assertFalse(cache.exists())
+                with self.assertRaisesRegex(RuntimeError, "No valid public activity snapshot"):
+                    activity.main()
             self.assertEqual(page.read_text(encoding="utf-8"), source)
 
     def test_fresh_deployed_snapshot_seeds_local_without_api_refresh(self):
@@ -146,7 +146,7 @@ class ActivityTests(unittest.TestCase):
         self.assertNotIn("org/repo0", [item["name"] for item in result["entries"]])
         self.assertIn("&lt;project&gt;", activity.render(result))
 
-    def test_api_failure_preserves_snapshot_and_missing_snapshot_keeps_fallback(self):
+    def test_api_failure_preserves_snapshot_and_missing_snapshot_stops_build(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "_site").mkdir()
@@ -158,7 +158,8 @@ class ActivityTests(unittest.TestCase):
                     patch.object(activity, "fetch", side_effect=URLError("offline")), \
                     patch("sys.argv", ["sync_activity.py", "--refresh"]), contextlib.redirect_stdout(io.StringIO()):
                 page.write_text(source, encoding="utf-8")
-                activity.main()
+                with self.assertRaisesRegex(RuntimeError, "No valid public activity snapshot"):
+                    activity.main()
                 self.assertEqual(page.read_text(encoding="utf-8"), source)
                 cache.write_text(json.dumps(snapshot), encoding="utf-8")
                 activity.main()
