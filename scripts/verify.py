@@ -10,6 +10,7 @@ from xml.etree import ElementTree
 from asset_urls import version_assets
 from site_metadata import site_url
 from site_metadata import SOCIAL_REQUIRED_META, load_site_metadata
+from sync_activity import START as ACTIVITY_START, END as ACTIVITY_END, render as render_activity
 
 ROOT = Path(__file__).resolve().parents[1] / "_site"
 ORIGIN = site_url(ROOT.parent)
@@ -151,8 +152,16 @@ def main():
         pages[file.resolve()] = parsed
 
     errors = []
-    source_metadata = load_site_metadata(ROOT.parent)
     home_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    try:
+        snapshot = json.loads((ROOT / "contributions.json").read_text(encoding="utf-8"))
+        activity = render_activity(snapshot)
+        section = re.search(re.escape(ACTIVITY_START) + r"(.*?)" + re.escape(ACTIVITY_END), home_html, re.S)
+        if section is None or section[1].strip() != activity:
+            errors.append("Homepage contributions do not match contributions.json")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        errors.append(f"Invalid contributions.json: {error}")
+    source_metadata = load_site_metadata(ROOT.parent)
     toc = re.search(r'<nav class="page-toc"[^>]*>(.*?)</nav>', home_html, re.S)
     actual_toc = re.findall(r'<a\s+href="#([^"]+)"[^>]*>(.*?)</a>', toc[1], re.S) if toc else []
     actual_toc = [(section_id, re.sub(r"<[^>]+>", "", label).strip()) for section_id, label in actual_toc]

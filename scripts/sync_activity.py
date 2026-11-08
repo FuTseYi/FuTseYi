@@ -145,10 +145,9 @@ def main():
         except SNAPSHOT_ERRORS as error:
             if args.refresh:
                 snapshot = previous_snapshot()
-            print(f"::warning::Public activity unavailable ({type(error).__name__}); retaining previous snapshot or source fallback.")
+            print(f"::warning::Public activity unavailable ({type(error).__name__}); using previous snapshot if available.")
     if snapshot is None:
-        SNAPSHOT.unlink(missing_ok=True)  # Do not publish an invalid snapshot.
-        return
+        raise RuntimeError("No valid public activity snapshot is available")
     content = render(snapshot)
     html = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: START + "\n" + content + "\n" + END, html, flags=re.S)
     page.write_text(html, encoding="utf-8")

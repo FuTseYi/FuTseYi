@@ -40,7 +40,7 @@ The Profile README synchronization workflow requests a separate short-lived toke
 
 The same build entry point is used for verification and the current publishing workflow. It generates the blog and search index, synchronizes staged homepage content, and checks the output. Generated `blog/`, `_site/`, and `sitemap.xml` are ignored by Git.
 
-The canonical origin in `index.html` determines generated article URLs, sitemap entries, and README links. Internal navigation uses root-relative paths. Hosting, domain, and credential settings belong outside the portable build.
+The canonical origin in `index.html` determines generated article URLs, sitemap entries, and profile README links. Internal navigation uses root-relative paths. Hosting, domain, and credential settings belong outside the portable build.
 
 ## Writing & Publishing
 
@@ -60,7 +60,7 @@ Article text goes here.
 
 Keep article media beside its source in `posts/my-note/assets/` and link to files such as `assets/example.webp`. Use meaningful alt text for informative images, empty alt text for decorative images, and `<figure>`/`<figcaption>` when a caption is needed. The folder name forms the public URL (`/blog/my-note/`), so avoid changing it after publishing.
 
-Under the current workflows, changes reaching source `main` publish the site and trigger README synchronization.
+Under the current workflows, relevant changes reaching source `main` publish the site and trigger GitHub profile README synchronization. The source repository's technical README is edited directly; `PUBLISHED_README.md` is copied into the public artifact as its README.
 
 ## Browser Verification
 
