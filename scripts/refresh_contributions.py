@@ -34,25 +34,25 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
       totalRepositoriesWithContributedPullRequestReviews
       totalRepositoryContributions
       commitContributionsByRepository(maxRepositories: 100) {
-        repository { nameWithOwner visibility description primaryLanguage { name } }
+        repository { nameWithOwner visibility isFork description primaryLanguage { name } }
         contributions(first: 1, orderBy: {field: OCCURRED_AT, direction: DESC}) {
           nodes { occurredAt }
         }
       }
       pullRequestContributionsByRepository(maxRepositories: 100) {
-        repository { nameWithOwner visibility description primaryLanguage { name } }
+        repository { nameWithOwner visibility isFork description primaryLanguage { name } }
         contributions(first: 1, orderBy: {direction: DESC}) {
           nodes { occurredAt }
         }
       }
       issueContributionsByRepository(maxRepositories: 100) {
-        repository { nameWithOwner visibility description primaryLanguage { name } }
+        repository { nameWithOwner visibility isFork description primaryLanguage { name } }
         contributions(first: 1, orderBy: {direction: DESC}) {
           nodes { occurredAt }
         }
       }
       pullRequestReviewContributionsByRepository(maxRepositories: 100) {
-        repository { nameWithOwner visibility description primaryLanguage { name } }
+        repository { nameWithOwner visibility isFork description primaryLanguage { name } }
         contributions(first: 1, orderBy: {direction: DESC}) {
           nodes { occurredAt }
         }
@@ -60,7 +60,7 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
       repositoryContributions(first: 100) {
         nodes {
           occurredAt
-          repository { nameWithOwner visibility description primaryLanguage { name } }
+          repository { nameWithOwner visibility isFork description primaryLanguage { name } }
         }
       }
     }
@@ -108,6 +108,9 @@ def valid_name(name):
 
 def contribution(repo, date, activity):
     if not repo or repo.get("visibility") != "PUBLIC":
+        return None
+    # Creating a fork is not an authored contribution by itself.
+    if activity == "Repository" and repo.get("isFork"):
         return None
     name = repo.get("nameWithOwner")
     if not valid_name(name):

@@ -2,13 +2,6 @@
   "updated_at": "2026-11-08T07:31:29.511204+00:00",
   "entries": [
     {
-      "name": "FuTseYi/xianyu-auto-reply",
-      "date": "2026-11-08T07:28:16Z",
-      "activity": "Repository",
-      "description": "闲鱼自动回复管理系统是一个基于 Python + FastAPI 开发的自动化客服系统，专为闲鱼平台设计。系统通过 WebSocket 连接闲鱼服务器，实时接收和处理消息，提供智能化的自动回复服务。同时集成闲鱼自动发货，自动评价，自动擦亮等功能，实现闲鱼虚拟商品自动化流程。",
-      "language": "Python"
-    },
-    {
       "name": "FuTseYi/FuTseYi-Site-Source",
       "date": "2026-11-08T07:28:09Z",
       "activity": "Pull request",
@@ -16,60 +9,11 @@
       "language": "Python"
     },
     {
-      "name": "FuTseYi/Auto-Empirical-Research-Skills",
-      "date": "2026-11-08T07:26:33Z",
-      "activity": "Repository",
-      "description": "精选 23,000+ AI Agent 技能库，覆盖8大社会科学学科的实证研究。CoPaper.AI 20分钟完成一篇可复现的规范实证论文，并支持用户上传 Skills。-- Maintained by CoPaper.AI from Stanford REAP.",
-      "language": "Stata"
-    },
-    {
-      "name": "FuTseYi/career-plan",
-      "date": "2026-11-08T07:25:14Z",
-      "activity": "Repository",
-      "description": ":octocat:30+高校留学、保研、考研、就业经验分享（飞跃手册），欢迎补充、修订",
-      "language": ""
-    },
-    {
-      "name": "FuTseYi/Cardentify",
-      "date": "2026-11-08T07:24:22Z",
-      "activity": "Repository",
-      "description": "Apple Pay 银行卡高清卡面收集",
-      "language": ""
-    },
-    {
-      "name": "FuTseYi/CityUHK-Hub",
-      "date": "2026-11-08T07:23:29Z",
-      "activity": "Repository",
-      "description": "CityUHK Hub | A searchable hub for open-source projects built by CityUHK creators ·香港城市大学学生项目和开源自助检索平台，发现CityUHK创作者们的好项目· 香港城市大學學生項目和開源自助檢索平台，搵到 CityUHK 一班创作者嘅好项目 ·  React 19 · Vite 6 · Tailwind CSS v4 · Node.js",
-      "language": "TypeScript"
-    },
-    {
       "name": "fmhy/edit",
       "date": "2026-11-07T13:45:12Z",
       "activity": "Issue",
       "description": "Make changes to FMHY",
       "language": "JavaScript"
-    },
-    {
-      "name": "FuTseYi/edit",
-      "date": "2026-11-07T13:26:52Z",
-      "activity": "Repository",
-      "description": "互联网上最大的免费资源收藏Make changes to FMHY",
-      "language": "JavaScript"
-    },
-    {
-      "name": "FuTseYi/Shadowrocket",
-      "date": "2026-11-07T13:23:23Z",
-      "activity": "Repository",
-      "description": "Shadowrocket 使用手册",
-      "language": "HTML"
-    },
-    {
-      "name": "FuTseYi/jailbreaks",
-      "date": "2026-11-07T12:44:11Z",
-      "activity": "Repository",
-      "description": "整理了 32 份完整提示词，覆盖 26+ 款 AI 模型，包括 Claude、Gemini、Grok、DeepSeek、Kimi、Qwen、GLM、Gemma、GPT-OSS 等。",
-      "language": ""
     },
     {
       "name": "UEM-Feiyue/UEM-Feiyue.github.io",
@@ -184,13 +128,6 @@
       "language": "JavaScript"
     },
     {
-      "name": "FuTseYi/every-embodied",
-      "date": "2026-02-25T06:57:31Z",
-      "activity": "Repository",
-      "description": "仅需Python基础，从0构建自己的具身智能机器人；从0逐步构建VLA/OpenVLA/SmolVLA/Pi0， 深入理解具身智能",
-      "language": "Python"
-    },
-    {
       "name": "datawhalechina/vibe-vibe",
       "date": "2026-02-07T08:00:00Z",
       "activity": "Commit",
@@ -205,32 +142,11 @@
       "language": "JavaScript"
     },
     {
-      "name": "FuTseYi/easy-vibe",
-      "date": "2026-02-06T14:21:53Z",
-      "activity": "Repository",
-      "description": "Vibe coding from 0 to 1 ｜把想法做成真正能上线的产品｜首个交互式教程｜零基础也能学会的 AI 编程实战",
-      "language": "JavaScript"
-    },
-    {
-      "name": "FuTseYi/Embodied-AI-Guide",
-      "date": "2026-01-14T14:43:48Z",
-      "activity": "Repository",
-      "description": "[Lumina Embodied AI] 具身智能技术指南 Embodied-AI-Guide",
-      "language": ""
-    },
-    {
       "name": "datawhalechina/faster-git",
       "date": "2026-01-14T08:00:00Z",
       "activity": "Commit",
       "description": "a chinese tutorial of git",
       "language": ""
-    },
-    {
-      "name": "FuTseYi/reinstall",
-      "date": "2026-01-08T08:33:09Z",
-      "activity": "Repository",
-      "description": "一键DD/重装脚本 (One-click reinstall OS on VPS)",
-      "language": "Shell"
     },
     {
       "name": "HAI-HKUST/HKUST-GZ-Templates-PPT",
@@ -245,13 +161,6 @@
       "activity": "Commit",
       "description": "HKUST-GZ-Resume 香港科技大学(广州)简历模板",
       "language": "TeX"
-    },
-    {
-      "name": "FuTseYi/faster-git",
-      "date": "2026-01-03T11:27:11Z",
-      "activity": "Repository",
-      "description": "a chinese tutorial of git",
-      "language": ""
     },
     {
       "name": "saicaca/fuwari",

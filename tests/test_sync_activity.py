@@ -76,6 +76,24 @@ class ActivityTests(unittest.TestCase):
                     activity.main()
             self.assertEqual((root / "_site/index.html").read_text(), "last good build")
 
+    def test_fork_creation_alone_is_not_a_contribution(self):
+        fork = {"nameWithOwner": "FuTseYi/upstream-fork", "visibility": "PUBLIC",
+                "isFork": True, "description": "", "primaryLanguage": None}
+        self.assertIsNone(refresh.contribution(fork, "2026-11-08T00:00:00Z", "Repository"))
+        for activity_type in ("Commit", "Pull request", "Issue", "Review"):
+            with self.subTest(activity=activity_type):
+                actual = refresh.contribution(fork, "2026-11-08T00:00:00Z", activity_type)
+                self.assertEqual(actual["activity"], activity_type)
+        original = {**fork, "isFork": False}
+        self.assertEqual(refresh.contribution(original, "2026-11-08T00:00:00Z", "Repository")["activity"], "Repository")
+
+    def test_canonical_snapshot_has_no_verified_fork_only_entries(self):
+        path = Path(__file__).resolve().parents[1] / "contributions.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        fork_only = {"FuTseYi/xianyu-auto-reply", "FuTseYi/edit", "FuTseYi/easy-vibe"}
+        self.assertFalse(fork_only & {entry["name"] for entry in data["entries"]})
+        self.assertIn("fmhy/edit", {entry["name"] for entry in data["entries"]})
+
     def test_graphql_merge_preserves_history(self):
         original = entry("fmhy/edit", "2025-01-01T00:00:00Z")
         fresh = entry("datawhalechina/diy-llm", "2026-11-01T00:00:00Z")
