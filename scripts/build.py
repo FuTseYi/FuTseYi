@@ -26,6 +26,7 @@ SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
 SITE_METADATA = load_site_metadata(ROOT)
 SITE = SITE_METADATA["origin"]
+SOURCE_REPOSITORY = "https://github.com/FuTseYi/FuTseYi-Site-Source"
 
 def shared_layout() -> dict[str, str]:
     """Read homepage-owned chrome and asset references once per build."""
@@ -179,7 +180,7 @@ def main() -> None:
         article = re.sub(r"<(/?)h([1-5])(?=[\s>])", lambda match: f"<{match[1]}h{int(match[2]) + 1}", article)
         article = article.replace('<table>', '<div class="article-table" role="region" aria-label="Data table" tabindex="0"><table>').replace('</table>', '</table></div>')
         tags = ''.join(f'<a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)}</a>' for tag in item["tags"])
-        header = f'<a class="back-link" href="/blog/"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><div class="article-meta"><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><a class="post-date" href="https://github.com/FuTseYi/futseyi.github.io/edit/main/posts/{slug}/index.md" target="_blank" rel="noopener noreferrer"><em>Edit on GitHub</em></a></div><div class="post-tags">{tags}</div></div>'
+        header = f'<a class="back-link" href="/blog/"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><div class="article-head"><span class="blog-kicker">BLOG & NOTES</span><h1>{escape(item["title"])}</h1><div class="article-meta"><time class="post-date" datetime="{item["date"]}">{pretty_date(item["date"])}</time><a class="post-date" href="{SOURCE_REPOSITORY}/edit/main/posts/{slug}/index.md" target="_blank" rel="noopener noreferrer"><em>Edit on GitHub</em></a></div><div class="post-tags">{tags}</div></div>'
         neighbors = []
         for offset, css_class in ((1, "previous"), (-1, "next")):
             other = position + offset
