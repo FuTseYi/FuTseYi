@@ -28,15 +28,13 @@ FuTseYi-Site-Source/
 
 ## 本地开发
 
-要求 Python 3.10 或更新版本。
+需要 Python 3.10 或更新版本。在 Source 根目录运行以下命令，启动本地预览：
 
 ```sh
 python preview.py
-python preview.py --build-only
-python -m unittest discover -s tests -t . -p "test_*.py"
 ```
 
-Windows 可使用 `py -3` 替代 `python`。预览、浏览器检查和环境设置见 [PREVIEW.md](PREVIEW.md)。
+打开 <http://127.0.0.1:8765/>；修改源码后刷新页面即可查看结果，结束时按 Ctrl+C。Windows 可使用 `py -3` 替代 `python`。只构建、运行测试或检查浏览器时，按 [PREVIEW.md](PREVIEW.md) 中对应步骤操作。
 
 ## 构建与发布
 
