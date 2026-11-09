@@ -20,7 +20,7 @@ def snapshot(entries):
 
 class ActivityTests(unittest.TestCase):
     def test_restored_history(self):
-        data = json.loads((Path(__file__).resolve().parents[1] / "contributions.json").read_text())
+        data = json.loads((Path(__file__).resolve().parents[1] / "contributions.json").read_text(encoding="utf-8"))
         activity.validate_snapshot(data)
         self.assertGreaterEqual(len(data["entries"]), 29)
         self.assertIn("fmhy/edit", {x["name"] for x in data["entries"]})
