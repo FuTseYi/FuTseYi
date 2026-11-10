@@ -6,7 +6,7 @@ Maintain this as a lightweight, portable static personal website. Favor correct 
 
 ## Ownership and boundaries
 
-- **Source** (`FuTseYi/FuTseYi-Site-Source`) is authoritative for code, articles, configurations, and build logic.
+- **Source** (`FuTseYi/FuTseYi-Site`) is authoritative for code, articles, configurations, and build logic.
 - **Published** (`FuTseYi/FuTseYi.github.io`) contains only generated static output; never edit it directly. `PUBLISHED_README.md` becomes Published's `README.md`.
 - `index.html` owns the homepage and shared page chrome; `assets/css/style.css`, `assets/js/site.js`, and `assets/js/atmosphere.js` own presentation and interaction.
 - `posts/<slug>/index.md` owns article content and its adjacent `assets/`; `scripts/site_build.py` orchestrates article generation, activity rendering, search indexing, and verification through `preview.py`.

@@ -13,7 +13,7 @@ START = "<!-- CONTRIBUTIONS:START -->"
 END = "<!-- CONTRIBUTIONS:END -->"
 REPO_NAME = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi",
-                         "futseyi/futseyi-site-source"}
+                         "futseyi/futseyi-site"}
 
 
 def timestamp(value):

@@ -1,11 +1,11 @@
-# FuTseYi-Site-Source
+# FuTseYi-Site
 
 个人网站的唯一源码与构建仓库。基于原生 HTML、CSS、JavaScript 和 Python 生成静态网站；构建后的文件统一发布到 [FuTseYi.github.io](https://github.com/FuTseYi/FuTseYi.github.io)，供 GitHub Pages 和 Vercel 使用。
 
 ## 项目结构
 
 ```text
-FuTseYi-Site-Source/
+FuTseYi-Site/
 ├── .github/workflows/  # 验证、贡献刷新、发布与 Profile 同步
 ├── assets/             # 样式、脚本、字体与图片
 ├── posts/              # Markdown 文章及其资源

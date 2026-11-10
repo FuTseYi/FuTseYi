@@ -1,6 +1,6 @@
 # Development & Preview
 
-This is the operating guide for **Source** (`FuTseYi-Site-Source`). The overview and canonical workflow diagram are in [README.md](README.md).
+This is the operating guide for **Source** (`FuTseYi-Site`). The overview and canonical workflow diagram are in [README.md](README.md).
 
 ## Local preview and build
 

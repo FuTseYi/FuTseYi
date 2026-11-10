@@ -40,7 +40,7 @@ class PreviewTests(unittest.TestCase):
         self.assertNotIn("    paths-ignore:", deploy)
         self.assertNotIn("continue-on-error: true", refresh)
         self.assertIn("contents: read", refresh)
-        self.assertIn("repositories: FuTseYi-Site-Source", refresh)
+        self.assertIn("repositories: FuTseYi-Site", refresh)
         self.assertIn("permission-contents: write", refresh)
         self.assertNotIn("actions: write", refresh)
         self.assertNotIn("gh workflow run deploy.yml --ref main", refresh)

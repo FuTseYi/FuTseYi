@@ -2,7 +2,7 @@
   "updated_at": "2026-11-08T13:06:20.976179+00:00",
   "entries": [
     {
-      "name": "UEM-Feiyue/UEM-Feiyue-Site-Source",
+      "name": "UEM-Feiyue/UEM-Feiyue",
       "date": "2026-11-08T10:41:04Z",
       "activity": "Issue",
       "description": "应急管理大学飞跃手册源码与构建仓库",
@@ -16,7 +16,7 @@
       "language": "JavaScript"
     },
     {
-      "name": "HKUST-ELPA/HKUST-ELPA-Site-Source",
+      "name": "HKUST-ELPA/HKUST-ELPA",
       "date": "2026-11-08T08:00:00Z",
       "activity": "Commit",
       "description": "A HKUST & HKUST(GZ) ELPA speaking practice resource with question banks, mock drills, notes, and progress tracking.",

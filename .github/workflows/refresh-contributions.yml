@@ -23,7 +23,7 @@ jobs:
           app-id: ${{ vars.PUBLISH_APP_ID }}
           private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
           owner: FuTseYi
-          repositories: FuTseYi-Site-Source
+          repositories: FuTseYi-Site
           permission-contents: write
       - uses: actions/checkout@v4
         with:

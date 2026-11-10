@@ -26,7 +26,7 @@ SOURCE = ROOT / "posts"
 OUTPUT = ROOT / "blog"
 SITE_METADATA = load_site_metadata(ROOT)
 SITE = SITE_METADATA["origin"]
-SOURCE_REPOSITORY = "https://github.com/FuTseYi/FuTseYi-Site-Source"
+SOURCE_REPOSITORY = "https://github.com/FuTseYi/FuTseYi-Site"
 
 def shared_layout() -> dict[str, str]:
     """Read homepage-owned chrome and asset references once per build."""
