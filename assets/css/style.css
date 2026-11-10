@@ -550,6 +550,7 @@ section.section { padding: 38px 0; }
 #contributions .project-tags{margin-top:5px;gap:8px}
 .project-item[hidden]{display:none}
 .list-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:9px 0;border:0;border-radius:0;background-color:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
+.list-toggle .link-arrow{margin-left:0}
 .list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);background-color:transparent;outline:none;text-decoration:none}
 
 @media (max-width: 680px) {
