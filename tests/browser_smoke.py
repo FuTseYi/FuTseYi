@@ -225,6 +225,30 @@ def check_rss_links(page):
         feed.close()
 
 
+def check_toc_transitions(page):
+    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    for _ in range(2):
+        page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
+        page.locator('#main > .page-toc.is-visible').wait_for()
+        assert page.locator('.page-toc').count() == 1
+        page.locator('#primary-navigation a[href="/blog/"]').click()
+        page.wait_for_url("**/blog/")
+        page.locator('#main .archive-toc').wait_for(state="attached")
+        assert page.locator('.page-toc').count() == 1
+        page.locator('a[href="/blog/astro-waline-comments/"]').first.click()
+        page.wait_for_url("**/blog/astro-waline-comments/")
+        page.locator('#main .article-toc').wait_for(state="attached")
+        assert page.locator('.page-toc').count() == 1
+        page.locator('.back-link[href="/blog/"]').click()
+        page.wait_for_url("**/blog/")
+        page.locator('#main .archive-toc').wait_for(state="attached")
+        assert page.locator('.page-toc').count() == 1
+        page.locator('#site-header .brand').click()
+        page.wait_for_url("http://127.0.0.1:8766/")
+        page.locator('#main > .page-toc').wait_for(state="attached")
+        assert page.locator('.page-toc').count() == 1
+
+
 def main():
     server = ThreadingHTTPServer(("127.0.0.1", 8766), partial(SimpleHTTPRequestHandler, directory=str(SITE)))
     thread = Thread(target=server.serve_forever, daemon=True)
@@ -250,6 +274,9 @@ def main():
             context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850})
             check_rss_links(context.new_page())
+            context.close()
+            context = browser.new_context(viewport={"width": 1700, "height": 850}, reduced_motion="reduce")
+            check_toc_transitions(context.new_page())
             context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="reduce")
             page = context.new_page()
