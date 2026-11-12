@@ -264,7 +264,8 @@ def main() -> None:
         absolute_article = re.sub(r'\b(href|src)="([^"]+)"', lambda match: f'{match[1]}="{escape(urljoin(url, unescape(match[2])), quote=True)}"', article)
         ET.SubElement(entry, "{http://purl.org/rss/1.0/modules/content/}encoded").text = absolute_article
     (ROOT / "rss.xml").write_bytes(ET.tostring(rss, encoding="utf-8", xml_declaration=True) + b"\n")
-    urls = [SITE + "/", SITE + "/blog/", SITE + "/blog/tags/"] + [SITE + post["url"] for post in posts]
+    pages = [ROOT / "index.html", *sorted(OUTPUT.rglob("index.html"))]
+    urls = [SITE + ("/" if page.parent == ROOT else f"/{page.parent.relative_to(ROOT).as_posix()}/") for page in pages]
     sitemap = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{xml_escape(url)}</loc></url>\n" for url in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     print(f"Blog: generated {len(posts)} article(s)")

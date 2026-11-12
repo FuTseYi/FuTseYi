@@ -544,6 +544,9 @@
           const next = incoming.head.querySelector(selector);
           if (current && next) current.replaceWith(next.cloneNode(true));
         }
+        const socialMeta = 'meta[property^="og:"], meta[property^="article:"], meta[name^="twitter:"]';
+        document.head.querySelectorAll(socialMeta).forEach(meta => meta.remove());
+        incoming.head.querySelectorAll(socialMeta).forEach(meta => document.head.append(meta.cloneNode(true)));
       }
     }, { before: true });
     swup.hooks.on('page:view', () => {

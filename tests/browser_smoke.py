@@ -200,7 +200,7 @@ def check_search(page):
     assert "anaconda" in body_match.inner_text().casefold()
     page.keyboard.press("Escape")
     assert not dialog.evaluate("(el) => el.open")
-    assert search.input_value() == ""
+    page.wait_for_function("document.querySelector('#blog-search').value === ''")
     assert not page.locator("#search-results").is_visible()
     page.keyboard.press("Control+k")
     assert dialog.evaluate("(el) => el.open")
@@ -226,26 +226,49 @@ def check_rss_links(page):
 
 
 def check_toc_transitions(page):
+    def check_metadata(article):
+        page.wait_for_function("article => document.querySelectorAll('.reading-progress').length === Number(article)", arg=article)
+        canonical = page.locator('link[rel="canonical"]').get_attribute('href')
+        assert page.locator('meta[property="og:url"]').get_attribute('content') == canonical
+        assert page.locator('meta[property="og:type"]').get_attribute('content') == ('article' if article else 'website')
+        assert page.locator('meta[name="twitter:title"]').get_attribute('content') == page.locator('meta[property="og:title"]').get_attribute('content')
+        assert (page.locator('meta[property="article:tag"]').count() > 0) == article
+        assert page.locator('#site-header').count() == 1
+        assert page.locator('.atmosphere').count() <= 1
+
     page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
     for _ in range(2):
+        check_metadata(False)
         page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
         page.locator('#main > .page-toc.is-visible').wait_for()
         assert page.locator('.page-toc').count() == 1
         page.locator('#primary-navigation a[href="/blog/"]').click()
         page.wait_for_url("**/blog/")
         page.locator('#main .archive-toc').wait_for(state="attached")
+        check_metadata(False)
         assert page.locator('.page-toc').count() == 1
         page.locator('a[href="/blog/astro-waline-comments/"]').first.click()
         page.wait_for_url("**/blog/astro-waline-comments/")
         page.locator('#main .article-toc').wait_for(state="attached")
+        check_metadata(True)
         assert page.locator('.page-toc').count() == 1
+        page.go_back()
+        page.wait_for_url("**/blog/")
+        page.locator('#main .archive-toc').wait_for(state="attached")
+        check_metadata(False)
+        page.go_forward()
+        page.wait_for_url("**/blog/astro-waline-comments/")
+        page.locator('#main .article-toc').wait_for(state="attached")
+        check_metadata(True)
         page.locator('.back-link[href="/blog/"]').click()
         page.wait_for_url("**/blog/")
         page.locator('#main .archive-toc').wait_for(state="attached")
+        check_metadata(False)
         assert page.locator('.page-toc').count() == 1
         page.locator('#site-header .brand').click()
         page.wait_for_url("http://127.0.0.1:8766/")
         page.locator('#main > .page-toc').wait_for(state="attached")
+        check_metadata(False)
         assert page.locator('.page-toc').count() == 1
 
 
@@ -322,6 +345,9 @@ def main():
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
                     assert not errors, f"WebKit {width}px browser errors: {errors}"
                     context.close()
+                context = safari.new_context(viewport={"width": 1700, "height": 850}, reduced_motion="reduce")
+                check_toc_transitions(context.new_page())
+                context.close()
             finally:
                 safari.close()
             print("Chromium and WebKit smoke checks passed: navigation, mobile layout, search, themes and articles.")

@@ -290,6 +290,10 @@ def main():
 
     xml = ElementTree.parse(ROOT / "sitemap.xml")
     ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+    sitemap_urls = [loc.text for loc in xml.findall(f".//{ns}loc")]
+    expected_urls = {ORIGIN + ("/" if file.parent == ROOT else f"/{file.parent.relative_to(ROOT).as_posix()}/") for file in pages}
+    if set(sitemap_urls) != expected_urls or len(sitemap_urls) != len(expected_urls):
+        errors.append("Sitemap does not match generated HTML pages")
     for loc in xml.findall(f".//{ns}loc"):
         if loc.text == ORIGIN + "/rss/":
             errors.append("Obsolete RSS page remains in sitemap")
