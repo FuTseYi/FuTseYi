@@ -16,7 +16,7 @@ Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [T
 
 *People can retire, but the spirit cannot retire. - Gundam*
 
-[Email](mailto:hello@futseyi.com) · [GitHub](https://github.com/FuTseYi) · [LinkedIn](https://www.linkedin.com/in/futseyi) · [X](https://x.com/FuTseYi) · [RSS](/rss.xml)
+[Email](mailto:hello@futseyi.com) · [GitHub](https://github.com/FuTseYi) · [LinkedIn](https://www.linkedin.com/in/futseyi) · [X](https://x.com/FuTseYi) · [RSS](/rss/)
 
 <a class="visitor-counter" href="https://visit.futseyi.com/status?path=https%3A%2F%2Fwww.futseyi.com%2F" target="_blank" rel="noopener noreferrer"><img src="https://visit.futseyi.com/api/combined?path=https%3A%2F%2Fwww.futseyi.com%2F" alt="Visitor badge"></a>
 
