@@ -12,9 +12,12 @@ from itertools import groupby
 import re
 import shutil
 import struct
-from datetime import date
+from datetime import date, datetime, time, timezone
+from email.utils import format_datetime
 from html import escape, unescape
 from pathlib import Path
+from urllib.parse import urljoin
+from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape as xml_escape
 import markdown
 from asset_urls import version_assets
@@ -66,6 +69,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <meta name="description" content="{description}">
 {social_meta}
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
+<link rel="alternate" type="application/rss+xml" title="Blog RSS" href="/rss.xml">
 {icons}
 <link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
 {year_font}{theme_init}
@@ -168,6 +172,7 @@ def main() -> None:
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir(parents=True)
     posts: list[dict] = []
+    feed_items: list[tuple[dict, str, str]] = []
     shared = shared_layout()
     parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "codehilite"],
                                extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
@@ -197,6 +202,7 @@ def main() -> None:
             shutil.copytree(assets, destination / "assets")
         page_lang = meta.get("lang", "zh-CN" if re.search(r"[\u3400-\u9fff]", meta["title"] + source) else "en")
         description = meta.get("description") or article_description(article, item["title"])
+        feed_items.append((item, description, article))
         (destination / "index.html").write_text(
             layout(item["title"], description, SITE + url, content,
                    body_class="blog-page article-page", lang=page_lang,
@@ -240,6 +246,24 @@ def main() -> None:
     tags_output.mkdir()
     (tags_output / "index.html").write_text(layout("All Tags", "Browse blog posts by tag", SITE + "/blog/tags/", tags_content, shared=shared), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    ET.register_namespace("content", "http://purl.org/rss/1.0/modules/content/")
+    rss = ET.Element("rss", version="2.0")
+    channel = ET.SubElement(rss, "channel")
+    ET.SubElement(channel, "title").text = SITE_METADATA["site_name"] + " · Blog"
+    ET.SubElement(channel, "link").text = SITE + "/blog/"
+    ET.SubElement(channel, "description").text = SITE_METADATA["description"]
+    ET.SubElement(channel, "language").text = SITE_METADATA["lang"]
+    for post, description, article in feed_items:
+        entry = ET.SubElement(channel, "item")
+        url = SITE + post["url"]
+        ET.SubElement(entry, "title").text = post["title"]
+        ET.SubElement(entry, "link").text = url
+        ET.SubElement(entry, "guid", isPermaLink="true").text = url
+        ET.SubElement(entry, "pubDate").text = format_datetime(datetime.combine(date.fromisoformat(post["date"]), time.min, timezone.utc))
+        ET.SubElement(entry, "description").text = description
+        absolute_article = re.sub(r'\b(href|src)="([^"]+)"', lambda match: f'{match[1]}="{escape(urljoin(url, unescape(match[2])), quote=True)}"', article)
+        ET.SubElement(entry, "{http://purl.org/rss/1.0/modules/content/}encoded").text = absolute_article
+    (ROOT / "rss.xml").write_bytes(ET.tostring(rss, encoding="utf-8", xml_declaration=True) + b"\n")
     urls = [SITE + "/", SITE + "/blog/", SITE + "/blog/tags/"] + [SITE + post["url"] for post in posts]
     sitemap = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{xml_escape(url)}</loc></url>\n" for url in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sitemap, encoding="utf-8")

@@ -14,6 +14,7 @@ FuTseYi-Site/
 ├── BLOG_INDEX.json     # 由文章元数据生成的编辑检索索引
 ├── contributions.json  # Git 跟踪的公开贡献数据快照
 ├── index.html          # 可直接维护的首页
+├── rss.xml             # 构建生成的全文订阅源
 ├── preview.py          # 本地预览及唯一构建入口
 └── requirements.txt    # Python 构建依赖
 ```

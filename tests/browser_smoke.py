@@ -208,6 +208,23 @@ def check_search(page):
     dialog.locator(".search-close").click()
     assert not dialog.evaluate("(el) => el.open")
 
+def check_rss_links(page):
+    for route, selector in (("/", '.hero-content .hero-links a[href="/rss.xml"]'),
+                            ("/blog/", '.footer-social a[href="/rss.xml"]')):
+        page.goto("http://127.0.0.1:8766" + route, wait_until="networkidle")
+        link = page.locator(selector)
+        assert link.count() == 1
+        assert link.get_attribute("data-no-swup") == ""
+        assert link.get_attribute("target") == "_blank"
+        with page.expect_popup() as popup_info:
+            link.click()
+        feed = popup_info.value
+        feed.wait_for_url("**/rss.xml")
+        assert feed.locator("rss channel item").count() == len(json.loads((SITE / "blog/posts.json").read_text(encoding="utf-8")))
+        assert page.url.endswith(route)
+        feed.close()
+
+
 def main():
     server = ThreadingHTTPServer(("127.0.0.1", 8766), partial(SimpleHTTPRequestHandler, directory=str(SITE)))
     thread = Thread(target=server.serve_forever, daemon=True)
@@ -230,6 +247,9 @@ def main():
             context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
+            context.close()
+            context = browser.new_context(viewport={"width": 1024, "height": 850})
+            check_rss_links(context.new_page())
             context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="reduce")
             page = context.new_page()

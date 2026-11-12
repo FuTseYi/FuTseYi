@@ -40,7 +40,7 @@ def assemble(root):
     site = root / "_site"
     log = run(root, "build.py")
     site.mkdir(exist_ok=True)
-    for name in ("index.html", "robots.txt", "sitemap.xml"):
+    for name in ("index.html", "robots.txt", "sitemap.xml", "rss.xml"):
         shutil.copy2(root / name, site / name)
     for name in ("LICENSE", "LICENSE-CONTENT", "LICENSING.md"):
         shutil.copy2(root / name, site / name)

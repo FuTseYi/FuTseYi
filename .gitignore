@@ -3,6 +3,7 @@ __pycache__/
 _site/
 .venv/
 sitemap.xml
+rss.xml
 
 /blog/
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 import json
 import re
+from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
@@ -30,6 +31,8 @@ class Page(HTMLParser):
             self.lang = attrs.get("lang", "")
         if tag == "link" and "canonical" in attrs.get("rel", "").split():
             self.meta["canonical"] = attrs.get("href", "")
+        if tag == "link" and "alternate" in attrs.get("rel", "").split() and attrs.get("type") == "application/rss+xml":
+            self.meta["rss"] = attrs.get("href", "")
         if attrs.get("id"):
             self.ids.add(attrs["id"])
         if tag == "meta":
@@ -139,6 +142,8 @@ def main():
     assert (ROOT / "index.html").is_file(), "Missing homepage"
     assert (ROOT / "blog/index.html").is_file(), "Missing Writing index"
     assert (ROOT / "blog/posts.json").is_file(), "Missing Writing feed"
+    assert (ROOT / "rss.xml").is_file(), "Missing RSS feed"
+    assert not (ROOT / "rss").exists(), "Obsolete RSS page remains in site output"
     assert (ROOT / "pagefind/pagefind.js").is_file(), "Missing search index"
     assert (ROOT / "assets/icons/favicon.svg").is_file(), "Missing favicon"
     assert f"Sitemap: {ORIGIN}/sitemap.xml" in (ROOT / "robots.txt").read_text(encoding="utf-8"), "Incorrect robots sitemap URL"
@@ -170,6 +175,8 @@ def main():
 
     for file, parsed in pages.items():
         name = file.relative_to(ROOT)
+        if urljoin(ORIGIN + "/", parsed.meta.get("rss", "")) != ORIGIN + "/rss.xml":
+            errors.append(f"{name}: missing RSS auto-discovery")
         for key in SOCIAL_REQUIRED_META:
             if not parsed.meta.get(key):
                 errors.append(f"{name}: missing social metadata {key}")
@@ -257,9 +264,35 @@ def main():
         if not (ROOT / "blog" / slug / "index.html").is_file():
             errors.append(f"Missing HTML for post: {slug}")
 
+    rss = ElementTree.parse(ROOT / "rss.xml").getroot()
+    if rss.tag != "rss" or rss.get("version") != "2.0":
+        errors.append("RSS feed is not RSS 2.0")
+    if rss.findtext("./channel/title") != source_metadata["site_name"] + " · Blog" or rss.findtext("./channel/description") != source_metadata["description"]:
+        errors.append("RSS channel metadata differs from homepage")
+    items = rss.findall("./channel/item")
+    if len(items) != len(posts):
+        errors.append("RSS item count does not match posts")
+    for post, item in zip(posts, items):
+        url = ORIGIN + post["url"]
+        if item.findtext("link") != url or item.findtext("guid") != url:
+            errors.append(f"RSS URL or GUID differs for {post['slug']}")
+        if item.findtext("title") != post["title"] or parsedate_to_datetime(item.findtext("pubDate")).date().isoformat() != post["date"]:
+            errors.append(f"RSS title or date differs for {post['slug']}")
+        body = item.findtext("{http://purl.org/rss/1.0/modules/content/}encoded")
+        if not body:
+            errors.append(f"RSS body missing for {post['slug']}")
+        else:
+            article = Page()
+            article.feed(body)
+            for link in article.links:
+                if not urlsplit(link).scheme:
+                    errors.append(f"RSS body has a relative link for {post['slug']}: {link}")
+
     xml = ElementTree.parse(ROOT / "sitemap.xml")
     ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
     for loc in xml.findall(f".//{ns}loc"):
+        if loc.text == ORIGIN + "/rss/":
+            errors.append("Obsolete RSS page remains in sitemap")
         result = local_target((ROOT / "index.html").resolve(), loc.text or "")
         if result is None or not result[0].is_file():
             errors.append(f"Invalid sitemap URL: {loc.text}")
