@@ -90,6 +90,7 @@ class ReadmeTests(unittest.TestCase):
             result = sync.render()
         self.assertIn(f"**Homepage**: [{sync.site_url().split('://', 1)[-1]}]({sync.site_url()}/)", result)
         self.assertIn(f"{sync.site_url()}/blog/", result)
+        self.assertIn(f"[RSS]({sync.site_url()}/rss.xml)", result)
 
     def test_local_website_url_follows_canonical(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(sync.os.environ, {}, clear=True):
