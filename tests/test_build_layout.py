@@ -1,19 +1,18 @@
 """The site chrome is prepared once while metadata stays page-specific."""
 import unittest
-from unittest.mock import patch
 
 import build
 
 
 class LayoutTests(unittest.TestCase):
-    def test_shared_layout_is_read_once_for_multiple_pages(self):
-        with patch.object(build, "version_assets", wraps=build.version_assets) as version:
-            shared = build.shared_layout()
-            first = build.layout("First", "First page", build.SITE + "/blog/first/",
-                                 "<p>First body</p>", shared=shared)
-            second = build.layout("Second", "Second page", build.SITE + "/blog/second/",
-                                  "<p>Second body</p>", shared=shared)
-        version.assert_called_once()
+    def test_shared_layout_is_reused_before_final_asset_versioning(self):
+        shared = build.shared_layout()
+        first = build.layout("First", "First page", build.SITE + "/blog/first/",
+                             "<p>First body</p>", shared=shared)
+        second = build.layout("Second", "Second page", build.SITE + "/blog/second/",
+                              "<p>Second body</p>", shared=shared)
+        self.assertNotIn("?v=", shared["css"])
+        self.assertNotIn("?v=", shared["scripts"])
         self.assertIn("<p>First body</p>", first)
         self.assertIn("<p>Second body</p>", second)
         self.assertIn('content="First page"', first)

@@ -3,6 +3,8 @@ import re
 import shutil
 import subprocess
 import sys
+from .asset_urls import version_assets
+from .site_metadata import site_url
 
 SOURCE_FILES = ("contributions.json", "index.html", "robots.txt", "LICENSE", "LICENSE-CONTENT", "LICENSING.md", "PUBLISHED_README.md")
 SOURCE_DIRS = ("posts",)  # Used by preview.py source-change watcher.
@@ -50,11 +52,12 @@ def assemble(root):
         shutil.copytree(root / name, site / name)
     log += run(root, "sync_readme.py", "--update-site")
     log += run(root, "sync_activity.py")
-    origin = re.search(r'<link rel="canonical" href="([^"]+)"',
-                       (root / "index.html").read_text(encoding="utf-8"))[1].rstrip("/")
+    origin = site_url(root)
     robots = site / "robots.txt"
-    robots.write_text(robots.read_text(encoding="utf-8").rstrip("\n") +
-                      "\nSitemap: " + origin + "/sitemap.xml\n", encoding="utf-8")
+    robot_rules = robots.read_text(encoding="utf-8").strip()
+    if re.search(r"(?im)^\s*sitemap\s*:", robot_rules):
+        raise ValueError("Source robots.txt must not declare a Sitemap; it is generated during build")
+    robots.write_text(robot_rules + "\nSitemap: " + origin + "/sitemap.xml\n", encoding="utf-8")
     for page in site.rglob("*.html"):
         html = page.read_text(encoding="utf-8")
         html = re.sub(r'(<a\b[^>]*\bhref=[\'"])' + re.escape(origin) + r'(?=/)', r'\1', html)
@@ -65,7 +68,6 @@ def assemble(root):
     if result.returncode:
         sys.stderr.write(result.stdout + result.stderr)
         raise subprocess.CalledProcessError(result.returncode, "pagefind")
-    from .asset_urls import version_assets
     for page in site.rglob("*.html"):
         page.write_text(version_assets(page.read_text(encoding="utf-8"), site), encoding="utf-8")
     return summarize(log + run(root, "verify.py"))

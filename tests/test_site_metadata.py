@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 import site_metadata
-from site_metadata import load_site_metadata, render_homepage, render_social_metadata, site_url
+from site_metadata import canonical_page_url, load_site_metadata, render_homepage, render_social_metadata, site_url
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -59,6 +59,17 @@ class SiteMetadataTests(unittest.TestCase):
             (root / "index.html").write_text('<link rel="canonical" href="http://example.org/">')
             with self.assertRaises(ValueError):
                 site_url(root)
+
+    def test_canonical_page_url_maps_generated_index_files(self):
+        self.assertEqual(canonical_page_url("https://example.org", Path("index.html")),
+                         "https://example.org/")
+        self.assertEqual(canonical_page_url("https://example.org", Path("blog/index.html")),
+                         "https://example.org/blog/")
+        self.assertEqual(canonical_page_url("https://example.org", Path("blog/example/index.html")),
+                         "https://example.org/blog/example/")
+        for invalid in (Path("blog/article.html"), Path("../index.html"), Path("/tmp/index.html")):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                canonical_page_url("https://example.org", invalid)
 
     def test_social_metadata_is_shared_and_escaped(self):
         metadata = load_site_metadata(ROOT)

@@ -142,10 +142,7 @@ def build(options=None, destination=None):
         candidate = Path(directory)
         staged = candidate / "site"
         summary = site_build.build(ROOT, staged, options or argparse.Namespace())
-        from scripts.asset_urls import version_assets
         from scripts.site_verify import verify
-        for page in staged.rglob("*.html"):
-            page.write_text(version_assets(page.read_text(encoding="utf-8"), staged), encoding="utf-8")
         verify(staged)
         (staged / ".nojekyll").touch()
         with SERVING_LOCK:

@@ -78,6 +78,15 @@ def site_url(root: Path) -> str:
     return _validated_origin(_parse_homepage(root).canonical)
 
 
+def canonical_page_url(origin: str, relative_html_path: Path) -> str:
+    """Map a generated index.html to its single public, trailing-slash URL."""
+    if (relative_html_path.is_absolute() or relative_html_path.name != "index.html"
+            or ".." in relative_html_path.parts):
+        raise ValueError(f"Invalid generated HTML path: {relative_html_path}")
+    directory = relative_html_path.parent.as_posix()
+    return origin + "/" + (directory + "/" if directory != "." else "")
+
+
 def load_site_metadata(root: Path) -> dict:
     """Read shared identity and sharing data from the homepage and its About portrait."""
     parser = _parse_homepage(root)
