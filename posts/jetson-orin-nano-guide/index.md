@@ -6,9 +6,9 @@ tags: Jetson Orin Nano, Edge AI, Development
 
 ![](assets/jetson-orin-nano-qtr-numbered.jpg)
 
-# 1 换源
+# 换源
 
-## 1.1 **验证架构和源兼容性​**​
+## **验证架构和源兼容性​**​
 
 - 检查系统架构：
 
@@ -25,9 +25,9 @@ uname -m
 ls -la /etc/apt/sources.list.d/
 ```
 
-## 1.2 两种换源方式
+## 两种换源方式
 
-### 1.2.1 方式 1.鱼香 ROS 一键换源
+### 方式 1.鱼香 ROS 一键换源
 
 ```bash
 wget http://fishros.com/install -O fishros && . fishros
@@ -35,7 +35,7 @@ wget http://fishros.com/install -O fishros && . fishros
 
 > 不要清除第三方源: 这样会把 nvidia 源配置文件给删除
 
-### 1.2.2 方式 2.输入以下代码换源
+### 方式 2.输入以下代码换源
 
 ```bash
 # 备份原有源 
@@ -53,7 +53,7 @@ sudo cp /etc/apt/sources.list.bak /etc/apt/sources.list
 sudo apt update
 ```
 
-# 2 Jupyter Lab 的安装与使用
+# Jupyter Lab 的安装与使用
 
 步骤 1: 更新 pip3 并安装 jupyter lab
 
@@ -104,9 +104,9 @@ sudo systemctl status jupyter.service
 ##输出(active (running))
 ```
 
-# 3 部署深度学习
+# 部署深度学习
 
-## 3.1 构建 Jetson-inference 环境
+## 构建 Jetson-inference 环境
 
 步骤 1.下载必要的依赖库
 
@@ -149,14 +149,14 @@ sudo make install
 sudo ldconfig
 ```
 
-## 3.2 安装 Pytorch 人工智能框架 (迁移学习重新训练网络)(可选)
+## 安装 Pytorch 人工智能框架 (迁移学习重新训练网络)(可选)
 
 ```bash
 cd jetson-inference/build
 ./install-pytorch.sh
 ```
 
-# 4 Hello AI Word 图像分类推理
+# Hello AI Word 图像分类推理
 
 开启一个终端输入
 

@@ -8,9 +8,9 @@ tags: PyTorch, Deep Learning, Tutorial
 
 # 第 01 讲 配置📝
 
-# 1.1 基本环境
+# 基本环境
 
-## 1.1.1 Anaconda
+## Anaconda
 
 > 安装当前最新版 Anaconda，安装时记好自己的 安装路径
 
@@ -51,7 +51,7 @@ conda activate pytorch
 pip list
 ```
 
-## 1.1.2 PyTorch
+## PyTorch
 
 > 有显卡参考 cuda 版本选择 (无显卡选择 CPU 版本)，选择后复制相应指令
 
@@ -87,9 +87,9 @@ python
 True
 ```
 
-# 1.2 基本工具
+# 基本工具
 
-## 1.2.1 PyCharm
+## PyCharm
 
 > 安装当前最新版 PyCharm 专业版 [https://www.jetbrains.com/pycharm/download](https://www.jetbrains.com/pycharm/download)
 
@@ -109,7 +109,7 @@ torch.cuda.is_available()
 解决办法：「设置」->「工具 - 终端」-> 把 「Shell 路径」 修改为 「cmd.exe」
 ```
 
-## 1.2.2 Jupyter
+## Jupyter
 
 ```shell
 # 进入「pytorch」环境
@@ -149,7 +149,7 @@ ssh -L 8888:localhost:8888 cnb@10.1.0.100 #cnb@10.1.0.100是服务器的地址�
 http://localhost:8888/?token=xxxxxx
 ```
 
-## 1.2.3 两个函数
+## 两个函数
 
 > TIP
 > - 查看帮助：PyCharm 中使用 **「ctrl+ 鼠标移动」** Jupyter 中使用 **「Name+??」**
@@ -180,6 +180,6 @@ dir(torch.cuda.is_available)
 help(torch.cuda.is_available)
 ```
 
-## 1.2.4 工具对比
+## 工具对比
 
 ![](assets/f6242db10c858c9372e22ca9a5add226-wcu7-iz8-1mzkrf.webp)

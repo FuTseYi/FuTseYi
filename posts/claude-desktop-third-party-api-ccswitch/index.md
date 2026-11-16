@@ -26,7 +26,7 @@ requestUrl: http://127.0.0.1:15721/v1/models
 
 ---
 
-## 一、先搞清楚：Claude Desktop 和 Claude Code 不是同一条链路
+## 先搞清楚：Claude Desktop 和 Claude Code 不是同一条链路
 
 这是我最开始最容易混淆的地方。
 
@@ -67,7 +67,7 @@ VS Code Claude 插件 / Claude Code
 
 ---
 
-## 二、开启 ccswitch 本地路由
+## 开启 ccswitch 本地路由
 
 在 ccswitch 里进入本地路由相关页面，确认这些状态：
 
@@ -100,7 +100,7 @@ http://127.0.0.1:10809
 
 ---
 
-## 三、配置 Claude Desktop 的 Gateway
+## 配置 Claude Desktop 的 Gateway
 
 在 Claude Desktop 里打开第三方推理配置。
 
@@ -149,7 +149,7 @@ ccswitch 才负责连接真实的第三方模型 API。
 
 ---
 
-## 四、最关键的一步：手动补 inferenceModels
+## 最关键的一步：手动补 inferenceModels
 
 只配置 Gateway 还不一定够。
 
@@ -180,7 +180,7 @@ Claude Desktop 想获取模型列表；
 
 ---
 
-## 五、通过 .reg 添加 inferenceModels
+## 通过 .reg 添加 inferenceModels
 
 先在 Claude Desktop 表单里填好：
 
@@ -228,7 +228,7 @@ reg import "C:\path\to\your.reg"
 
 ---
 
-## 六、haiku / sonnet / opus 只是别名
+## haiku / sonnet / opus 只是别名
 
 这里也容易误解。
 
@@ -268,7 +268,7 @@ ccswitch 日志
 
 ---
 
-## 七、关于模型名后缀，比如 `[1m]`
+## 关于模型名后缀，比如 `[1m]`
 
 有些模型名可能会长这样：
 
@@ -313,7 +313,7 @@ deepseek-v4-flash
 
 ---
 
-## 八、`thinking: false` 不是必选项
+## `thinking: false` 不是必选项
 
 有些教程会建议在 ccswitch 里加：
 
@@ -336,9 +336,9 @@ deepseek-v4-flash
 
 ---
 
-## 九、常见报错怎么理解？
+## 常见报错怎么理解？
 
-### 1. Gateway returned HTTP 400
+### Gateway returned HTTP 400
 
 400 一般表示请求已经发出去了，但 Provider 拒绝了请求。
 
@@ -364,7 +364,7 @@ thinking / tool_use 兼容问题
 5. 必要时尝试 thinking: false
 ```
 
-### 2. Gateway returned HTTP 404
+### Gateway returned HTTP 404
 
 如果 404 的地址是：
 
@@ -384,7 +384,7 @@ inferenceModels
 
 ---
 
-## 十、如何确认 Claude Desktop 真的走了 ccswitch？
+## 如何确认 Claude Desktop 真的走了 ccswitch？
 
 可以看 ccswitch 的请求记录或日志。
 
@@ -414,15 +414,15 @@ status_code = 200
 
 ---
 
-## 十一、最终流程总结
+## 最终流程总结
 
 如果从头配置，我会按这个顺序来：
 
-### 1. 先在 ccswitch 里配置好 Provider
+### 先在 ccswitch 里配置好 Provider
 
 确保第三方模型 API 在 ccswitch 中可以正常使用。
 
-### 2. 开启 ccswitch 本地路由
+### 开启 ccswitch 本地路由
 
 确认：
 
@@ -433,7 +433,7 @@ Claude：开启
 服务地址：http://127.0.0.1:15721
 ```
 
-### 3. Claude Desktop 配置 Gateway
+### Claude Desktop 配置 Gateway
 
 填写：
 
@@ -443,7 +443,7 @@ Gateway API key = PROXY_MANAGED
 Gateway auth scheme = bearer
 ```
 
-### 4. 导出 .reg
+### 导出 .reg
 
 点击 Claude Desktop 配置页右下角的：
 
@@ -451,7 +451,7 @@ Gateway auth scheme = bearer
 Export
 ```
 
-### 5. 修改 .reg，补上 inferenceModels
+### 修改 .reg，补上 inferenceModels
 
 在：
 
@@ -471,7 +471,7 @@ Export
 "inferenceModels"="[\"sonnet\"]"
 ```
 
-### 6. 导入 .reg 并重启 Claude Desktop
+### 导入 .reg 并重启 Claude Desktop
 
 ```powershell
 reg import "C:\path\to\your.reg"
@@ -479,7 +479,7 @@ reg import "C:\path\to\your.reg"
 
 然后完全退出并重启 Claude Desktop。
 
-### 7. 新开会话测试
+### 新开会话测试
 
 不要只看设置页的 Check again。
 
@@ -487,7 +487,7 @@ reg import "C:\path\to\your.reg"
 
 ---
 
-## 十二、最终使用习惯
+## 最终使用习惯
 
 配置完成后，可以这样理解：
 

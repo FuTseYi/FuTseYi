@@ -6,13 +6,13 @@ tags: YOLOv7, RKNN, Edge AI
 
 ![](assets/rk3588s.jpg)
 
-# 1.数据标注
+# 数据标注
 
 - 通过 labelimg 软件进行图片数据标注。
 - 深入解析 LabelImage：图像标注工具的全面指南 -CSDN 博客
 - 提前 predefined_classes.txt 文本中修改不同类别的数据。
 
-# 2.模型训练
+# 模型训练
 
 - 以 RKNN 系列模型为例，训练一个 yolov7 的目标检测模型。
 - 通过 SSH 进入计算服务器的 Docker 中，按照 readme 文件进行模型训练。
@@ -25,7 +25,7 @@ yolov7-rknn/data 文件夹中的数据集配置文件，在 yolov7-rknn 文件�
 - 执行后运行 python export.py --rknpu rk3588 --
 weight ./runs/train/expXX/weights/best.pt 导出 onnx 文件以供转换。
 
-# 3.模型转换与部署
+# 模型转换与部署
 
 - 参照 airockchip/rknn-toolkit2 at v1.5.2 进行模型转换。
 - 将转换好的模型拷贝至部署代码的 model/RK3588 的文件夹中，同

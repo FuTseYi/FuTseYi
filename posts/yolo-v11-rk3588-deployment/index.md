@@ -35,7 +35,7 @@ conda activate yolo11
 
 # 模型选择
 
-## 1.板端下载官方预转换的 ONNX 模型
+## 板端下载官方预转换的 ONNX 模型
 
 ```bash
 # yolo11n
@@ -46,7 +46,7 @@ wget https://ftrg.zbox.filez.com/v2/delivery/data/95f00b0fc900458ba134f8b180b3f7
 wget https://ftrg.zbox.filez.com/v2/delivery/data/95f00b0fc900458ba134f8b180b3f7a1/examples/yolo11/yolo11m.onnx
 ```
 
-## 2.使用服务器训练好的模型
+## 使用服务器训练好的模型
 
 # 模型部署
 

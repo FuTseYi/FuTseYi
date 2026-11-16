@@ -28,7 +28,7 @@ tags: Zotero, Backup, Tara Plugin
 - [中文社区插件合集页](https://zotero-chinese.com/plugins/#search-%E8%92%B2%E5%85%AC%E8%8B%B1)
 	搜索 蒲公英
 
-# 1 创建备份 [​](#%E5%88%9B%E5%BB%BA%E5%A4%87%E4%BB%BD) {#创建备份}
+# 创建备份 [​](#%E5%88%9B%E5%BB%BA%E5%A4%87%E4%BB%BD) {#创建备份}
 
 下载安装 Tara 插件后，通过点击 `Tara` 图标来创建一个备份
 
@@ -40,7 +40,7 @@ tags: Zotero, Backup, Tara Plugin
 
 ![备份文件](./assets/inline-image.png)
 
-# 2 恢复备份 [​](#%E6%81%A2%E5%A4%8D%E5%A4%87%E4%BB%BD) {#恢复备份}
+# 恢复备份 [​](#%E6%81%A2%E5%A4%8D%E5%A4%87%E4%BB%BD) {#恢复备份}
 
 点击 `恢复`
 
@@ -54,7 +54,7 @@ tags: Zotero, Backup, Tara Plugin
 
 ![备份恢复完成](./assets/tara-k7xawd7w.png)
 
-# 3 导出备份文件 [​](#%E5%AF%BC%E5%87%BA%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6) {#导出备份文件}
+# 导出备份文件 [​](#%E5%AF%BC%E5%87%BA%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6) {#导出备份文件}
 
 点击 `导出`
 
@@ -68,7 +68,7 @@ tags: Zotero, Backup, Tara Plugin
 
 ![导出的备份文件](./assets/inline-image-2.png)
 
-# 4 在新电脑上进行数据恢复 [​](#%E5%9C%A8%E6%96%B0%E7%94%B5%E8%84%91%E4%B8%8A%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D) {#在新电脑上进行数据恢复}
+# 在新电脑上进行数据恢复 [​](#%E5%9C%A8%E6%96%B0%E7%94%B5%E8%84%91%E4%B8%8A%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D) {#在新电脑上进行数据恢复}
 
 在新电脑上安装了 Zotero，此时 Zotero 上没有任何插件，配置都是默认的。这时，你可以将 [导出备份文件](#%E5%AF%BC%E5%87%BA%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6) 导出的文件复制到新电脑上。
 
@@ -76,7 +76,7 @@ tags: Zotero, Backup, Tara Plugin
 
 插件安装成功，点击恢复，会出现一个文件选择的窗中，选择 [导出备份文件](#%E5%AF%BC%E5%87%BA%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6) 中所生成的备份文件，之后 Zotero 会恢复对应的插件及相关配置。
 
-# 5 在不同电脑上同步备份 [​](#%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%94%B5%E8%84%91%E4%B8%8A%E5%90%8C%E6%AD%A5%E5%A4%87%E4%BB%BD) {#在不同电脑上同步备份}
+# 在不同电脑上同步备份 [​](#%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%94%B5%E8%84%91%E4%B8%8A%E5%90%8C%E6%AD%A5%E5%A4%87%E4%BB%BD) {#在不同电脑上同步备份}
 
 当你在多个电脑上同时使用 Zotero 时，可以通过 Zotero 的 `同步功能` 来实现数据的快速备份和恢复。
 

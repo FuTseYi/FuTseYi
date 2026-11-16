@@ -6,7 +6,7 @@ tags: Qwen2.5-VL, vLLM, Vision-Language Models
 
 # 环境搭建工作
 
-## 1 使用 Conda 创建环境
+## 使用 Conda 创建环境
 
 ```bash
 conda create -n qwen python=3.11 -y
@@ -16,7 +16,7 @@ conda activate qwen
 sudo apt update && sudo apt upgrade
 ```
 
-## 2 模型下载
+## 模型下载
 
 > **1.首先安装所需依赖**
 
@@ -57,7 +57,7 @@ vllm serve /home/user/qwen --port 8001 --host 0.0.0.0 --dtype bfloat16 --limit-m
 
 # 模型正式测试与调用
 
-## 1 使用 OpenAI Python SDK 调用
+## 使用 OpenAI Python SDK 调用
 
 > **1.可以使用本地 usb 摄像头配合 opencv 手动截图单独存放在 captures 文件夹下,供后续大模型调用分析**
 

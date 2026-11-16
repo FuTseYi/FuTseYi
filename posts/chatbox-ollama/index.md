@@ -6,7 +6,7 @@ tags: Chatbox, Ollama, LLM
 
 ![](assets/image.gif)
 
-# 1 在服务器上安装 Ollama 框架&并使用 systemd 管理 Ollama
+# 在服务器上安装 Ollama 框架&并使用 systemd 管理 Ollama
 
 **在这里因为网络原因,我推荐大家直接到 github 官网下载压缩包,移入服务器中解压使用**
 
@@ -34,7 +34,7 @@ sudo systemctl daemon-reload # 重新加载配置 sudo systemctl start ollama # 
 常用命令​​ bash sudo systemctl status ollama # 查看状态 sudo journalctl -u ollama -f # 实时查看日志 sudo systemctl stop ollama # 停止服务 sudo systemctl restart ollama # 重启服务
 ```
 
-# 2 使用 Chatbox 连接到远程 Ollama 服务
+# 使用 Chatbox 连接到远程 Ollama 服务
 
  1. ##  Ollama 作为 systemd 服务运行，应使用==systemctl== 设置环境变量：
 

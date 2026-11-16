@@ -120,7 +120,7 @@ src/
 
 # 架构演进：从分散到集中
 
-## 第一阶段：初始实现（配置分散）
+## 初始实现（配置分散）
 
 ### 问题分析
 
@@ -174,9 +174,9 @@ const SERVER_URL = "https://waline.xieyi.org/";
 | **可移植性差** | 迁移到其他项目需要大量修改 | 🟡 中 |
 | **无法复用** | 每个页面都需要重复配置 | 🟡 中 |
 
-## 第二阶段：配置集中管理（重构后）
+## 配置集中管理（重构后）
 
-### 1. 类型定义：建立类型安全基础
+### 类型定义：建立类型安全基础
 
 ```typescript
 // ✅ src/types/config.ts
@@ -212,7 +212,7 @@ export type WalineConfig = {
 - ✅ 支持复杂类型（如 `wordLimit` 可以是数字或数组）
 - ✅ 使用索引签名支持 `locale` 的扩展性
 
-### 2. 配置集中：统一管理所有配置
+### 配置集中：统一管理所有配置
 
 ```typescript
 // ✅ src/config.ts
@@ -272,7 +272,7 @@ export const walineConfig: WalineConfig = {
 - ✅ 类型自动提示和检查
 - ✅ 易于修改和维护
 
-### 3. 组件简化：专注于逻辑和渲染
+### 组件简化：专注于逻辑和渲染
 
 ```astro
 <!-- ✅ src/components/Waline.astro -->
@@ -351,7 +351,7 @@ const walineClientConfig = JSON.stringify({
 
 # 核心功能实现
 
-## 第一步：Props 覆盖机制
+## Props 覆盖机制
 
 ### 设计理念
 
@@ -421,7 +421,7 @@ Props 配置 > config.ts 全局配置 > 默认值
 <Waline serverURL="https://test.waline.example.com/" />
 ```
 
-## 第二步：客户端初始化逻辑
+## 客户端初始化逻辑
 
 ### 错误处理机制
 
@@ -473,7 +473,7 @@ function initWaline() {
 3. **JSON 解析**：捕获解析错误
 4. **优雅降级**：错误时安全返回，不影响页面其他功能
 
-## 第三步：Placeholder 持久化
+## Placeholder 持久化
 
 ### 问题描述
 
@@ -528,7 +528,7 @@ if (walineContainer) {
 - **精确控制**：可以精确指定要监听的变化类型
 - **批量处理**：浏览器会自动批量处理多个变化，避免频繁回调
 
-## 第四步：生命周期管理
+## 生命周期管理
 
 ### 支持 Astro ViewTransitions
 
@@ -921,7 +921,7 @@ export const walineConfig: WalineConfig = {
 
 # 性能优化策略
 
-## 1. CSS 动画性能优化
+## CSS 动画性能优化
 
 ```css
 /* ✅ 推荐：使用 transform（GPU 加速） */
@@ -935,7 +935,7 @@ export const walineConfig: WalineConfig = {
 }
 ```
 
-## 2. 懒加载优化
+## 懒加载优化
 
 ```javascript
 // 未来优化方向：Intersection Observer
@@ -951,7 +951,7 @@ const observer = new IntersectionObserver((entries) => {
 observer.observe(document.querySelector('#waline'));
 ```
 
-## 3. CDN 资源优化
+## CDN 资源优化
 
 ```html
 <!-- 使用 unpkg CDN 加速资源加载 -->

@@ -4,13 +4,13 @@ date: 2025-05-12
 tags: Cloudflare, PicList, Image Hosting
 ---
 
-# 1 提前准备
+# 提前准备
 
 1. 一个提前注册好的 Cloudflare 账号，并添加一个付费计划,不必担心扣费，可以选择 0 元免费计划
 2. 一个提前注册好的域名，可以选便宜一些的,域名后缀无所谓，只是作为图片网址使用如果不想花一年十几块的域名费，也可以去网上找免费的域名使用
 3. [Piclist软件](https://github.com/Kuingsmile/PicList)
 
-# 2 创建 Cloudflare R2 存储桶
+# 创建 Cloudflare R2 存储桶
 
 **R2 实际上是一个对象存储。Cloudflare 提供 10G 的免费存储和每月 1000 万次的免费访问**
 
@@ -23,7 +23,7 @@ tags: Cloudflare, PicList, Image Hosting
 	 - Cloudflare 提供自己的子域域名，只不过功能受限，速度受限
 	 - 所以建议自定义域访问 [域名的购买配置]()
 
-# 3 S3 API 配置
+# S3 API 配置
 
 > **接下来，我们看看如何通过调用 S3 API 进行上传下载，并通过 PicList 接入该 API 实现一站式、本地化的图床图片管理**
 
@@ -39,7 +39,7 @@ tags: Cloudflare, PicList, Image Hosting
 
 > 根据 Cloudflare 的安全策略，令牌信息页面一旦关闭，便永远不再展现，如果忘记了相应的信息，只能重新生成新令牌，所以请将令牌信息记录于可信的位置，妥善保管。
 
-# 4 Piclist 图床配置
+# Piclist 图床配置
 
 > 现在，事情来到了最后一步 —— 我们需要一个工具软件来接入我们配置好的 S3 API，方便我们从本地上传和管理图片，而不必每次都打开 cloudflare 面板，而 PicList 就是这方面的不二之选。
 
@@ -85,7 +85,7 @@ tags: Cloudflare, PicList, Image Hosting
 
 同样一张图片，在这样的文件路径下，会被上传到 “桶名称 / 2024/08/xxx/” 中，而图片本身会被重命名成 “该图片对应的 md5 字符串.jpg” 的形式。
 
-# 5 Piclist 的管理功能 (可以直接管理你的云端图床)
+# Piclist 的管理功能 (可以直接管理你的云端图床)
 
 > 云存储平台/云服务器和图床平台的管理是 PicList 新增的功能，在这里你可以：
 >
@@ -104,13 +104,13 @@ tags: Cloudflare, PicList, Image Hosting
 
 3. 这样配置完成后，就可以直接在 Piclist 查看咱们云端的图床啦
 
-# 6 关于配置的同步备份 (使用 Github 仓库备份)
+# 关于配置的同步备份 (使用 Github 仓库备份)
 
 ![PixPin_2025-05-30_13-26-30](assets/pixpin-2025-05-30-13-26-30.png)
 
 > 这里我使用 Github 自建私有仓库 (Piclist_Backup ) 进行配置文件的保存
 
-# 7 相关参考链接
+# 相关参考链接
 
 > <https://www.zbf1009.top/archives/28>
 >

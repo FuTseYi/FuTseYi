@@ -1,5 +1,5 @@
 ---
-title: 土耳其 Apple ID 注册与跨区家庭共享实践
+title: 土区 Apple ID 订阅 ChatGPT Plus
 date: 2026-05-16
 tags: Apple ID, ChatGPT, iCloud, Cross-Region
 ---
@@ -49,7 +49,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 开始之前，需要准备以下内容。
 
-## 1. 一个全新的邮箱
+## 一个全新的邮箱
 
 要求：
 
@@ -58,7 +58,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 2. 一个手机号
+## 一个手机号
 
 最好：
 
@@ -73,7 +73,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 3. 一份土耳其地址信息
+## 一份土耳其地址信息
 
 这里推荐直接使用在线生成器：
 
@@ -90,7 +90,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 4. 一台 Apple 设备
+## 一台 Apple 设备
 
 支持：
 
@@ -115,9 +115,9 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-# 一、注册土耳其 Apple ID
+# 注册土耳其 Apple ID
 
-## 1. 打开 Apple 官网
+## 打开 Apple 官网
 
 进入：
 
@@ -135,7 +135,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 2. 创建 Apple 账户
+## 创建 Apple 账户
 
 进入后点击：
 
@@ -151,7 +151,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 3. 验证信息
+## 验证信息
 
 填写验证码后，正常情况下就能完成注册。
 
@@ -171,7 +171,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-# 二、真正切换 App Store 到土耳其区（关键步骤）
+# 真正切换 App Store 到土耳其区（关键步骤）
 
 很多人：
 
@@ -200,7 +200,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 1. 退出当前 App Store 账号
+## 退出当前 App Store 账号
 
 路径：
 
@@ -213,7 +213,7 @@ tags: Apple ID, ChatGPT, iCloud, Cross-Region
 
 ---
 
-## 2. 使用 Safari 打开土区跳转链接
+## 使用 Safari 打开土区跳转链接
 
 直接复制到 Safari：
 
@@ -227,7 +227,7 @@ Safari 会自动跳转到：
 
 ---
 
-## 3. 直接登录刚注册的土区账号
+## 直接登录刚注册的土区账号
 
 登录后检查：
 
@@ -243,7 +243,7 @@ Safari 会自动跳转到：
 
 ---
 
-# 三、购买土耳其 Apple 礼品卡
+# 购买土耳其 Apple 礼品卡
 
 接下来需要给账号充值。
 
@@ -282,9 +282,9 @@ Safari 会自动跳转到：
 
 ---
 
-# 四、购买礼品卡并充值
+# 购买礼品卡并充值
 
-## 1. 使用支持支付宝的 SEAGM 购买礼品卡
+## 使用支持支付宝的 SEAGM 购买礼品卡
 
 建议：
 
@@ -301,7 +301,7 @@ Safari 会自动跳转到：
 
 ---
 
-## 2. 获取礼品卡代码
+## 获取礼品卡代码
 
 付款完成后：
 
@@ -315,7 +315,7 @@ Safari 会自动跳转到：
 
 ---
 
-## 3. App Store 兑换礼品卡
+## App Store 兑换礼品卡
 
 路径：
 
@@ -333,7 +333,7 @@ Safari 会自动跳转到：
 
 ---
 
-# 五、关于付款信息：不需要提前选择 None
+# 关于付款信息：不需要提前选择 None
 
 这里需要特别说明一个很多教程都会提到的问题。
 
@@ -372,7 +372,7 @@ Safari 会自动跳转到：
 
 ---
 
-# 六、订阅 ChatGPT Plus
+# 订阅 ChatGPT Plus
 
 充值完成后：
 
@@ -411,7 +411,7 @@ Safari 会自动跳转到：
 
 ---
 
-# 七、将土区账号加入中国区 Apple 家庭（附加功能）
+# 将土区账号加入中国区 Apple 家庭（附加功能）
 
 这一部分：
 
@@ -522,7 +522,7 @@ Safari 会自动跳转到：
 
 # 常见问题 FAQ
 
-## Q1：必须使用代理吗？
+## 必须使用代理吗？
 
 不必须。
 
@@ -533,7 +533,7 @@ Safari 会自动跳转到：
 
 ---
 
-## Q2：为什么 Mac 无法支付？
+## 为什么 Mac 无法支付？
 
 因为 GPT Plus 的 App Store 内购：
 
@@ -541,7 +541,7 @@ Safari 会自动跳转到：
 
 ---
 
-## Q3：GPT 账号必须是土区吗？
+## GPT 账号必须是土区吗？
 
 不需要。
 
@@ -553,7 +553,7 @@ GPT 账号本身没有限制。
 
 ---
 
-## Q4：注册完土区 Apple ID 后，必须先添加付款方式并选择 None 吗？
+## 注册完土区 Apple ID 后，必须先添加付款方式并选择 None 吗？
 
 不需要。
 
@@ -575,7 +575,7 @@ GPT 账号本身没有限制。
 
 ---
 
-## Q5：家庭共享是共享 GPT Plus 吗？
+## 家庭共享是共享 GPT Plus 吗？
 
 不是。
 
@@ -591,7 +591,7 @@ GPT 账号本身没有限制。
 
 ---
 
-## Q6：土区 Apple ID 会封号吗？
+## 土区 Apple ID 会封号吗？
 
 只要：
 

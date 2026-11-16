@@ -6,9 +6,9 @@ tags: PyTorch, Deep Learning, Tutorial
 
 # 第 02 讲 数据📝
 
-# 1.1 加载数据
+# 加载数据
 
-## 1.1.1 Dataset
+## Dataset
 
 > PyTorch 有关加载数据的，主要涉及 **Dataset** 和 **DataLoader**
 >
@@ -122,7 +122,7 @@ img, label = train_dataset[124]
 img.show()
 ```
 
-## 1.1.2 TensorBoard
+## TensorBoard
 
 > 我们不知道一个神经网络执行具体细节是什么，要人工调试十分困难
 >
@@ -233,9 +233,9 @@ writer.add_image("test", img_array, global_step=1, dataformats="HWC")
 writer.close()
 ```
 
-# 1.2 转换数据
+# 转换数据
 
-## 1.2.1 Transforms(一个工具箱)
+## Transforms(一个工具箱)
 
 > Transforms 主要是用于图像变换的操作，可以对图像进行裁剪、标准化等
 
@@ -515,7 +515,7 @@ writer.close()
 tensorboard --logdir="logs"
 ```
 
-## 1.2.2 DataLoader
+## DataLoader
 
 > batch_size 取四个数据打包成 imgs.targets,相当于融合在一起
 

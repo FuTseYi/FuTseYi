@@ -4,7 +4,7 @@ date: 2026-09-24
 tags: OneDrive, Windows, Proxy, Troubleshooting
 ---
 
-# 1 问题背景
+# 问题背景
 
 在 Windows 使用代理工具时，浏览器可以正常访问 Microsoft 网站，但 OneDrive 或部分 Microsoft 应用仍然可能出现登录异常。
 
@@ -12,7 +12,7 @@ tags: OneDrive, Windows, Proxy, Troubleshooting
 
 如果代理客户端没有允许相关应用通过本地代理通信，就可能出现浏览器正常、应用无法登录的情况。
 
-# 2 问题定位
+# 问题定位
 
 Windows 的 AppContainer Loopback 限制会影响 UWP 应用访问本机回环地址。代理工具提供的 UWP 网络环回豁免功能，可以允许指定应用访问本机代理服务。
 
@@ -22,7 +22,7 @@ Windows 的 AppContainer Loopback 限制会影响 UWP 应用访问本机回环�
 AppContainer Loopback Exemption Utility
 ```
 
-# 3 实际解决步骤
+# 实际解决步骤
 
 我当时按以下方式处理：
 
@@ -42,13 +42,13 @@ Microsoft.AAD.BrokerPlugin
 
 它参与 Windows 的 Microsoft 账号身份验证流程。允许相关 AppContainer 访问本地代理后，登录请求才有机会沿着预期的网络路径完成。
 
-# 4 为什么不是只设置 OneDrive
+# 为什么不是只设置 OneDrive
 
 Microsoft 登录并不总是由 OneDrive 主程序独立完成。Windows 的账号凭据和身份验证流程可能涉及系统组件，因此只处理 OneDrive 本身，不一定能解决登录窗口或账号授权阶段的问题。
 
 这也是我当时同时选择“工作或学校帐户”和“邮件和日历”的原因。实际勾选范围应以当前系统和工具列出的应用为准，不需要为了排查而把所有应用都加入豁免。
 
-# 5 注意事项
+# 注意事项
 
 - 只从可信来源运行 UWP 网络环回工具
 - 只勾选确实需要通过本地代理通信的应用
@@ -57,7 +57,7 @@ Microsoft 登录并不总是由 OneDrive 主程序独立完成。Windows 的账�
 
 环回豁免只是允许应用访问本机回环地址，并不会自动修复账号问题，也不意味着所有 Microsoft 登录故障都由它引起。
 
-# 6 总结
+# 总结
 
 这次排查让我注意到，Windows 中的网络问题不能只看浏览器是否能访问网页。**浏览器、传统桌面程序和 UWP / AppContainer 应用，可能采用不同的网络访问路径。**
 

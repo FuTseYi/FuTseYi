@@ -14,9 +14,9 @@ tags: Windows, Software, Setup
 - Linux：🐧
 - Android：🤖
 
-# 1 我自己使用
+# 我自己使用
 
-## 1.1 Mac
+## Mac
 
 | 软件                 | 功能                | 收费               | 评价                               | 安装方式                                   |
 | ------------------ | ----------------- | ---------------- | -------------------------------- | -------------------------------------- |
@@ -36,7 +36,7 @@ tags: Windows, Software, Setup
 | 像素蛋糕               | 修图                | 按量付费             | 说是摄影棚里常用                         | [](https://www.pixcakeai.com/)         |
 | 1Password          | 密码管理器             | $2.99 起/月        | 内置的密钥管理软件不好用吗                    | AppStore                               |
 
-## 1.2 Windows
+## Windows
 
 | 名称                         | 说明                                                          |
 | -------------------------- | ----------------------------------------------------------- |
@@ -59,7 +59,7 @@ tags: Windows, Software, Setup
 | EcoPaste                   | 一款开源的跨平台剪切板管理工具                                             |
 | ExplorerTabUtility         | 大幅提升 Windows 11 文件资源管理器的功能：自动将窗口转换为标签页、复制标签页、重新打开已关闭的标签页等等！ |
 
-# 2 工具类 (系统增强，GIF，截图，剪切板，下载)
+# 工具类 (系统增强，GIF，截图，剪切板，下载)
 
 |   分类    | 名称                         | 平台                                                                        | 说明                                                          | 下载                                                                                       |
 | :-----: | -------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -94,18 +94,18 @@ tags: Windows, Software, Setup
 | 文件资源管理器 |                            |                                                                           |                                                             |                                                                                          |
 |         | ExplorerTabUtility         | 🖥️                                                                       | 大幅提升 Windows 11 文件资源管理器的功能：自动将窗口转换为标签页、复制标签页、重新打开已关闭的标签页等等！ | [官网](https://github.com/w4po/ExplorerTabUtility.git)                                     |
 
-# 3 插件工具
+# 插件工具
 
 | 浏览器插件 | B2Y | 🖥️/🍏/🐧/🤖 | YouTube 同步显示 Bilibili 弹幕 | [Github地址](https://github.com/ahaduoduoduo/bilibili-youtube-danmaku.git)<br>[谷歌商店插件](https://chromewebstore.google.com/detail/b2y-youtube-%E5%90%8C%E6%AD%A5%E6%98%BE%E7%A4%BA-bilibili/dmkbhbnbpfijhgpnfahfioedledohfja) |
 | :---: | --- | ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
-# 4 命令行工具
+# 命令行工具
 
 | 名称  | 平台  | 说明                    | 下载                                    |
 | :-: | --- | --------------------- | ------------------------------------- |
 | Lux | 🍏  | 在 Mac 终端命令粘贴视频链接,直接提取下载 | [官网](https://github.com/iawia002/lux) |
 
-# 5 远程控制
+# 远程控制
 
 |    名称    | 平台           | 说明                                  | 下载                                                                    |
 | :------: | ------------ | ----------------------------------- | --------------------------------------------------------------------- |
@@ -113,7 +113,7 @@ tags: Windows, Software, Setup
 |  Todesk  | 🖥️/🍏/🐧/🤖 | 支持 1080p 高清画质，连接稳定不限速               | [官网](https://www.todesk.com/)                                         |
 | anydesk  | 🖥️/🍏/🐧/🤖 | 远程访问的明智之选                           | [官网](https://anydesk.com/zhs)                                         |
 
-# 6 OCR/翻译
+# OCR/翻译
 
 | 名称         | 平台        | 说明                                                               | 下载                                                                                    |
 | ---------- | --------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -122,7 +122,7 @@ tags: Windows, Software, Setup
 | Umi-OCR    | 🖥️       | 开源、免费的离线 OCR 软件。支持截屏/批量导入图片，PDF 文档识别，排除水印/页眉页脚，扫描/生成二维码。内置多国语言库。 | [Github](https://github.com/hiroi-sora/Umi-OCR)                                       |
 | 天若 ocr     | 🖥️       | 文本识别，截图功能， 录制 gif， 上传图床， 截图矫正， 配置云同步                             | [官网](https://ocr.tianruo.net/)                                                        |
 
-# 7 局域网文件传输
+# 局域网文件传输
 
 | 名称                      | 平台           | 说明                                        | 下载                                                                                 |
 | ----------------------- | ------------ | ----------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -133,26 +133,26 @@ tags: Windows, Software, Setup
 | transok-wails           | 🖥️/🍏       | 一个高效的局域网文件共享工具                            | [Github](https://github.com/bent2685/transok-wails)                                |
 | dufs                    | 🖥️/🍏/🐧    | 文件服务器支持静态服务、上传、搜索、访问控制、webdav…            | [Github](https://github.com/sigoden/dufs)                                          |
 
-# 8 图片查看器
+# 图片查看器
 
 |名称|平台|说明|下载|
 |---|---|---|---|
 |FSViewerSetup|🖥️|图像查看器|[官网](https://www.faststone.org/FSIVDownload.htm)|
 |Honeyview|🖥️|快速的图片查看器|[官网](https://www.bandisoft.com/honeyview/)|
 
-# 9 图表和白板
+# 图表和白板
 
 | 名称             | 平台        | 说明         | 下载                                                 |
 | -------------- | --------- | ---------- | -------------------------------------------------- |
 | drawio-desktop | 🖥️/🍏/🐧 | 强大、免费的绘图工具 | [Github](https://github.com/jgraph/drawio-desktop) |
 
-# 10 PDF
+# PDF
 
 |名称|平台|说明|下载|
 |---|---|---|---|
 |Sumatra PDF|🖥️|PDF、电子书 (epub、mobi)、漫画书 (cbz/cbr)、DjVu、XPS、CHM、Windows 图像 浏览器。|[官网](https://www.sumatrapdfreader.org/free-pdf-reader) [Github](https://github.com/sumatrapdfreader/sumatrapdf)|
 
-# 11 解压缩
+# 解压缩
 
 | 名称       | 平台        | 说明                           | 下载                                                                                 |
 | -------- | --------- | ---------------------------- | ---------------------------------------------------------------------------------- |
@@ -162,14 +162,14 @@ tags: Windows, Software, Setup
 | WinRar   | 🖥️/🍏/🤖 | 老牌压缩软件                       | [官网](https://www.winrar.com.cn/index.htm) [果核](https://www.ghxi.com/pcwinrar.html) |
 | peazip   | 🖥️/🍏/🐧 | 实用的免费的压缩软件，功能全面易于使用。         | [官网](https://peazip.github.io/) [Github](https://github.com/peazip/PeaZip)         |
 
-# 12 视频播放器
+# 视频播放器
 
 | 名称        | 平台           | 说明                   | 下载                                                                                                                             |
 | --------- | ------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | potplayer | 🖥️          | 万能格式影音播放器            | [官网1](https://potplayer.daum.net/?lang=zh_CN) [官网2](http://potplayer.tv/?lang=zh_CN) [果核](https://www.ghxi.com/potplayer.html) |
 | VLC       | 🖥️/🍏/🐧/🤖 | 一款自由、开源的跨平台多媒体播放器及框架 | [官网](https://www.videolan.org/) [果核](https://www.ghxi.com/pcvlc.html)                                                          |
 
-# 13 卸载工具
+# 卸载工具
 
 > 推荐果核下载
 
@@ -182,7 +182,7 @@ tags: Windows, Software, Setup
 | Bulk Crap Uninstaller      | 🖥️ | 开源，快速删除大量不需要的应用程序。                                                    | [Github](https://github.com/Klocman/Bulk-Crap-Uninstaller/releases) [官网](https://www.bcuninstaller.com/) [果核](https://www.ghxi.com/bulkcrapuninstaller.html) |
 | uninstall_view（推荐）         | 🖥️ | 适用于 Windows 11/10/8/7/Vista 的替代卸载程序                                   | [来源](https://www.nirsoft.net/utils/uninstall_view.html) [123网盘下载](https://www.123pan.com/s/E8jA-abFl.html) 密码 VhIy                                           |
 
-# 14 录屏
+# 录屏
 
 | 名称         | 平台        | 说明                                        | 下载                                                                                 |
 | ---------- | --------- | ----------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -190,13 +190,13 @@ tags: Windows, Software, Setup
 | OBS Studio | 🖥️/🍏/🐧 | OBS Studio - 用于直播和屏幕录制的免费开源软件             | [官网](https://obsproject.com/) [Github](https://github.com/obsproject/obs-studio)   |
 | 土豆录屏       | 🖥️       | 免费、无录制时长限制、无水印的录屏软件                       | [官网](http://tudouluping.com/) [蓝奏](https://wwoy.lanzouc.com/iShwu16hk7uh) 密码 tudou |
 
-# 15 桌面快速启动管理
+# 桌面快速启动管理
 
 | 名称             | 平台  | 说明                                                                                 | 下载                                              |
 | -------------- | --- | ---------------------------------------------------------------------------------- | ----------------------------------------------- |
 | GeekDesk(极客桌面) | 🖥️ | 一款 C#构建的免费、小巧、美观、高度自定义的桌面快速启动管理工具，集成了 Everything 搜索功能，不仅能帮我们整理桌面，还能快速启动应用程序、管理文件夹。 | [Github](https://github.com/BookerLiu/GeekDesk) |
 
-# 16 相关参考拓展
+# 相关参考拓展
 
 [好用常用软件 - 王旭阳个人博客](https://www.wxy97.com/archives/20)
 

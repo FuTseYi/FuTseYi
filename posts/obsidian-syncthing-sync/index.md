@@ -6,13 +6,13 @@ tags: Obsidian, Syncthing, Synchronization
 
 > 或许这就是最好的 Obsidian 全平台同步方案，甚至在国内可能优于官方的同步，因为它的同步速度取决于你内网带宽！并且它不局限于同步 Obsidian，也可以同步其他基于文件的的资料或者照片以及视频。
 
-# 1 前言
+# 前言
 
 Obsidian 的同步最大的问题是 IOS 端，在桌面端我们可以利用 OneDrive，Dropbox 等工具来同步，但是在 IOS 端我们无法使用这些工具来同步其他 app 的数据，所以如果不使用官方的同步，我们只能依赖插件，例如 `remotely-save` 和 `live-sync` 或者基于 `git` 的 http 插件以及 `working copy` 来同步文件，这些插件的最大问题就是性能和对冲突的处理策略不友好，那么 `syncthing` 便是终极的同步方案！
 
 `Syncthing` 一个几乎实时的 Obsidian 同步方案，某些方面，它甚至优于官方同步。
 
-# 2 Syncthing 的介绍
+# Syncthing 的介绍
 
 以下来自 [官网](https://syncthing.net/)
 
@@ -20,19 +20,19 @@ Obsidian 的同步最大的问题是 IOS 端，在桌面端我们可以利用 On
 
 总结来说：syncthing 是一个开源的多端 p2p 同步工具。
 
-# 3 Syncthing 的安装
+# Syncthing 的安装
 
 桌面端的下载地址：[官网下载](https://syncthing.net/downloads/)
 
-## 3.1 Windows 端
+## Windows 端
 
 windows 端有 2 类客户端，一类是基于命令行 +web 端 ui 的客户端，一类是集成 ui 客户端，两种都是一样的。
 
-### 3.1.1 集成 UI 客户端 (有本地 UI 界面)
+### 集成 UI 客户端 (有本地 UI 界面)
 
 [SyncTrayzor 下载地址](https://github.com/canton7/SyncTrayzor)
 
-### 3.1.2 基于 WebUI 的 Base 客户端
+### 基于 WebUI 的 Base 客户端
 
 建议下载安装版 [Windows 安装版](https://github.com/Bill-Stewart/SyncthingWindowsSetup/)
 
@@ -45,11 +45,11 @@ windows 端有 2 类客户端，一类是基于命令行 +web 端 ui 的客户�
 3. 把快捷方式粘贴到自启动文件夹中，下次开机会自动启动 syncthing
 	你也可以记住这个文件夹的位置，或者把 `Start Syncthing` 和 `Stop Syncthing` 快捷方式复制到桌面用于手动启动和关闭，也可以从开始菜单启停。
 
-## 3.2 iPhone 和 iPad 端
+## iPhone 和 iPad 端
 
 > iPhone 上一直没有一个友好的 syncthing 客户端，主要是无法跨沙箱，也就无法同步文件夹，这确实非常的难受，使用起来很受限，之前一直使用 `mobius sync` 这个收费的客户端，它能跨沙箱，但是如果体验后就必须保持后台，使用体验不算很好。直到开源的 `Synctrain` 的出现让 IOS 上的同步体验达到几乎无感。
 
-### 3.2.1 Synctrain(免费开源,建议使用这个)
+### Synctrain(免费开源,建议使用这个)
 
 [Github 项目](https://github.com/pixelspark/sushitrain)
 
@@ -57,13 +57,13 @@ App Store：[Download on the App Store](https://apps.apple.com/nl/app/synctrain/
 
 TF：[Test beta versions through TestFlight](https://testflight.apple.com/join/2f54I4CM)
 
-### 3.2.2 Mobius Sync
+### Mobius Sync
 
 App Store 下载，国区 38 元买断，也很不错的 app。
 
 **两个 app 最大的区别在于能否用快捷方式！**
 
-# 4 Syncthing 配置（演示局域网下的同步）
+# Syncthing 配置（演示局域网下的同步）
 
 以 Windows 端和 iPhone 同步为例，其他设备加入大同小异，但 syncthing 的中继和发现以及 stun 服务不友好，谨慎使用！
 
@@ -104,9 +104,9 @@ PC 端点击图标 or 自动启动
 		- 完美自动化！
 		- ![](assets/fxhlr9bgnvhjb7j.png)
 
-# 5 Syncthing 并非仅能同步局域网内的电脑，广域网内电脑照样好同步 (后续更新)
+# Syncthing 并非仅能同步局域网内的电脑，广域网内电脑照样好同步 (后续更新)
 
-# 6 参考链接
+# 参考链接
 
 > [Obsidian多端同步终极大法Syncthing、备份终极大法Kopia \| 老张博客](https://laozhang.org/archives/3506.html)
 >

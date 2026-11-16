@@ -10,43 +10,43 @@ tags: Ubuntu, Linux, Development
 
 > 按顺序执行
 
-# 1：更改主机名
+# 更改主机名
 
 ```bash
 hostnamectl set-hostname localhost
 ```
 
-# 2：换国内系统源（开源脚本）
+# 换国内系统源（开源脚本）
 
 ```bash
 bash <(curl -sSL https://gitee.com/SuperManito/LinuxMirrors/raw/main/ChangeMirrors.sh)
 ```
 
-# 3：更新系统常用包
+# 更新系统常用包
 
 ```bash
 apt update && apt install -y curl wget git zip tar lsof vim sudo
 ```
 
-# 4：启用 BBR
+# 启用 BBR
 
 ```bash
 sudo modprobe tcp_bbr && echo "net.ipv4.tcp_congestion_control = bbr" | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 
-# 5：启用虚拟内存
+# 启用虚拟内存
 
 ```bash
 sudo fallocate -l 2G /swapfile && sudo chmod 700 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ```
 
-# 6：使用国内镜像安装 docker（开源脚本）
+# 使用国内镜像安装 docker（开源脚本）
 
 ```bash
 bash <(curl -sSL https://gitee.com/SuperManito/LinuxMirrors/raw/main/DockerInstallation.sh)
 ```
 
-# 7：加强 SSH 防护
+# 加强 SSH 防护
 
 修改 SSH 配置文件
 
@@ -70,13 +70,13 @@ PermitEmptyPasswords no
 sudo systemctl restart ssh
 ```
 
-# 8：安装 web 服务（caddy）
+# 安装 web 服务（caddy）
 
 ```bash
 sudo apt install -yq debian-keyring debian-archive-keyring apt-transport-https curl && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list && sudo apt update -q && sudo apt install -yq caddy
 ```
 
-# 9：更改系统语言为中文
+# 更改系统语言为中文
 
 ```bash
 sudo nano /etc/locale.gen
@@ -87,13 +87,13 @@ sudo update-locale LANG=zh_CN.UTF-8
 sudo localectl set-locale LANG=zh_CN.UTF-8
 ```
 
-# 10：配置系统时区为上海
+# 配置系统时区为上海
 
 ```bash
 sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ```
 
-# 11：然后就可以使用 docker 愉快的部署各种服务了（脚本已自动配置国内镜像源），然后配合 caddy 反代各种服务
+# 然后就可以使用 docker 愉快的部署各种服务了（脚本已自动配置国内镜像源），然后配合 caddy 反代各种服务
 
 # 其他参考
 
