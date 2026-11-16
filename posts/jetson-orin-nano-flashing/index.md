@@ -4,7 +4,7 @@ date: 2025-07-09
 tags: Jetson Orin Nano, NVIDIA, Linux
 ---
 
-# 1 前言
+# 前言
 
 Jetson 系列产品烧录系统的方法一般有两种，
 
@@ -16,9 +16,9 @@ Jetson 系列产品烧录系统的方法一般有两种，
 > 搭建 Jetson 系列产品烧录系统的环境需要在电脑主机上安装 Ubuntu 系统。
 > 且安装的 Ubuntu 系统版本为 16.04 LTS 或者 18.04 LTS。
 
-# 2 环境搭建过程
+# 环境搭建过程
 
-## 2.1 在安装有 Ubuntu 系统的电脑主机上安装应用库
+## 在安装有 Ubuntu 系统的电脑主机上安装应用库
 
 ```bash
 sudo apt-get install qemu-user-static 
@@ -27,7 +27,7 @@ sudo apt-get install python
 
 搭建环境的过程需要以上应用库来将某些 NVIDIA 软件组件安装到 Jetson 开发工具包中。
 
-## 2.2 从 NVIDIA 官网下载所需版本的驱动程序包，和示例根文件系统包
+## 从 NVIDIA 官网下载所需版本的驱动程序包，和示例根文件系统包
 
 - 下载链接如下：<https://developer.nvidia.com/embedded/linux-tegra-archive>。
 
@@ -39,7 +39,7 @@ sudo apt-get install python
 ![2025-07-10_10-01-14.png](assets/20250710100223016.png)
 ![2025-07-10_10-08-36.png](assets/20250710100920813.png)
 
-## 2.3 查阅指导文档
+## 查阅指导文档
 
 - 选择版本进入后点击查看指导文档（Jetson Linux Developer Guide）
 
@@ -48,7 +48,7 @@ sudo apt-get install python
 - 选择目录中**Quick Start**，滑动到 Environment Variables 部分开始着手操作
 ![2025-07-10_10-07-04.png](assets/20250710100716011.png)
 
-# 3 开始动手烧录系统
+# 开始动手烧录系统
 
 - 通过以上操作,已经将相关驱动文件放入同一个文件夹 (我命名为 Jetson)
 - Jetson 设备硬件操作

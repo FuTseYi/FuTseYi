@@ -32,16 +32,6 @@
     ]
   },
   {
-    "slug": "git-baidu-netdisk-sync-conflict",
-    "title": "Git 仓库与百度网盘同步冲突排查",
-    "date": "2026-10-12",
-    "tags": [
-      "Git",
-      "百度网盘",
-      "Troubleshooting"
-    ]
-  },
-  {
     "slug": "baidu-netdisk-onedrive-sync-backup",
     "title": "百度网盘与 OneDrive 的文件同步与备份实践",
     "date": "2026-10-12",
@@ -93,8 +83,8 @@
     ]
   },
   {
-    "slug": "turkey-foreign-apple-id-chatgpt-plus-cross-region-family-sharing",
-    "title": "土耳其 Apple ID 注册与跨区家庭共享实践",
+    "slug": "turkey-apple-id-chatgpt-plus",
+    "title": "土区 Apple ID 订阅 ChatGPT Plus",
     "date": "2026-05-16",
     "tags": [
       "Apple ID",

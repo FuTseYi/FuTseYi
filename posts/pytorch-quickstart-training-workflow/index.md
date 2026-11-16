@@ -8,9 +8,9 @@ tags: PyTorch, Deep Learning, Tutorial
 
 # 第 04 讲 炼丹流程📝
 
-# 1.1 模型操作
+# 模型操作
 
-## 1.1.1 使用&修改
+## 使用&修改
 
 > torchvision.models 有分类、语义分割、目标检测等，本次讲分类模型 VGG
 >
@@ -80,7 +80,7 @@ vgg16_false.classifier[6] = nn.Linear(4096, 10)
 print(vgg16_false)
 ```
 
-## 1.1.2 保存&加载
+## 保存&加载
 
 > 训练好的模型需要进行保存，以备后续加载使用
 
@@ -200,7 +200,7 @@ model = torch.load('tudui_method1.pth')
 print(model)
 ```
 
-# 1.2 模型训练
+# 模型训练
 
 > train.py
 
@@ -492,7 +492,7 @@ print(outputs.argmax(0)) # 纵向对比
 print(outputs.argmax(1)) # 横向对比
 ```
 
-# 1.3 GPU
+# GPU
 
 ![](assets/89d50ef561c5aefcbd26b1a0cf035598-kp36oeqm-z1d1h36.webp)
 
@@ -688,7 +688,7 @@ loss_fn.to(device)
             targets = targets.to(device)
 ```
 
-# 1.4 验证
+# 验证
 
 > 本节加载模型，选择导入 model 文件中模型的方式，不再复制代码
 

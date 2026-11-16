@@ -6,9 +6,9 @@ tags: PyTorch, Deep Learning, Tutorial
 
 # 第 03 讲 神经网络📝
 
-# 1.1 基本骨架
+# 基本骨架
 
-## 1.1.1 Module
+## Module
 
 > `torch.nn` 是非常常用的包，其中 `torch.container` 中的 **「Module」** 是所有神经网络的基类
 >
@@ -54,9 +54,9 @@ print(output)
 # 输出tensor([2.])PyTorch 默认的张量打印格式，表示其值为 2.0
 ```
 
-## 1.1.2 Layers
+## Layers
 
-## 1.1.2.1 Ⅰ 卷积层
+## 卷积层
 
 > 卷积层中最常使用 **Conv2d** -- 因为图像为二维
 >
@@ -239,7 +239,7 @@ for data in dataloader:  ## `data` 只是一个变量名 它代表每次迭代�
 writer.close()
 ```
 
-## 1.1.2.2 Ⅱ 池化层
+## 池化层
 
 > 池化层中最常使用 **「MaxPool2d」**
 >
@@ -374,7 +374,7 @@ for data in dataloader:
 writer.close()
 ```
 
-## 1.1.2.3 Ⅲ 激活层
+## 激活层
 
 > 激活层一般采用 **「非线性激活」** ，神经网络中引入非线性的特质，才能训练出符合各种特征的模型
 >
@@ -513,7 +513,7 @@ writer.close()
 > True 代表替换原来的变量
  ![](assets/d1eca2a28f401217b5945dfbf806a631-6lcvf4zt-z2ft5lv.webp)
 
-## 1.1.2.4 Ⅳ 其他层
+## 其他层
 
 > 「Transformer Layers」 特定的网络结构
 >
@@ -600,7 +600,7 @@ for data in dataloader:
 >
 > `nn.Flatten()`，只展平单张图片，**不会丢失 batch**，所以每一张图片都能独立得到 10 维预测，输出就是 `torch.Size([64,10])`
 
-## 1.1.3 Sequential
+## Sequential
 
 > Sequential 主要是方便代码的编写，使代码更加简洁
 
@@ -686,9 +686,9 @@ writer.add_graph(tudui, input)
 writer.close()
 ```
 
-# 1.2 损失&优化
+# 损失&优化
 
-## 1.2.1 损失函数
+## 损失函数
 
 > 损失函数（Loss Function）用于衡量模型的「预测输出」与「实际标签」之间的差异或者误差
 >
@@ -776,7 +776,7 @@ result_cross = loss_cross(x, y)
 print(result_cross)
 ```
 
-## 1.2.2 反向传播
+## 反向传播
 
 > 前向传播：将训练集数据输入到 NN 的「输入层」，经过「隐藏层」，最后到达「输出层」并输出结果
 >
@@ -866,7 +866,7 @@ for data in dataloader:
     print("ok")
 ```
 
-## 1.2.3 优化器
+## 优化器
 
 > **更新参数 减少损失**
 >
