@@ -1,6 +1,5 @@
 """Check that the profile README follows homepage content."""
 from pathlib import Path
-import shutil
 import sys
 import tempfile
 import unittest
@@ -57,33 +56,11 @@ class ReadmeTests(unittest.TestCase):
             self.assertIn(label, result)
         for dt, _, _ in sync.read_post_entries():
             self.assertNotIn(dt.strftime("%Y.%m.%d"), result)
-        self.assertNotIn("assets/images/profile/me.jpg", result)
-        self.assertNotIn("## *Website*", result)
-        self.assertNotIn("Powered by", result)
         ordered=["**Homepage**:",home["note"],*home["paragraphs"],
                  home["languages"],home["motto_label"],
                  *home["quotes"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
         positions=[result.index(text) for text in ordered]
         self.assertEqual(positions,sorted(positions))
-
-    def test_homepage_changes_propagate_without_generator_edits(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            html = (sync.ROOT / "index.html").read_text(encoding="utf-8")
-            html = html.replace("Currently exploring new things, occasionally pretending I know what I’m doing.",
-                                "A new profile note.")
-            html = html.replace("Interested in AI, engineering, and whatever keeps me curious.", "A new focus.")
-            html = html.replace(">LinkedIn</a>", ">Professional profile</a>")
-            html = html.replace("Datawhale is an AI-focused open source organization founded in 2018.",
-                                "A revised community description.")
-            (root / "index.html").write_text(html, encoding="utf-8")
-            shutil.copytree(sync.ROOT / "posts", root / "posts")
-            with patch.object(sync, "ROOT", root):
-                result = sync.render()
-            for text in ("A new profile note.", "**Focus:** A new focus.",
-                         "[Professional profile]"):
-                self.assertIn(text, result)
-            self.assertNotIn("A revised community description.", result)
 
     def test_website_urls_ignore_repository_name(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):

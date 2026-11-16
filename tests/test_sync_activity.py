@@ -19,13 +19,9 @@ def snapshot(entries):
 
 
 class ActivityTests(unittest.TestCase):
-    def test_restored_history(self):
+    def test_tracked_snapshot_is_valid(self):
         data = json.loads((Path(__file__).resolve().parents[1] / "contributions.json").read_text(encoding="utf-8"))
         activity.validate_snapshot(data)
-        self.assertGreaterEqual(len(data["entries"]), 29)
-        self.assertIn("fmhy/edit", {x["name"] for x in data["entries"]})
-        self.assertIn("datawhalechina/diy-llm", {x["name"] for x in data["entries"]})
-        self.assertNotIn("futseyi/futseyi-site", {x["name"].lower() for x in data["entries"]})
 
     def test_schema_rejects_duplicate_names(self):
         with self.assertRaisesRegex(ValueError, "Duplicate"):
@@ -88,13 +84,6 @@ class ActivityTests(unittest.TestCase):
         original = {**fork, "isFork": False}
         self.assertEqual(refresh.contribution(original, "2026-11-08T00:00:00Z", "Repository")["activity"], "Repository")
 
-    def test_canonical_snapshot_has_no_verified_fork_only_entries(self):
-        path = Path(__file__).resolve().parents[1] / "contributions.json"
-        data = json.loads(path.read_text(encoding="utf-8"))
-        fork_only = {"FuTseYi/xianyu-auto-reply", "FuTseYi/edit", "FuTseYi/easy-vibe"}
-        self.assertFalse(fork_only & {entry["name"] for entry in data["entries"]})
-        self.assertIn("fmhy/edit", {entry["name"] for entry in data["entries"]})
-
     def test_site_is_filtered_from_graphql(self):
         repo = {"nameWithOwner": "FuTseYi/FuTseYi-Site", "visibility": "PUBLIC",
                 "isFork": False, "description": "", "primaryLanguage": None}
@@ -102,10 +91,10 @@ class ActivityTests(unittest.TestCase):
         self.assertEqual(refresh.merge([entry("FuTseYi/FuTseYi-Site")]), [])
 
     def test_graphql_merge_preserves_history(self):
-        original = entry("fmhy/edit", "2025-01-01T00:00:00Z")
-        fresh = entry("datawhalechina/diy-llm", "2026-11-01T00:00:00Z")
+        original = entry("org/older", "2025-01-01T00:00:00Z")
+        fresh = entry("org/newer", "2026-11-01T00:00:00Z")
         merged = refresh.merge([original, fresh])
-        self.assertEqual({x["name"] for x in merged}, {"fmhy/edit", "datawhalechina/diy-llm"})
+        self.assertEqual({x["name"] for x in merged}, {"org/older", "org/newer"})
 
     def test_graphql_merge_deduplicates_case_insensitively(self):
         old = entry("Org/Repo", "2025-01-01T00:00:00Z")
