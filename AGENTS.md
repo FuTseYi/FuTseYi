@@ -10,6 +10,7 @@ Maintain this as a lightweight, portable static personal website. Favor correct 
 - **Published** (`FuTseYi/FuTseYi.github.io`) contains only generated static output; never edit it directly. `PUBLISHED_README.md` becomes Published's `README.md`.
 - `index.html` owns the homepage and shared page chrome; `assets/css/style.css`, `assets/js/site.js`, and `assets/js/atmosphere.js` own presentation and interaction.
 - `posts/<slug>/index.md` owns article content and its adjacent `assets/`; `scripts/site_build.py` orchestrates article generation, activity rendering, search indexing, and verification through `preview.py`.
+- Markdown image ALT follows the article Description pattern: authored text wins; empty Markdown ALT falls back to a readable filename stem. Explicit raw HTML ALT, including decorative `alt=""`, remains unchanged.
 - `contributions.json` is a **tracked, verified** GitHub contribution snapshot; do not confuse it with untracked generated site output.
 - `BLOG_INDEX.json` is a tracked discovery index generated from Markdown metadata. Update via `python scripts/blog_index.py --write` and verify via `--check`; never edit JSON by hand.
 - Do not commit generated `_site/`, `blog/`, `rss.xml`, or `sitemap.xml` to Source.

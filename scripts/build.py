@@ -16,10 +16,11 @@ from datetime import date, datetime, time, timezone
 from email.utils import format_datetime
 from html import escape, unescape
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape as xml_escape
 import markdown
+from markdown.treeprocessors import Treeprocessor
 from post_metadata import post_tags, read_posts
 from site_metadata import canonical_page_url, load_site_metadata, render_social_metadata
 
@@ -29,6 +30,26 @@ OUTPUT = ROOT / "blog"
 SITE_METADATA = load_site_metadata(ROOT)
 SITE = SITE_METADATA["origin"]
 SOURCE_REPOSITORY = "https://github.com/FuTseYi/FuTseYi-Site"
+
+class FilenameAltFallback(Treeprocessor):
+    """Fill empty Markdown image alt text from the source filename."""
+
+    def run(self, root):
+        for image in root.iter("img"):
+            if not image.get("alt", "").strip():
+                filename = Path(unquote(urlsplit(image.get("src", "")).path)).stem
+                fallback = re.sub(r"[-_]+", " ", filename).strip()
+                if fallback:
+                    image.set("alt", fallback)
+
+
+def markdown_parser() -> markdown.Markdown:
+    parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "codehilite"],
+                               extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
+    # Runs after Markdown's inline image conversion; raw HTML is not modified.
+    parser.treeprocessors.register(FilenameAltFallback(parser), "filename_image_alt", 15)
+    return parser
+
 
 def shared_layout() -> dict[str, str]:
     """Read homepage-owned chrome and asset references once per build."""
@@ -173,8 +194,7 @@ def main() -> None:
     posts: list[dict] = []
     feed_items: list[tuple[dict, str, str]] = []
     shared = shared_layout()
-    parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "codehilite"],
-                               extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
+    parser = markdown_parser()
     for position, (slug, meta, source) in enumerate(source_posts):
         page_url = canonical_page_url(SITE, Path("blog") / slug / "index.html")
         url = page_url.removeprefix(SITE)
