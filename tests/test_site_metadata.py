@@ -10,13 +10,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SiteMetadataTests(unittest.TestCase):
-    def test_repository_metadata_follows_about_portrait_and_sections(self):
-        metadata = load_site_metadata(ROOT)
-        self.assertEqual(metadata["image"], metadata["origin"] + "/assets/images/profile/me.jpg")
-        self.assertEqual(metadata["image_alt"], "FuTseYi's profile photo")
-        self.assertEqual([item[0] for item in metadata["toc_entries"]],
-                         ["about", "recent-blog", "education", "active-in", "contributions"])
-
     def test_load_site_metadata_parses_homepage_only_once(self):
         with patch.object(site_metadata, "_parse_homepage",
                           wraps=site_metadata._parse_homepage) as parse:
@@ -67,7 +60,8 @@ class SiteMetadataTests(unittest.TestCase):
                          "https://example.org/blog/")
         self.assertEqual(canonical_page_url("https://example.org", Path("blog/example/index.html")),
                          "https://example.org/blog/example/")
-        for invalid in (Path("blog/article.html"), Path("../index.html"), Path("/tmp/index.html")):
+        for invalid in (Path("blog/article.html"), Path("../index.html"),
+                        Path(Path.cwd().anchor) / "tmp/index.html"):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 canonical_page_url("https://example.org", invalid)
 

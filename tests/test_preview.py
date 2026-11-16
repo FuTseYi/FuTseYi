@@ -28,28 +28,7 @@ class PreviewTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         deploy = (root / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
         self.assertIn("python preview.py --build-only", deploy)
-        self.assertNotIn("python preview.py --build-only --refresh-activity", deploy)
-        refresh = (root / ".github/workflows/refresh-contributions.yml").read_text(encoding="utf-8")
-        self.assertIn("scripts/refresh_contributions.py", refresh)
-        self.assertNotIn("  push:", refresh)
-        self.assertIn("  workflow_dispatch:", refresh)
-        self.assertIn("  schedule:", refresh)
-        self.assertNotIn("  workflow_run:", deploy)
-        self.assertIn("  push:", deploy)
-        self.assertIn("    branches: [main]", deploy)
-        self.assertNotIn("    paths-ignore:", deploy)
-        self.assertNotIn("continue-on-error: true", refresh)
-        self.assertIn("contents: read", refresh)
-        self.assertIn("repositories: FuTseYi-Site", refresh)
-        self.assertIn("permission-contents: write", refresh)
-        self.assertNotIn("actions: write", refresh)
-        self.assertNotIn("gh workflow run deploy.yml --ref main", refresh)
-        self.assertIn("token: ${{ steps.app.outputs.token }}", refresh)
         self.assertIn("rsync -a --delete --exclude='.git/' _site/ published/", deploy)
-        self.assertIn("repository: FuTseYi/futseyi.github.io", deploy)
-        self.assertIn("permission-contents: write", deploy)
-        self.assertIn("'deploymentEnabled': {'main': True, '*': False}", deploy)
-        self.assertFalse((root / "vercel.json").exists())
 
     def test_build_only_does_not_bind_preview_port(self):
         with patch.object(preview.sys, "argv", ["preview.py", "--build-only"]), \

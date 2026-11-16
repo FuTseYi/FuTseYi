@@ -22,20 +22,20 @@ class ImageAltTests(unittest.TestCase):
         return parsed.images
 
     def test_existing_markdown_alt_is_preserved(self):
-        image, = self.render('![My precise screenshot](assets/rk3588-edge-ai.png)')
+        image, = self.render('![My precise screenshot](assets/example-image.png)')
         self.assertEqual(image["alt"], "My precise screenshot")
 
     def test_filename_fallback_normalizes_hyphens_and_underscores(self):
-        image, = self.render('![](assets/cloudflare_email-routing.webp)')
-        self.assertEqual(image["alt"], "cloudflare email routing")
+        image, = self.render('![](assets/sample_image-name.webp)')
+        self.assertEqual(image["alt"], "sample image name")
 
     def test_filename_supports_unicode_spaces_and_mixed_language(self):
-        image, = self.render('![](assets/港科大-RK3588_测试结果.png)')
-        self.assertEqual(image["alt"], "港科大 RK3588 测试结果")
+        image, = self.render('![](assets/示例-image_结果.png)')
+        self.assertEqual(image["alt"], "示例 image 结果")
 
     def test_filename_decodes_url_escapes_and_ignores_query_fragment(self):
-        image, = self.render('![](assets/edge%20AI-workflow.png?v=1#zoom)')
-        self.assertEqual(image["alt"], "edge AI workflow")
+        image, = self.render('![](assets/sample%20image-name.png?v=1#zoom)')
+        self.assertEqual(image["alt"], "sample image name")
 
     def test_generic_filenames_receive_a_simple_fallback(self):
         image, = self.render('![](assets/IMG_1234.jpg)')

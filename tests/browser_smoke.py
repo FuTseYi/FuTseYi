@@ -1,5 +1,6 @@
 """Chromium and WebKit regressions for generated content and navigation."""
 import json
+import re
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -7,6 +8,19 @@ from threading import Thread
 from playwright.sync_api import sync_playwright
 
 SITE = Path(__file__).resolve().parents[1] / "_site"
+
+
+def sample_articles():
+    posts = json.loads((SITE / "blog/posts.json").read_text(encoding="utf-8"))
+    selected = {}
+    for post in posts:
+        html = (SITE / "blog" / post["slug"] / "index.html").read_text(encoding="utf-8")
+        article = html.split('<article class="article"', 1)[1].split("</article>", 1)[0]
+        for feature, marker in (("code", "codehilite"), ("table", "article-table"), ("image", "<img")):
+            if feature not in selected and marker in article:
+                selected[feature] = post["slug"]
+    assert len(selected) == 3, "Browser smoke requires articles with code, a table, and an image"
+    return selected
 
 
 def check(page, name, width):
@@ -175,6 +189,9 @@ def check_contribution_year_expansion(page):
 
 
 def check_search(page):
+    posts = json.loads((SITE / "blog/posts.json").read_text(encoding="utf-8"))
+    post = next(post for post in posts if len(re.findall(r"[A-Za-z]{3,}", post["title"])) >= 2)
+    terms = re.findall(r"[A-Za-z]{3,}", post["title"])[:2]
     page.goto("http://127.0.0.1:8766/blog/", wait_until="networkidle")
     page.locator(".search-open").click()
     dialog = page.locator("#search-dialog")
@@ -184,20 +201,15 @@ def check_search(page):
     assert not page.locator("#search-results").is_visible()
     assert not dialog.locator(".scroll-hint").is_visible()
     assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
-    search.fill("PyTorch")
-    result = page.locator("#search-results a")
-    result.first.wait_for(timeout=15000)
-    assert result.first.get_attribute("href").startswith("/blog/")
+    result = page.locator(f'#search-results a[href="{post["url"]}"]')
+    search.fill(terms[0])
+    result.wait_for(timeout=15000)
     assert page.locator("#search-results").is_visible()
     assert page.locator(".search-summary").is_visible()
-    assert page.locator("#search-results .link-label mark").first.inner_text() == "PyTorch"
-    search.fill("GitHub README")
-    page.locator("#search-results a").first.wait_for(timeout=15000)
-    assert page.locator("#search-results a").first.locator(".link-label mark").all_inner_texts() == ["GitHub", "README"]
-    search.fill("Anaconda")
-    body_match = page.locator("#search-results .search-match mark").first
-    body_match.wait_for(timeout=15000)
-    assert "anaconda" in body_match.inner_text().casefold()
+    assert result.locator(".link-label mark").first.inner_text().casefold() == terms[0].casefold()
+    search.fill(" ".join(terms))
+    result.wait_for(timeout=15000)
+    assert [mark.casefold() for mark in result.locator(".link-label mark").all_inner_texts()] == [term.casefold() for term in terms]
     page.keyboard.press("Escape")
     assert not dialog.evaluate("(el) => el.open")
     page.wait_for_function("document.querySelector('#blog-search').value === ''")
@@ -225,7 +237,7 @@ def check_rss_links(page):
         feed.close()
 
 
-def check_toc_transitions(page):
+def check_toc_transitions(page, article_slug):
     def check_metadata(article):
         page.wait_for_function("article => document.querySelectorAll('.reading-progress').length === Number(article)", arg=article)
         canonical = page.locator('link[rel="canonical"]').get_attribute('href')
@@ -247,8 +259,8 @@ def check_toc_transitions(page):
         page.locator('#main .archive-toc').wait_for(state="attached")
         check_metadata(False)
         assert page.locator('.page-toc').count() == 1
-        page.locator('a[href="/blog/astro-waline-comments/"]').first.click()
-        page.wait_for_url("**/blog/astro-waline-comments/")
+        page.locator(f'a[href="/blog/{article_slug}/"]').first.click()
+        page.wait_for_url(f"**/blog/{article_slug}/")
         page.locator('#main .article-toc').wait_for(state="attached")
         check_metadata(True)
         assert page.locator('.page-toc').count() == 1
@@ -257,7 +269,7 @@ def check_toc_transitions(page):
         page.locator('#main .archive-toc').wait_for(state="attached")
         check_metadata(False)
         page.go_forward()
-        page.wait_for_url("**/blog/astro-waline-comments/")
+        page.wait_for_url(f"**/blog/{article_slug}/")
         page.locator('#main .article-toc').wait_for(state="attached")
         check_metadata(True)
         page.locator('.back-link[href="/blog/"]').click()
@@ -273,6 +285,8 @@ def check_toc_transitions(page):
 
 
 def main():
+    articles = sample_articles()
+    code_slug = articles["code"]
     server = ThreadingHTTPServer(("127.0.0.1", 8766), partial(SimpleHTTPRequestHandler, directory=str(SITE)))
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -286,7 +300,7 @@ def main():
                     page = context.new_page()
                     check_site_navigation(page, width)
                     check_contribution_year_expansion(page)
-                    for slug in ("astro-waline-comments", "pytorch-quickstart-neural-networks", "hkust-elpa-serverless-github-native-cms"):
+                    for slug in dict.fromkeys(articles.values()):
                         check(page, slug, width)
                     context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="no-preference")
@@ -299,27 +313,27 @@ def main():
             check_rss_links(context.new_page())
             context.close()
             context = browser.new_context(viewport={"width": 1700, "height": 850}, reduced_motion="reduce")
-            check_toc_transitions(context.new_page())
+            check_toc_transitions(context.new_page(), code_slug)
             context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="reduce")
             page = context.new_page()
             errors = []
             page.on("pageerror", lambda error: errors.append(str(error)))
-            for route in ("/#%E0%A4%A", "/blog/astro-waline-comments/#%E0%A4%A"):
+            for route in ("/#%E0%A4%A", f"/blog/{code_slug}/#%E0%A4%A"):
                 page.goto("http://127.0.0.1:8766" + route, wait_until="networkidle")
                 assert page.locator("#site-header").count() == 1
             assert not errors, f"Malformed URL fragments must not break navigation: {errors}"
             context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, java_script_enabled=False)
             page = context.new_page()
-            page.goto("http://127.0.0.1:8766/blog/astro-waline-comments/")
+            page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/")
             pre = page.locator("article.article pre").first
             assert pre.is_visible()
             assert pre.evaluate("(e) => getComputedStyle(e).borderTopStyle !== 'none'")
             context.close()
             context = browser.new_context(permissions=["clipboard-read", "clipboard-write"])
             page = context.new_page()
-            page.goto("http://127.0.0.1:8766/blog/astro-waline-comments/")
+            page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/")
             copy = page.locator(".code-copy").first
             assert copy.count() == 1
             expected = page.locator(".article-code").first.locator("pre").inner_text()
@@ -338,7 +352,7 @@ def main():
                     errors = []
                     page.on("pageerror", lambda error: errors.append(str(error)))
                     check_site_navigation(page, width)
-                    page.goto("http://127.0.0.1:8766/blog/astro-waline-comments/",
+                    page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/",
                               wait_until="networkidle")
                     assert page.locator("article.article").count() == 1
                     assert page.locator(".article-code button.code-copy").count() > 0
@@ -346,7 +360,7 @@ def main():
                     assert not errors, f"WebKit {width}px browser errors: {errors}"
                     context.close()
                 context = safari.new_context(viewport={"width": 1700, "height": 850}, reduced_motion="reduce")
-                check_toc_transitions(context.new_page())
+                check_toc_transitions(context.new_page(), code_slug)
                 context.close()
             finally:
                 safari.close()
