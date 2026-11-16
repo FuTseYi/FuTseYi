@@ -81,7 +81,9 @@ class PreviewTests(unittest.TestCase):
             self.preview_root(root)
             def render(source, staged, options):
                 staged.mkdir()
-                (staged / "index.html").write_text('<a href="missing.html">Broken</a>')
+                (staged / "index.html").write_text(
+                    '<link rel="canonical" href="https://example.org/">'
+                    '<a href="missing.html">Broken</a>')
                 return ([], [])
             with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
                     patch.object(preview.site_build, "build", side_effect=render):
@@ -110,7 +112,8 @@ class PreviewTests(unittest.TestCase):
 
             def assemble(source, staged, options):
                 staged.mkdir()
-                (staged / "index.html").write_text("new build")
+                (staged / "index.html").write_text(
+                    '<link rel="canonical" href="https://example.org/">new build')
                 ready.set()
                 return ([], [])
 
@@ -132,7 +135,8 @@ class PreviewTests(unittest.TestCase):
                     worker.join(3)
                 self.assertFalse(worker.is_alive())
             self.assertEqual(errors, [])
-            self.assertEqual((root / "_site/index.html").read_text(), "new build")
+            self.assertEqual((root / "_site/index.html").read_text(),
+                             '<link rel="canonical" href="https://example.org/">new build')
             self.assertFalse((root / "_site/stale.txt").exists())
             self.assertEqual(list(root.glob(".preview-*")), [])
 
@@ -303,7 +307,8 @@ class PreviewTests(unittest.TestCase):
             self.preview_root(root)
             def render(source, staged, options):
                 staged.mkdir()
-                (staged / "index.html").write_text("new")
+                (staged / "index.html").write_text(
+                    '<link rel="canonical" href="https://example.org/">new')
                 return ([], [])
             rename = Path.rename
             def fail_staged(path, destination):

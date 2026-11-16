@@ -20,9 +20,8 @@ from urllib.parse import urljoin
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape as xml_escape
 import markdown
-from asset_urls import version_assets
 from post_metadata import post_tags, read_posts
-from site_metadata import load_site_metadata, render_social_metadata
+from site_metadata import canonical_page_url, load_site_metadata, render_social_metadata
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "posts"
@@ -33,7 +32,7 @@ SOURCE_REPOSITORY = "https://github.com/FuTseYi/FuTseYi-Site"
 
 def shared_layout() -> dict[str, str]:
     """Read homepage-owned chrome and asset references once per build."""
-    home = version_assets((ROOT / "index.html").read_text(encoding="utf-8"), ROOT)
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
     header = re.search(r'<header class="site-header".*?</header>', home, re.S)[0]
     header = re.sub(r'(aria-label="[^"]*), back to top"', r'\1 homepage"', header)
     header = re.sub(r'href="#([^"]+)"', r'href="/#\1"', header)
@@ -177,7 +176,8 @@ def main() -> None:
     parser = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "codehilite"],
                                extension_configs={"codehilite": {"guess_lang": False, "linenums": False}})
     for position, (slug, meta, source) in enumerate(source_posts):
-        url = f"/blog/{slug}/"
+        page_url = canonical_page_url(SITE, Path("blog") / slug / "index.html")
+        url = page_url.removeprefix(SITE)
         item = dict(slug=slug, url=url, title=meta["title"], date=meta["date"], tags=post_tags(meta))
         parser.reset()
         article = size_article_images(parser.convert(source), SOURCE / slug)
@@ -204,7 +204,7 @@ def main() -> None:
         description = meta.get("description") or article_description(article, item["title"])
         feed_items.append((item, description, article))
         (destination / "index.html").write_text(
-            layout(item["title"], description, SITE + url, content,
+            layout(item["title"], description, page_url, content,
                    body_class="blog-page article-page", lang=page_lang,
                    social_type="article", tags=item["tags"], shared=shared),
             encoding="utf-8"
@@ -236,7 +236,7 @@ def main() -> None:
     search_icon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>'
     search = '<dialog class="search-dialog" id="search-dialog" aria-label="Search articles"><div class="search-field">' + search_icon + '<input id="blog-search" type="search" placeholder="Search articles..." aria-label="Search articles" autocomplete="off" aria-controls="search-results"><button type="button" class="search-close" aria-label="Close search">×</button></div><div id="search-results" aria-live="polite"></div></dialog>'
     index = search + '<div class="blog-layout"><h1 class="blog-title">Blog<span style="color:var(--accent)">.</span></h1><div class="blog-actions"><button type="button" class="search-open" aria-keyshortcuts="Control+K Meta+K" aria-label="Search articles">' + search_icon + '<span class="search-label">Search</span><kbd>⌘/Ctrl K</kbd></button><a class="blog-tags-mobile" href="/blog/tags/">All tags <span class="link-arrow" aria-hidden="true"></span></a></div>' + archive_toc + '<div class="blog-list">' + ("".join(entries) if entries else "<p>No posts yet.</p>") + '</div>' + sidebar + '</div>'
-    (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", SITE + "/blog/", index, shared=shared), encoding="utf-8")
+    (OUTPUT / "index.html").write_text(layout("Blog", "Notes on AI, engineering and open-source experiments", canonical_page_url(SITE, Path("blog/index.html")), index, shared=shared), encoding="utf-8")
     tag_groups = []
     for tag, matches in sorted_tags:
         links = ''.join(f'<li><a href="{escape(post["url"], quote=True)}">{escape(post["title"])}</a></li>' for post in matches)
@@ -244,7 +244,7 @@ def main() -> None:
     tags_content = '<a class="back-link" href="/blog/"><span class="link-arrow link-arrow-left" aria-hidden="true"></span>All posts</a><h1>All Tags</h1><div class="tag-groups">' + ''.join(tag_groups) + '</div>'
     tags_output = OUTPUT / "tags"
     tags_output.mkdir()
-    (tags_output / "index.html").write_text(layout("All Tags", "Browse blog posts by tag", SITE + "/blog/tags/", tags_content, shared=shared), encoding="utf-8")
+    (tags_output / "index.html").write_text(layout("All Tags", "Browse blog posts by tag", canonical_page_url(SITE, Path("blog/tags/index.html")), tags_content, shared=shared), encoding="utf-8")
     (OUTPUT / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     ET.register_namespace("content", "http://purl.org/rss/1.0/modules/content/")
     rss = ET.Element("rss", version="2.0")
@@ -265,7 +265,7 @@ def main() -> None:
         ET.SubElement(entry, "{http://purl.org/rss/1.0/modules/content/}encoded").text = absolute_article
     (ROOT / "rss.xml").write_bytes(ET.tostring(rss, encoding="utf-8", xml_declaration=True) + b"\n")
     pages = [ROOT / "index.html", *sorted(OUTPUT.rglob("index.html"))]
-    urls = [SITE + ("/" if page.parent == ROOT else f"/{page.parent.relative_to(ROOT).as_posix()}/") for page in pages]
+    urls = [canonical_page_url(SITE, page.relative_to(ROOT)) for page in pages]
     sitemap = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{xml_escape(url)}</loc></url>\n" for url in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     print(f"Blog: generated {len(posts)} article(s)")

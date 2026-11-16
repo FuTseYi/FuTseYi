@@ -1,6 +1,6 @@
 # FuTseYi-Site
 
-个人网站的唯一源码与构建仓库。基于原生 HTML、CSS、JavaScript 和 Python 生成静态网站；构建后的文件统一发布到 [FuTseYi.github.io](https://github.com/FuTseYi/FuTseYi.github.io)，供 GitHub Pages 和 Vercel 使用。
+个人网站的唯一源码与构建仓库。基于原生 HTML、CSS、JavaScript 和 Python 生成静态网站；构建后的文件统一发布到 [FuTseYi.github.io](https://github.com/FuTseYi/FuTseYi.github.io)，由 Vercel 部署至正式生产域名。
 
 ## 项目结构
 
@@ -13,8 +13,9 @@ FuTseYi-Site/
 ├── tests/              # 单元与浏览器回归测试
 ├── BLOG_INDEX.json     # 由文章元数据生成的编辑检索索引
 ├── contributions.json  # Git 跟踪的公开贡献数据快照
-├── index.html          # 可直接维护的首页
-├── rss.xml             # 构建生成的全文订阅源
+├── index.html          # 可直接维护的首页及站点 Origin
+├── robots.txt          # 基础爬虫规则（构建时补全 Sitemap）
+├── rss.xml             # 构建生成的全文订阅源（不跟踪）
 ├── preview.py          # 本地预览及唯一构建入口
 └── requirements.txt    # Python 构建依赖
 ```
@@ -39,7 +40,7 @@ python preview.py
 
 ## 构建与发布
 
-**Source**（本仓库）是唯一维护入口；**Published**（`FuTseYi/FuTseYi.github.io`）仅保存由 Source 产生的静态成品。GitHub Pages 与 Vercel 使用 Published 的同一份文件，不重复生成网站。发布仓库的 `README.md` 由 [PUBLISHED_README.md](PUBLISHED_README.md) 复制生成。
+**Source**（本仓库）是唯一维护入口；**Published**（`FuTseYi/FuTseYi.github.io`）仅保存由 Source 产生的静态成品。Vercel 使用 Published 的静态文件作为正式生产部署来源，不重复构建网站。GitHub Pages 如启用，仅作为非生产镜像。发布仓库的 `README.md` 由 [PUBLISHED_README.md](PUBLISHED_README.md) 复制生成。
 
 ```mermaid
 sequenceDiagram
@@ -51,7 +52,7 @@ sequenceDiagram
     participant App as GitHub App
     participant Deploy as Publish Action
     participant Published as Published main
-    participant Hosts as GitHub Pages / Vercel
+    participant Hosts as Vercel Production
 
     opt 每月定时或手动刷新贡献
         Maintainer->>Refresh: schedule / workflow_dispatch
@@ -75,6 +76,8 @@ sequenceDiagram
         Published->>Hosts: 使用同一份文件部署
     end
 ```
+
+SEO 元数据以首页 Canonical 为唯一 Origin 来源，由 `scripts/site_metadata.py` 统一解析和映射。文章生成器负责 HTML、RSS、Sitemap；构建编排负责补全 robots.txt，并在 HTML 生成后统一版本化 CSS/JS。语义验证与最终产物验证分别检查索引契约和本地资源完整性。
 
 贡献刷新独立运行：每月 **1 日、15 日 UTC 01:17** 定时执行，也可手动触发；只有数据变化时，才由 GitHub App Bot 提交 `contributions.json`。Source `main` 上的任何 Push（包括 Bot 的贡献快照提交）都会触发网站发布，发布工作流也支持手动运行。构建只读取已提交的贡献快照，不调用 GraphQL；静态产物未变化时不会产生 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章相关变更同步到 `FuTseYi/FuTseYi`。
 

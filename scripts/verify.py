@@ -6,10 +6,10 @@ import re
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import unquote, urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit
 from xml.etree import ElementTree
 from asset_urls import version_assets
-from site_metadata import site_url
+from site_metadata import canonical_page_url, site_url
 from site_metadata import SOCIAL_REQUIRED_META, load_site_metadata
 from sync_activity import START as ACTIVITY_START, END as ACTIVITY_END, render as render_activity
 
@@ -23,6 +23,8 @@ class Page(HTMLParser):
         self.ids: set[str] = set()
         self.links: list[str] = []
         self.meta: dict[str, str] = {}
+        self.canonicals: list[str] = []
+        self.robots_directives: list[str] = []
         self.lang = ""
 
     def handle_starttag(self, tag, attrs):
@@ -30,7 +32,9 @@ class Page(HTMLParser):
         if tag == "html":
             self.lang = attrs.get("lang", "")
         if tag == "link" and "canonical" in attrs.get("rel", "").split():
-            self.meta["canonical"] = attrs.get("href", "")
+            canonical = attrs.get("href", "")
+            self.canonicals.append(canonical)
+            self.meta["canonical"] = canonical
         if tag == "link" and "alternate" in attrs.get("rel", "").split() and attrs.get("type") == "application/rss+xml":
             self.meta["rss"] = attrs.get("href", "")
         if attrs.get("id"):
@@ -39,6 +43,8 @@ class Page(HTMLParser):
             key = attrs.get("property") or attrs.get("name")
             if key:
                 self.meta[key] = attrs.get("content", "")
+                if key.lower() in ("robots", "googlebot"):
+                    self.robots_directives.append(self.meta[key])
                 if key in ("og:image", "twitter:image") and self.meta[key]:
                     self.links.append(self.meta[key])
         if tag in ("a", "link") and attrs.get("href"):
@@ -115,27 +121,20 @@ class ArticleStructure(HTMLParser):
                 break
 
 
-def local_target(page: Path, link: str) -> tuple[Path, str] | None:
-    link = link.strip()
-    parsed = urlsplit(link)
-    if parsed.scheme and parsed.scheme not in ("http", "https"):
-        if parsed.scheme in ("mailto", "tel", "data"):
-            return None
-        raise ValueError(f"Unsupported link scheme in {page}: {link}")
-    if parsed.netloc and parsed.netloc != urlsplit(ORIGIN).netloc:
-        return None
-    if not parsed.path and not parsed.netloc:
-        target = page
-    else:
-        relative_page = "/" + page.relative_to(ROOT).as_posix()
-        absolute_path = unquote(urlsplit(urljoin(ORIGIN + relative_page, link)).path)
-        target = ROOT / absolute_path.lstrip("/")
-        if target.is_dir() or absolute_path.endswith("/"):
-            target /= "index.html"
-    resolved = target.resolve()
-    if not resolved.is_relative_to(ROOT.resolve()):
-        raise ValueError(f"Path escapes site root: {link}")
-    return resolved, unquote(parsed.fragment)
+def check_page_identity(pages: dict[Path, Page], root: Path, origin: str) -> list[str]:
+    """Check each published HTML page against its actual canonical route."""
+    errors = []
+    for file, parsed in pages.items():
+        name = file.relative_to(root)
+        expected = canonical_page_url(origin, name)
+        if len(parsed.canonicals) != 1:
+            errors.append(f"{name}: expected exactly one canonical, found {len(parsed.canonicals)}")
+        elif parsed.canonicals[0] != expected:
+            errors.append(f"{name}: canonical {parsed.canonicals[0]!r} != {expected!r}")
+        if any(re.search(r"\bnoindex\b", directive, flags=re.I)
+               for directive in parsed.robots_directives):
+            errors.append(f"{name}: unexpected robots noindex directive")
+    return errors
 
 
 def main():
@@ -146,7 +145,10 @@ def main():
     assert not (ROOT / "rss").exists(), "Obsolete RSS page remains in site output"
     assert (ROOT / "pagefind/pagefind.js").is_file(), "Missing search index"
     assert (ROOT / "assets/icons/favicon.svg").is_file(), "Missing favicon"
-    assert f"Sitemap: {ORIGIN}/sitemap.xml" in (ROOT / "robots.txt").read_text(encoding="utf-8"), "Incorrect robots sitemap URL"
+    robot_lines = (ROOT / "robots.txt").read_text(encoding="utf-8").splitlines()
+    sitemap_directives = [line.split(":", 1)[1].strip() for line in robot_lines
+                          if re.match(r"(?i)^\s*sitemap\s*:", line)]
+    assert sitemap_directives == [ORIGIN + "/sitemap.xml"], "Expected exactly one correct robots sitemap directive"
 
     pages = {}
     for file in ROOT.rglob("*.html"):
@@ -156,7 +158,7 @@ def main():
         parsed.feed(html)
         pages[file.resolve()] = parsed
 
-    errors = []
+    errors = check_page_identity(pages, ROOT, ORIGIN)
     home_html = (ROOT / "index.html").read_text(encoding="utf-8")
     try:
         snapshot = json.loads((ROOT / "contributions.json").read_text(encoding="utf-8"))
@@ -237,22 +239,6 @@ def main():
         for anchor in parsed.toc_links:
             if anchor not in pages[post_page.resolve()].ids:
                 errors.append(f"{name}: missing inline TOC target #{anchor}")
-    count = 0
-    for file, parsed in pages.items():
-        for link in parsed.links:
-            count += 1
-            try:
-                result = local_target(file, link)
-                if result is None:
-                    continue
-                target, fragment = result
-                if not target.is_file():
-                    errors.append(f"{file.relative_to(ROOT)}: missing {link}")
-                elif fragment and target in pages and fragment not in pages[target].ids:
-                    errors.append(f"{file.relative_to(ROOT)}: missing anchor {link}")
-            except ValueError as error:
-                errors.append(str(error))
-
     posts = json.loads((ROOT / "blog/posts.json").read_text(encoding="utf-8"))
     assert isinstance(posts, list), "Post index is not a list"
     slugs = set()
@@ -269,6 +255,8 @@ def main():
         errors.append("RSS feed is not RSS 2.0")
     if rss.findtext("./channel/title") != source_metadata["site_name"] + " · Blog" or rss.findtext("./channel/description") != source_metadata["description"]:
         errors.append("RSS channel metadata differs from homepage")
+    if rss.findtext("./channel/link") != ORIGIN + "/blog/":
+        errors.append("RSS channel link differs from the canonical blog URL")
     items = rss.findall("./channel/item")
     if len(items) != len(posts):
         errors.append("RSS item count does not match posts")
@@ -291,19 +279,13 @@ def main():
     xml = ElementTree.parse(ROOT / "sitemap.xml")
     ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
     sitemap_urls = [loc.text for loc in xml.findall(f".//{ns}loc")]
-    expected_urls = {ORIGIN + ("/" if file.parent == ROOT else f"/{file.parent.relative_to(ROOT).as_posix()}/") for file in pages}
+    expected_urls = {canonical_page_url(ORIGIN, file.relative_to(ROOT)) for file in pages}
     if set(sitemap_urls) != expected_urls or len(sitemap_urls) != len(expected_urls):
         errors.append("Sitemap does not match generated HTML pages")
-    for loc in xml.findall(f".//{ns}loc"):
-        if loc.text == ORIGIN + "/rss/":
-            errors.append("Obsolete RSS page remains in sitemap")
-        result = local_target((ROOT / "index.html").resolve(), loc.text or "")
-        if result is None or not result[0].is_file():
-            errors.append(f"Invalid sitemap URL: {loc.text}")
 
     if errors:
         raise SystemExit("Static site verification failed:\n" + "\n".join(errors))
-    print(f"Verified {len(pages)} HTML pages, {len(posts)} posts, {count} references and sitemap.")
+    print(f"Verified {len(pages)} HTML pages, {len(posts)} posts, RSS, sitemap and canonical URLs.")
 
 
 if __name__ == "__main__":
