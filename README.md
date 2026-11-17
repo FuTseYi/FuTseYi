@@ -2,7 +2,7 @@
 
 **Homepage**: [www.futseyi.com](https://www.futseyi.com/)
 
-Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [HKUST, Guangzhou Campus](https://www.hkust-gz.edu.cn/), with a background in automation.
+Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [HKUST, Guangzhou Campus](https://en.wikipedia.org/wiki/Hong_Kong_University_of_Science_and_Technology_(Guangzhou)), with a background in automation.
 
 *Currently exploring new things, occasionally pretending I know what I’m doing.*
 
@@ -25,7 +25,7 @@ Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [HKUST, Gu
 ## Active In
 
 <p>
-<span><img src="https://www.futseyi.com/assets/images/active-in/datawhale.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://github.com/datawhalechina">Datawhale</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/hai-hkust.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://hai-hkust.github.io/">HAI-HKUST</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/hkust-elpa.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://hkust-elpa.vercel.app/">HKUST-ELPA</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/uem-feiyue.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://github.com/UEM-Feiyue">UEM-Feiyue</a></span>
+<span><img src="https://www.futseyi.com/assets/images/active-in/datawhale.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://github.com/datawhalechina">Datawhale</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/hai-hkust.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://github.com/HAI-HKUST">HAI-HKUST</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/hkust-elpa.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://github.com/HKUST-ELPA">HKUST-ELPA</a></span> &nbsp;&nbsp;&nbsp; <span><img src="https://www.futseyi.com/assets/images/active-in/uem-feiyue.svg" alt="" width="32" align="middle" />&nbsp;<a href="https://github.com/UEM-Feiyue">UEM-Feiyue</a></span>
 </p>
 
 ## Recent Blog
