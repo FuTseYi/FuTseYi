@@ -2,9 +2,11 @@
 
 **Homepage**: [www.futseyi.com](https://www.futseyi.com/)
 
+Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [HKUST, Guangzhou Campus](https://www.hkust-gz.edu.cn/), with a background in automation.
+
 *Currently exploring new things, occasionally pretending I know what I’m doing.*
 
-Hi, I'm **FuTseYi**, also known as **Shine**. I'm a Red Bird MPhil student at [The Hong Kong University of Science and Technology (HKUST), Guangzhou Campus](https://www.hkust-gz.edu.cn/), with a background in automation.
+*Mostly fixing typos and calling it open source. Go easy on me~*
 
 **Focus:** Interested in AI, engineering, and whatever keeps me curious.
 
