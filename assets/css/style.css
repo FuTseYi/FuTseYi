@@ -313,11 +313,12 @@ strong { font-weight: 600; }
 
 .hero-content { min-width:0; }
 
+.hero .handwritten-name { font-family: Caveat, var(--font); font-weight: 700; }
+
 .hero h1 {
     margin-top: 10px;
     font-size: clamp(38px, 4.8vw, 56px);
-    font-family: Caveat, var(--font);
-    font-weight: 600; line-height: 1.15; letter-spacing: 0;
+    line-height: 1.15; letter-spacing: 0;
   }
 
 .hero h1 .alias {
@@ -333,6 +334,7 @@ strong { font-weight: 600; }
 .about-intro .bio { margin-top: 18px; font-size: 15px; line-height: 1.8; color: var(--ink-soft); }
 .bio a { color: var(--accent); }
 .bio strong { color: var(--ink); font-weight: 600; }
+.bio .handwritten-name { font-size: 1.4em; line-height: 1; }
 .bio p+p { margin-top: 12px; }
 .about-intro .profile-note { margin: 0; font-size: 13px; font-weight: 400; font-style: italic; color: var(--ink-soft); }
 .bio-detail { margin-top: 12px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
