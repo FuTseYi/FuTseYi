@@ -14,7 +14,7 @@ Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [HKUST, Gu
 
 **Motto:**
 
-*Freiheit als Autonomie — Freedom through autonomy.*
+*Freiheit als Autonomie. — Freedom through autonomy.*
 
 *People can retire, but the spirit cannot retire. - Gundam*
 
