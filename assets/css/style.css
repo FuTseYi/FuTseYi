@@ -797,16 +797,15 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .blog-entry .post-date,.post-date{font-size:12px;color:var(--ink-faint)}
 .blog-entry .post-date.is-active{color:var(--gold-ink)}
 .blog-entry h3,#search-results li a{font-weight:500;font-size:15px;color:var(--ink);line-height:1.5}
-.blog-sidebar{position:sticky;top:82px;align-self:start;max-height:calc(100vh - 100px);overflow:auto;scrollbar-width:none}
-.blog-sidebar::-webkit-scrollbar{display:none}
+.blog-sidebar{align-self:start}
 .blog-sidebar h2{font-size:19px;font-weight:600;margin-bottom:16px}
 .blog-sidebar ul{display:flex;flex-direction:column;align-items:flex-start;gap:8px;list-style:none}
-.blog-sidebar .post-tag{display:inline-block;background-color:var(--surface)}
+.blog-sidebar .post-tag{display:inline-block;padding-inline:0}
 .blog-sidebar .post-tag span{color:var(--ink-faint)}
-.all-tags-link{margin-top:18px}
+.all-tags-link{margin-bottom:18px}
 
 .tag-groups{display:flex;flex-wrap:wrap;align-items:flex-start;gap:9px;margin-top:28px}
-.tag-group{border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:13px}
+.tag-group{border-radius:6px;padding:4px 10px;font-size:13px}
 .tag-group summary{cursor:pointer;list-style:none}
 .tag-group summary::-webkit-details-marker{display:none}
 .tag-group summary span{color:var(--ink-faint)}
@@ -818,7 +817,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article-head{margin:30px 0 38px}
 .article-head h1{margin:10px 0 13px;font-size:clamp(28px,4vw,40px);line-height:1.35;overflow-wrap:anywhere;text-wrap:pretty}
 .post-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}
-.post-tag{border:1px solid var(--line);border-radius:5px;padding:2px 9px;color:var(--ink-soft);font-size:12px}
+.post-tag{border-radius:5px;padding:2px 9px;color:var(--ink-soft);font-size:12px}
 .post-neighbors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px;border-top:1px solid var(--line);margin-top:55px;padding-top:24px}
 .post-neighbor{display:block;min-width:0;margin:-12px;padding:12px;border-radius:10px;color:var(--ink);transition:background-color .16s}
 .post-neighbor.next{text-align:right;grid-column:2}

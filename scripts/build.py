@@ -251,7 +251,7 @@ def main() -> None:
             tag_posts.setdefault(tag, []).append(post)
     sorted_tags = sorted(tag_posts.items(), key=lambda pair: (-len(pair[1]), pair[0].casefold()))
     sidebar_tags = ''.join(f'<li><a class="post-tag" href="/blog/tags/#{tag_id(tag)}"># {escape(tag)} <span>({len(matches)})</span></a></li>' for tag, matches in sorted_tags[:30])
-    sidebar = '<aside class="blog-sidebar"><h2>Tags</h2><ul>' + sidebar_tags + '</ul><a class="all-tags-link" href="/blog/tags/">View all<span class="link-arrow" aria-hidden="true"></span></a></aside>'
+    sidebar = '<aside class="blog-sidebar"><h2>Tags</h2><a class="all-tags-link" href="/blog/tags/">View all<span class="link-arrow" aria-hidden="true"></span></a><ul>' + sidebar_tags + '</ul></aside>'
     archive_toc = '<nav class="page-toc archive-toc" aria-label="Archive by year and month"><span class="toc-title">ARCHIVE</span>' + ''.join(toc_entries) + '</nav>'
     search_icon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>'
     search = '<dialog class="search-dialog" id="search-dialog" aria-label="Search articles"><div class="search-field">' + search_icon + '<input id="blog-search" type="search" placeholder="Search articles..." aria-label="Search articles" autocomplete="off" aria-controls="search-results"><button type="button" class="search-close" aria-label="Close search">×</button></div><div id="search-results" aria-live="polite"></div></dialog>'
