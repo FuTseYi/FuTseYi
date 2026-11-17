@@ -336,7 +336,7 @@ strong { font-weight: 600; }
 .bio strong { color: var(--ink); font-weight: 600; }
 .bio .handwritten-name { font-size: 1.4em; line-height: 1; }
 .bio p+p { margin-top: 12px; }
-.about-intro .profile-note { margin: 0; font-size: 13px; font-weight: 400; font-style: italic; color: var(--ink-soft); }
+.about-intro .profile-note { margin: 12px 0 0; font-size: 13px; font-weight: 400; font-style: italic; color: var(--ink-soft); }
 .bio-detail { margin-top: 12px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
 .bio-detail p+p { margin-top: 8px; }
 .bio-detail strong { color: var(--ink); }
@@ -601,6 +601,7 @@ footer {
 
 .footer-utility{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:12.5px;color:var(--ink-faint)}
 .footer-license{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-license .link-arrow{position:relative;left:-2px;margin-left:0}
 .footer-license,.footer-back-top,.footer-brand{color:var(--ink-faint)}
 .footer-license:is(:hover,:focus-visible),.footer-back-top:is(:hover,:focus-visible),.footer-brand:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
 .footer-back-top{display:inline-flex;align-items:center;gap:6px;margin-left:auto;white-space:nowrap}

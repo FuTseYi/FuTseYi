@@ -47,7 +47,7 @@ class ReadmeTests(unittest.TestCase):
         result = sync.render()
         self.assertEqual([line for line in result.splitlines() if line.startswith("#")],
                          ["## About", "## Active In", "## Recent Blog"])
-        for text in [home["note"], *home["paragraphs"], home["languages"],
+        for text in [*home["paragraphs"], home["languages"],
                      *home["quotes"], *home["links"]]:
             self.assertIn(text, result)
         for title, image in home["communities"]:
@@ -56,11 +56,15 @@ class ReadmeTests(unittest.TestCase):
             self.assertIn(label, result)
         for dt, _, _ in sync.read_post_entries():
             self.assertNotIn(dt.strftime("%Y.%m.%d"), result)
-        ordered=["**Homepage**:",home["note"],*home["paragraphs"],
+        ordered=["**Homepage**:",*home["paragraphs"],
                  home["languages"],home["motto_label"],
                  *home["quotes"],*home["links"],home["badge"],"## Active In","## Recent Blog"]
         positions=[result.index(text) for text in ordered]
         self.assertEqual(positions,sorted(positions))
+
+    def test_markdown_preserves_emphasis_with_html_attributes(self):
+        self.assertEqual(sync.md('<strong class="name">Name</strong> and <em>note</em>'),
+                         '**Name** and *note*')
 
     def test_website_urls_ignore_repository_name(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
