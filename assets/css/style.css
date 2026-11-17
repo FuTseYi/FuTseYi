@@ -1,5 +1,5 @@
 @font-face{font-family:Caveat;src:url("../fonts/caveat-handwriting.woff2") format("woff2");font-style:normal;font-weight:400 600;font-display:block}
-@font-face{font-family:"Bodoni Moda";src:url("../fonts/bodoni-moda-numerals.ttf") format("truetype");font-style:italic;font-weight:500;font-display:swap;unicode-range:U+0030-0039}
+@font-face{font-family:"Bodoni Moda";src:url("../fonts/bodoni-moda-numerals.ttf") format("truetype");font-style:italic;font-weight:500;font-display:block;unicode-range:U+0030-0039}
 
 :root {
     color-scheme: light;
