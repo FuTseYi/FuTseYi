@@ -26,4 +26,4 @@ When reusing website code, retain the copyright and permission notice in [LICENS
 - Third-party names, logos, screenshots and quoted material are not relicensed by this repository. Follow the source attribution and obtain any permissions required for your use.
 - These licenses do not grant trademark, privacy, publicity or endorsement rights. Reusing the design does not authorize representing yourself as FuTseYi (Shine) or implying an affiliation.
 
-The footer phrase “Go ahead, steal it” is an invitation to reuse the site under these licenses; it does not waive their conditions.
+The footer phrase “Yoink it.” is an invitation to reuse the site under these licenses; it does not waive their conditions.

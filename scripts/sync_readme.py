@@ -27,7 +27,7 @@ def md(fragment):
             href=site_url()+href
         return "["+re.sub(r"<[^>]*>","",match[2]).strip()+"]("+href+")"
     fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',link,fragment,flags=re.S|re.I)
-    fragment=re.sub(r"<strong>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
+    fragment=re.sub(r"<strong\b[^>]*>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
     fragment=re.sub(r"<em>(.*?)</em>",r"*\1*",fragment,flags=re.S|re.I)
     return unescape(" ".join(re.sub(r"<[^>]+>","",fragment).split()))
 def read_home():
@@ -37,15 +37,19 @@ def read_home():
         if not match:raise ValueError(f"index.html: missing {label}")
         return match
     bio=required(r'<div\s+class="bio"\s*>(.*?)</div>',"bio")[1]
-    note=required(r'<p class="profile-note">(.*?)</p>',"profile note")[1]
     languages=required(r'<p class="profile-languages">(.*?)</p>',"languages")[1]
     motto=required(r'<div class="profile-motto">(.*?)</div>\s*</div>',"motto")[1]
     links=required(r'<div class="hero-links">(.*?)</div>',"profile links")[1]
     community=required(r'<section[^>]*id="active-in"[^>]*>(.*?)</section>',"Active In")[1]
     badge=required(r'<a class="visitor-counter"[^>]*>.*?</a>',"visitor badge")[0]
+    paragraphs=[]
+    for attrs,text in re.findall(r'<p\b([^>]*)>(.*?)</p>',bio,re.S):
+        classes=re.search(r'\bclass="([^"]*)"',attrs)
+        value=md(text)
+        paragraphs.append('*'+value+'*' if classes and 'profile-note' in classes[1].split() else value)
     content={
-        "paragraphs":[md(x) for x in re.findall(r'<p\b[^>]*>(.*?)</p>',bio,re.S)],
-        "note":md(note), "languages":md(languages),
+        "paragraphs":paragraphs,
+        "languages":md(languages),
         "motto_label":md(required(r'<h3 class="motto-heading">(.*?)</h3>',"motto label")[1]),
         "quotes":[md(x) for x in re.findall(r'<p>(.*?)</p>',motto,re.S)],
         "links":[md(x) for x in re.findall(r'<a\b[^>]*>.*?</a>',links,re.S)],
@@ -74,7 +78,6 @@ def render():
     return (
       '## About\n\n'
       +f'**Homepage**: [{site.split("://",1)[-1]}]({site}/)\n\n'
-      +f'*{home["note"]}*\n\n'
       +'\n\n'.join(home["paragraphs"])+'\n\n'
       +home["languages"]+'\n\n'
       +home["motto_label"]+'\n\n'
