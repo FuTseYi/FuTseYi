@@ -66,6 +66,18 @@ class ReadmeTests(unittest.TestCase):
         self.assertEqual(sync.md('<strong class="name">Name</strong> and <em>note</em>'),
                          '**Name** and *note*')
 
+    def test_markdown_preserves_italics_in_link_labels(self):
+        for tag in ("i", "em"):
+            with self.subTest(tag=tag):
+                self.assertEqual(sync.md(f'<a href="https://example.com/"><{tag}>Campus</{tag}></a>'),
+                                 '[*Campus*](https://example.com/)')
+
+    def test_markdown_preserves_nested_inline_formatting(self):
+        self.assertEqual(
+            sync.md("<em><a href='/about'><strong>A &amp; B</strong></a></em>"),
+            f"*[**A & B**]({sync.site_url()}/about)*",
+        )
+
     def test_website_urls_ignore_repository_name(self):
         with patch.dict(sync.os.environ, {"GITHUB_REPOSITORY": "NewOwner/NewOwner.github.io"}):
             result = sync.render()
