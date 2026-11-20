@@ -6,7 +6,7 @@ import json
 import os
 import re
 from datetime import date
-from html import unescape
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.request import Request, urlopen
 from asset_urls import version_assets
@@ -18,18 +18,45 @@ ROOT=Path(__file__).resolve().parents[1]
 def site_url():
     return production_url(ROOT)
 
-def md(fragment):
-    def link(match):
-        href=match[1]
+class InlineMarkdown(HTMLParser):
+    emphasis = {"strong": "**", "em": "*", "i": "*"}
+
+    def __init__(self):
+        super().__init__()
+        self.frames = [(None, None, [])]
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.emphasis or tag == "a":
+            self.frames.append((tag, dict(attrs).get("href"), []))
+
+    def handle_data(self, data):
+        self.frames[-1][2].append(data)
+
+    def handle_endtag(self, tag):
+        if self.frames[-1][0] != tag:
+            return
+        _, href, parts = self.frames.pop()
+        content = "".join(parts)
+        if tag in self.emphasis:
+            marker = self.emphasis[tag]
+            content = re.sub(r"\S(?:.*\S)?", lambda match: f"{marker}{match[0]}{marker}", content, flags=re.S)
+        elif href:
+            content = self.link(content.strip(), href)
+        self.handle_data(content)
+
+    @staticmethod
+    def link(label, href):
         if href.startswith("#"):
             href=site_url()+"/"+href
         elif href.startswith("/"):
             href=site_url()+href
-        return "["+re.sub(r"<[^>]*>","",match[2]).strip()+"]("+href+")"
-    fragment=re.sub(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>',link,fragment,flags=re.S|re.I)
-    fragment=re.sub(r"<strong\b[^>]*>(.*?)</strong>",r"**\1**",fragment,flags=re.S|re.I)
-    fragment=re.sub(r"<em>(.*?)</em>",r"*\1*",fragment,flags=re.S|re.I)
-    return unescape(" ".join(re.sub(r"<[^>]+>","",fragment).split()))
+        return f"[{label}]({href})"
+
+def md(fragment):
+    parser = InlineMarkdown()
+    parser.feed(fragment)
+    parser.close()
+    return " ".join("".join(parser.frames[0][2]).split())
 def read_home():
     html=(ROOT/"index.html").read_text(encoding="utf-8")
     def required(pattern,label):
