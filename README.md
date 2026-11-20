@@ -2,7 +2,7 @@
 
 **Homepage**: [www.futseyi.com](https://www.futseyi.com/)
 
-Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [HKUST, Guangzhou Campus](https://en.wikipedia.org/wiki/Hong_Kong_University_of_Science_and_Technology_(Guangzhou)), with a background in automation.
+Hey, I'm **FuTseYi**. Just **Shine** is fine. I'm an MPhil student at [*HKUST, Guangzhou Campus*](https://en.wikipedia.org/wiki/Hong_Kong_University_of_Science_and_Technology_(Guangzhou)), with a background in automation.
 
 *Currently exploring new things, occasionally pretending I know what I’m doing.*
 
