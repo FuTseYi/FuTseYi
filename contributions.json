@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T07:54:16.005847+00:00",
+  "updated_at": "2026-11-21T03:42:39.913838+00:00",
   "entries": [
     {
       "name": "UEM-Stu/UEM-Stu-Brand",
@@ -42,6 +42,13 @@
       "activity": "Commit",
       "description": "",
       "language": ""
+    },
+    {
+      "name": "tseyicontact/FuTseYi-Site-Source",
+      "date": "2026-11-08T08:00:00Z",
+      "activity": "Commit",
+      "description": "Source and single build pipeline for FuTseYi-Site",
+      "language": "Python"
     },
     {
       "name": "HKUST-ELPA/HKUST-ELPA.github.io",
