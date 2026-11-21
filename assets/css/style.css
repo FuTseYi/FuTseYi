@@ -571,9 +571,7 @@ section.section { padding: 38px 0; }
 /* Shared directory: homepage, archive and article. */
 .toc-title{font-size:9px;color:var(--ink-faint);letter-spacing:.12em;margin:0 0 8px 12px}
 .page-toc{display:none;flex-direction:column;gap:2px;width:160px;max-height:min(420px,60vh,calc(100vh - 2 * (var(--nav-h) + 20px)));overflow-y:auto;scrollbar-width:none;padding:10px 0;z-index:40;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease}
-.page-toc::-webkit-scrollbar,.toc-content::-webkit-scrollbar{display:none}
-.js .page-toc{overflow:hidden}
-.toc-content{display:flex;flex-direction:column;gap:2px;min-height:0;overflow-y:auto;scrollbar-width:none}
+.page-toc::-webkit-scrollbar{display:none}
 .page-toc.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 .page-toc a{display:block;padding:5px 10px 5px 12px;border-left:2px solid var(--line);color:var(--ink-faint);font-size:12px;font-weight:500;letter-spacing:.01em;line-height:1.3;text-decoration:none;white-space:normal;overflow-wrap:anywhere;transition:color .15s ease,border-color .15s ease}
 .page-toc .toc-level-2{padding-left:24px;font-size:11px}
@@ -713,8 +711,6 @@ section.section { padding: 32px 0; }
 .article-toc-clip{min-height:0;overflow:hidden}
 .article-toc-inline nav{display:flex;flex-direction:column;gap:0;max-height:50vh;overflow-y:auto;scrollbar-width:none;padding:8px 6px 12px}
 .article-toc-inline nav::-webkit-scrollbar{display:none}
-.article-toc-inline .scroll-hint{margin-bottom:8px}
-.article-toc-inline:not(.is-open) .scroll-hint{display:none}
 .article-toc-inline nav a{display:block;padding:12px 6px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .article-toc-inline nav a:last-child{border:0}
 .article-toc-inline nav .toc-level-2{padding-left:20px}

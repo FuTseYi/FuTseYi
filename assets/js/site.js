@@ -133,21 +133,7 @@
       document.body.prepend(readingProgress);
     }
 
-    const addScrollHint = (content, container, isEnabled = () => true) => {
-      const hint = document.createElement('div');
-      hint.className = 'scroll-hint';
-      hint.setAttribute('aria-hidden', 'true');
-      container.append(hint);
-      const syncHint = () => {
-        hint.classList.toggle('is-visible', isEnabled() && content.scrollHeight - content.clientHeight - content.scrollTop > 2);
-      };
-      content.addEventListener('scroll', syncHint, { passive: true });
-      const observer = new ResizeObserver(syncHint);
-      observer.observe(content);
-      observers.push(observer);
-      return syncHint;
-    };
-    const setupDisclosure = (container, toggleSelector, panelSelector, onChange) => {
+    const setupDisclosure = (container, toggleSelector, panelSelector) => {
       if (!container) return;
       const button = container.querySelector(toggleSelector);
       const panel = container.querySelector(panelSelector);
@@ -155,25 +141,13 @@
         container.classList.toggle('is-open', open);
         button.setAttribute('aria-expanded', String(open));
         panel.inert = !open;
-        onChange?.();
       };
       setOpen(false);
       button.addEventListener('click', () => setOpen(!container.classList.contains('is-open')));
     };
-    const inlineToc = document.querySelector('.article-toc-inline');
-    if (inlineToc) {
-      const syncInlineHint = addScrollHint(inlineToc.querySelector('nav'), inlineToc, () => inlineToc.classList.contains('is-open'));
-      setupDisclosure(inlineToc, '.article-toc-toggle', '.article-toc-panel', syncInlineHint);
-    }
+    setupDisclosure(document.querySelector('.article-toc-inline'), '.article-toc-toggle', '.article-toc-panel');
     setupDisclosure(document.querySelector('.web-evolution'), '.web-evolution-toggle', '.web-evolution-panel');
     const toc = document.querySelector('.page-toc');
-    const tocContent = toc && document.createElement('div');
-    if (toc) {
-      tocContent.className = 'toc-content';
-      tocContent.append(...toc.childNodes);
-      toc.append(tocContent);
-      addScrollHint(tocContent, toc);
-    }
     if (toc?.classList.contains('article-toc')) {
       const observer = new ResizeObserver(() => toc.style.setProperty('--toc-height', `${toc.offsetHeight}px`));
       observer.observe(toc);
@@ -244,17 +218,9 @@
       }
       tocLinks.forEach((link) => {
         const current = decodeURIComponent(link.hash.slice(1)) === active;
-        const changed = current && !link.classList.contains('is-active');
         link.classList.toggle('is-active', current);
         if (current) link.setAttribute('aria-current', 'location');
         else link.removeAttribute('aria-current');
-        if (changed && tocContent.clientHeight) {
-          const item = link.getBoundingClientRect();
-          const bounds = tocContent.getBoundingClientRect();
-          if (item.top < bounds.top || item.bottom > bounds.bottom) {
-            tocContent.scrollTop += item.top - bounds.top - (tocContent.clientHeight - item.height) / 2;
-          }
-        }
       });
     };
     const schedule = () => {
@@ -300,7 +266,6 @@
       button.addEventListener('click', () => {
         revealed = revealed === years.length ? 0 : revealed + 1;
         sync();
-        releaseTarget();
       });
       list.after(button);
     });
@@ -324,7 +289,17 @@
       dialog.autofocus = true;
       const openButton = document.querySelector('.search-open');
       const results = document.getElementById('search-results');
-      const syncScrollHint = addScrollHint(results, dialog);
+      const hint = document.createElement('div');
+      hint.className = 'scroll-hint';
+      hint.setAttribute('aria-hidden', 'true');
+      dialog.append(hint);
+      const syncScrollHint = () => {
+        hint.classList.toggle('is-visible', results.scrollHeight - results.clientHeight - results.scrollTop > 2);
+      };
+      listen(results, 'scroll', syncScrollHint, { passive: true });
+      const observer = new ResizeObserver(syncScrollHint);
+      observer.observe(results);
+      observers.push(observer);
       let engine;
       let sequence = 0;
       const loadSearch = () => engine ??= import('/pagefind/pagefind.js').then(async pagefind => {
