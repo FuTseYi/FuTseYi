@@ -1,0 +1,62 @@
+name: Synchronize profile README
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/sync-readme.yml
+      - index.html
+      - posts/**
+      - scripts/blog_index.py
+      - scripts/post_metadata.py
+      - scripts/site_metadata.py
+      - scripts/sync_readme.py
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: readme-sync
+  cancel-in-progress: false
+jobs:
+  synchronize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - name: Verify profile content generated from homepage
+        run: python -m unittest tests.test_sync_readme -v
+      - name: Create short-lived profile token
+        id: profile_token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+          permission-contents: write
+      - name: Resolve profile bot identity
+        id: bot
+        env:
+          GH_TOKEN: ${{ steps.profile_token.outputs.token }}
+          APP_SLUG: ${{ steps.profile_token.outputs.app-slug }}
+        run: echo "id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+      - name: Synchronize GitHub Profile README
+        env:
+          GH_TOKEN: ${{ steps.profile_token.outputs.token }}
+          BOT_NAME: ${{ steps.profile_token.outputs.app-slug }}[bot]
+          BOT_EMAIL: ${{ steps.bot.outputs.id }}+${{ steps.profile_token.outputs.app-slug }}[bot]@users.noreply.github.com
+        run: |
+          python scripts/sync_readme.py --sync-profile
+          if git diff --quiet -- README.md; then
+            echo 'Profile README already matches'
+            exit 0
+          fi
+          gh auth setup-git
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
+          git add README.md
+          git commit -m "docs: sync README from personal website"
+          git push origin HEAD:main

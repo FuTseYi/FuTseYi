@@ -1,0 +1,60 @@
+name: Refresh versioned GitHub contributions
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 1 1,15 * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contribution-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create source update token
+        id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+          permission-contents: write
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ steps.app.outputs.token }}
+          persist-credentials: true
+      - name: Resolve source bot identity
+        id: bot
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          APP_SLUG: ${{ steps.app.outputs.app-slug }}
+        run: echo "id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Refresh lifetime public contributions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/refresh_contributions.py
+      - name: Check for snapshot changes
+        id: changes
+        run: |
+          if git diff --quiet -- contributions.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Commit verified changes to canonical source
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name '${{ steps.app.outputs.app-slug }}[bot]'
+          git config user.email '${{ steps.bot.outputs.id }}+${{ steps.app.outputs.app-slug }}[bot]@users.noreply.github.com'
+          git add contributions.json
+          git commit -m "data: refresh verified public contributions"
+          # App-authored snapshot updates trigger the publishing workflow via push.
+          git push origin HEAD:main
