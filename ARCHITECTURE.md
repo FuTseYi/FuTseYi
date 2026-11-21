@@ -79,7 +79,7 @@ sequenceDiagram
 
 SEO 元数据以首页 Canonical 为唯一 Origin 来源，由 `scripts/site_metadata.py` 统一解析和映射。文章生成器负责 HTML、RSS、Sitemap；构建编排负责补全 robots.txt，并在 HTML 生成后统一版本化 CSS/JS。语义验证与最终产物验证分别检查索引契约和本地资源完整性。
 
-贡献刷新独立运行：每月 **1 日、15 日 UTC 01:17** 定时执行，也可手动触发；只有数据变化时，才由 GitHub App Bot 提交 `contributions.json`。Source `main` 上的 Push（包括 Bot 的贡献快照提交）会触发网站发布，只有根 README 变更的 Push 除外，发布工作流也支持手动运行。构建只读取已提交的贡献快照，不调用 GraphQL；静态产物未变化时不会产生 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章元数据生成本仓库根 README，仅在内容变化时由 GitHub App Bot 提交。
+贡献刷新独立运行：每月 **1 日、15 日 UTC 01:17** 定时执行，也可手动触发；只有数据变化时，才由 GitHub App Bot 提交 `contributions.json`。Source `main` 上的网站相关变更（包括 Bot 提交的贡献快照）会触发网站发布。仅修改根 README、架构说明、仓库指南、预览指南或博客编辑指南的提交会跳过构建。发布工作流也支持手动运行。构建只读取已提交的贡献快照，不调用 GraphQL；静态产物未变化时不会产生 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章元数据生成本仓库根 README，仅在内容变化时由 GitHub App Bot 提交。Profile README 同步和贡献刷新共用一个 GitHub Actions 队列，依次读取并更新 Source `main`。
 
 ## 文档
 
