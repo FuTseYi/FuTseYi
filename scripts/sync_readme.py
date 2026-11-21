@@ -5,7 +5,6 @@ import re
 from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
-from asset_urls import version_assets
 from site_metadata import site_url as production_url
 from blog_index import build_index
 
@@ -133,7 +132,7 @@ def update_site():
         label="View all articles" if posts else "Browse recent articles"
         content+=f'<a class="list-toggle" href="{SITE}/blog/">{label} <span class="link-arrow" aria-hidden="true"></span></a>'
     html=re.sub(r"<!-- LATEST-POSTS -->.*?<!-- /LATEST-POSTS -->",lambda _: content,html,flags=re.S)
-    output.write_text(version_assets(html, ROOT),encoding="utf-8")
+    output.write_text(html,encoding="utf-8")
     print("Injected latest blog posts into deployed homepage.")
 
 def main():
