@@ -5,7 +5,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 SITE = Path(__file__).resolve().parents[1] / "_site"
 
@@ -24,7 +24,7 @@ def sample_articles():
 
 
 def check(page, name, width):
-    page.goto(f"http://127.0.0.1:8766/blog/{name}/", wait_until="networkidle")
+    page.goto(f"http://127.0.0.1:8766/blog/{name}/")
     assert page.locator("article.article").count() == 1
     assert page.locator("h1").count() == 1
     atmosphere = page.locator(".atmosphere")
@@ -68,7 +68,7 @@ def check(page, name, width):
 
 
 def check_site_navigation(page, width):
-    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    page.goto("http://127.0.0.1:8766/")
     assert page.locator("h1").count() == 1
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
 
@@ -83,8 +83,6 @@ def check_site_navigation(page, width):
     page.evaluate("""() => {
         window.__persistentHeader = document.querySelector('#site-header');
         window.__persistentCanvas = document.querySelector('.atmosphere canvas');
-    }""")
-    page.evaluate("""() => {
         window.__scrollHistory = [];
         window.addEventListener('scroll', () => window.__scrollHistory.push(window.scrollY), {passive: true});
     }""")
@@ -95,8 +93,18 @@ def check_site_navigation(page, width):
     assert page.evaluate("document.querySelector('#site-header') === window.__persistentHeader")
     if page.evaluate("!matchMedia('(prefers-reduced-motion: reduce)').matches"):
         assert page.evaluate("(window.__scrollHistory || []).some(y => y > 15 && y < 600)"), "Homepage logo must scroll smoothly instead of being overridden by navigation"
-    page.evaluate("window.scrollTo({top: 700, behavior: 'instant'}); window.__scrollHistory = []")
-    assert page.evaluate("window.scrollY > 100")
+    def open_blog():
+        page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
+        page.wait_for_function("window.scrollY > 100")
+        page.evaluate("window.__scrollHistory = []")
+        if width <= 860:
+            page.locator(".nav-toggle").click()
+        page.locator("#primary-navigation a[href='/blog/']").click()
+        page.wait_for_url("**/blog/")
+        page.locator(".blog-entry").first.wait_for()
+        page.wait_for_function("window.scrollY < 2")
+        assert page.evaluate("!window.__scrollHistory.some(y => y > 15 && y < 600)"), "Cross-page navigation animated the scroll position"
+
     if width <= 860:
         toggle = page.locator(".nav-toggle")
         assert toggle.is_visible()
@@ -107,17 +115,7 @@ def check_site_navigation(page, width):
         page.keyboard.press("Escape")
         assert toggle.get_attribute("aria-expanded") == "false"
         assert page.locator("#primary-navigation").evaluate("(el) => el.inert")
-        toggle.click()
-        page.locator("#primary-navigation a[href='/blog/']").click()
-    else:
-        page.locator("#primary-navigation a[href='/blog/']").click()
-    page.wait_for_url("**/blog/")
-    page.locator(".blog-entry").first.wait_for()
-    page.wait_for_function("window.scrollY < 2")
-    assert page.evaluate("""() => {
-        const samples = window.__scrollHistory || [];
-        return !samples.some(y => y > 15 && y < 600);
-    }"""), "Cross-page navigation visibly animated the scroll position"
+    open_blog()
     page.wait_for_function("""() => {
         const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
         return !document.documentElement.classList.contains('is-navigating') &&
@@ -132,7 +130,7 @@ def check_site_navigation(page, width):
     page.go_back()
     page.wait_for_url("http://127.0.0.1:8766/")
     page.locator("main h1").wait_for()
-    assert page.evaluate("""() => !window.Swup || (
+    assert page.evaluate("""() => (
         document.querySelector('#site-header') === window.__persistentHeader &&
         document.querySelector('.atmosphere canvas') === window.__persistentCanvas
     )""")
@@ -144,20 +142,11 @@ def check_site_navigation(page, width):
         page.locator("#site-header .brand").click()
         page.wait_for_url("http://127.0.0.1:8766/")
         page.locator("main h1").wait_for()
-        page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
-        page.wait_for_function("window.scrollY > 100")
-        page.evaluate("window.__scrollHistory = []")
-        if width <= 860:
-            page.locator(".nav-toggle").click()
-        page.locator("#primary-navigation a[href='/blog/']").click()
-        page.wait_for_url("**/blog/")
-        page.locator(".blog-entry").first.wait_for()
-        page.wait_for_function("window.scrollY < 2")
-        assert page.evaluate("""() => !(window.__scrollHistory || []).some(y => y > 15 && y < 600)"""), "Repeated navigation animated the scroll position"
+        open_blog()
 
 
 def check_contribution_year_expansion(page):
-    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    page.goto("http://127.0.0.1:8766/")
     items = page.locator("#contribution-list .project-item")
     entries = json.loads((SITE / "contributions.json").read_text(encoding="utf-8"))["entries"]
     assert items.count() == len(entries)
@@ -192,7 +181,7 @@ def check_search(page):
     posts = json.loads((SITE / "blog/posts.json").read_text(encoding="utf-8"))
     post = next(post for post in posts if len(re.findall(r"[A-Za-z]{3,}", post["title"])) >= 2)
     terms = re.findall(r"[A-Za-z]{3,}", post["title"])[:2]
-    page.goto("http://127.0.0.1:8766/blog/", wait_until="networkidle")
+    page.goto("http://127.0.0.1:8766/blog/")
     page.locator(".search-open").click()
     dialog = page.locator("#search-dialog")
     assert dialog.evaluate("(el) => el.open")
@@ -203,13 +192,12 @@ def check_search(page):
     assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
     result = page.locator(f'#search-results a[href="{post["url"]}"]')
     search.fill(terms[0])
-    result.wait_for(timeout=15000)
-    assert page.locator("#search-results").is_visible()
-    assert page.locator(".search-summary").is_visible()
-    assert result.locator(".link-label mark").first.inner_text().casefold() == terms[0].casefold()
+    marks = result.locator(".link-label mark")
+    expect(marks.first).to_have_text(terms[0], ignore_case=True, timeout=15000)
+    expect(page.locator("#search-results")).to_be_visible()
+    expect(page.locator(".search-summary")).to_be_visible()
     search.fill(" ".join(terms))
-    result.wait_for(timeout=15000)
-    assert [mark.casefold() for mark in result.locator(".link-label mark").all_inner_texts()] == [term.casefold() for term in terms]
+    expect(marks).to_have_text(terms, ignore_case=True, timeout=15000)
     page.keyboard.press("Escape")
     assert not dialog.evaluate("(el) => el.open")
     page.wait_for_function("document.querySelector('#blog-search').value === ''")
@@ -223,7 +211,7 @@ def check_search(page):
 def check_rss_links(page):
     for route, selector in (("/", '.hero-content .hero-links a[href="/rss.xml"]'),
                             ("/blog/", '.footer-social a[href="/rss.xml"]')):
-        page.goto("http://127.0.0.1:8766" + route, wait_until="networkidle")
+        page.goto("http://127.0.0.1:8766" + route)
         link = page.locator(selector)
         assert link.count() == 1
         assert link.get_attribute("data-no-swup") == ""
@@ -238,50 +226,41 @@ def check_rss_links(page):
 
 
 def check_toc_transitions(page, article_slug):
-    def check_metadata(article):
+    home = "http://127.0.0.1:8766/"
+    page.goto(home)
+    canonical = page.locator('link[rel="canonical"]')
+    origin = canonical.get_attribute("href").rstrip("/")
+
+    def check_route(path, toc, article=False):
+        page.wait_for_url(home.rstrip("/") + path)
+        expect(page.locator(f"#main {toc}")).to_be_attached()
+        expect(page.locator(".page-toc")).to_have_count(1)
         page.wait_for_function("article => document.querySelectorAll('.reading-progress').length === Number(article)", arg=article)
-        canonical = page.locator('link[rel="canonical"]').get_attribute('href')
-        assert page.locator('meta[property="og:url"]').get_attribute('content') == canonical
+        expect(canonical).to_have_attribute("href", origin + path)
+        expect(page.locator('meta[property="og:url"]')).to_have_attribute("content", origin + path)
         assert page.locator('meta[property="og:type"]').get_attribute('content') == ('article' if article else 'website')
         assert page.locator('meta[name="twitter:title"]').get_attribute('content') == page.locator('meta[property="og:title"]').get_attribute('content')
         assert (page.locator('meta[property="article:tag"]').count() > 0) == article
         assert page.locator('#site-header').count() == 1
         assert page.locator('.atmosphere').count() <= 1
 
-    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    article_path = f"/blog/{article_slug}/"
+    check_route("/", ".page-toc")
     for _ in range(2):
-        check_metadata(False)
         page.evaluate("window.scrollTo({top: 700, behavior: 'instant'})")
         page.locator('#main > .page-toc.is-visible').wait_for()
-        assert page.locator('.page-toc').count() == 1
         page.locator('#primary-navigation a[href="/blog/"]').click()
-        page.wait_for_url("**/blog/")
-        page.locator('#main .archive-toc').wait_for(state="attached")
-        check_metadata(False)
-        assert page.locator('.page-toc').count() == 1
-        page.locator(f'a[href="/blog/{article_slug}/"]').first.click()
-        page.wait_for_url(f"**/blog/{article_slug}/")
-        page.locator('#main .article-toc').wait_for(state="attached")
-        check_metadata(True)
-        assert page.locator('.page-toc').count() == 1
+        check_route("/blog/", ".archive-toc")
+        page.locator(f'a[href="{article_path}"]').first.click()
+        check_route(article_path, ".article-toc", article=True)
         page.go_back()
-        page.wait_for_url("**/blog/")
-        page.locator('#main .archive-toc').wait_for(state="attached")
-        check_metadata(False)
+        check_route("/blog/", ".archive-toc")
         page.go_forward()
-        page.wait_for_url(f"**/blog/{article_slug}/")
-        page.locator('#main .article-toc').wait_for(state="attached")
-        check_metadata(True)
+        check_route(article_path, ".article-toc", article=True)
         page.locator('.back-link[href="/blog/"]').click()
-        page.wait_for_url("**/blog/")
-        page.locator('#main .archive-toc').wait_for(state="attached")
-        check_metadata(False)
-        assert page.locator('.page-toc').count() == 1
+        check_route("/blog/", ".archive-toc")
         page.locator('#site-header .brand').click()
-        page.wait_for_url("http://127.0.0.1:8766/")
-        page.locator('#main > .page-toc').wait_for(state="attached")
-        check_metadata(False)
-        assert page.locator('.page-toc').count() == 1
+        check_route("/", ".page-toc")
 
 
 def main():
@@ -299,12 +278,12 @@ def main():
                     context.add_init_script(f"localStorage.setItem('site-theme', '{theme}')")
                     page = context.new_page()
                     check_site_navigation(page, width)
-                    check_contribution_year_expansion(page)
                     for slug in dict.fromkeys(articles.values()):
                         check(page, slug, width)
                     context.close()
             context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="no-preference")
             check_site_navigation(context.new_page(), 390)
+            check_contribution_year_expansion(context.new_page())
             context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
@@ -320,7 +299,7 @@ def main():
             errors = []
             page.on("pageerror", lambda error: errors.append(str(error)))
             for route in ("/#%E0%A4%A", f"/blog/{code_slug}/#%E0%A4%A"):
-                page.goto("http://127.0.0.1:8766" + route, wait_until="networkidle")
+                page.goto("http://127.0.0.1:8766" + route)
                 assert page.locator("#site-header").count() == 1
             assert not errors, f"Malformed URL fragments must not break navigation: {errors}"
             context.close()
@@ -352,8 +331,7 @@ def main():
                     errors = []
                     page.on("pageerror", lambda error: errors.append(str(error)))
                     check_site_navigation(page, width)
-                    page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/",
-                              wait_until="networkidle")
+                    page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/")
                     assert page.locator("article.article").count() == 1
                     assert page.locator(".article-code button.code-copy").count() > 0
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
