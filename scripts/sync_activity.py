@@ -12,8 +12,7 @@ OUTPUT = ROOT / "_site/contributions.json"
 START = "<!-- CONTRIBUTIONS:START -->"
 END = "<!-- CONTRIBUTIONS:END -->"
 REPO_NAME = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
-EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi",
-                         "futseyi/futseyi"}
+EXCLUDED_REPOSITORIES = {"futseyi/futseyi.github.io", "futseyi/futseyi"}
 
 
 def timestamp(value):

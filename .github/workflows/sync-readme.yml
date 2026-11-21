@@ -14,8 +14,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: readme-sync
-  cancel-in-progress: false
+  group: source-main-writes
+  queue: max
 jobs:
   synchronize:
     runs-on: ubuntu-latest

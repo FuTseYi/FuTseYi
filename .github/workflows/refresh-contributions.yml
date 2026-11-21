@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: contribution-refresh
-  cancel-in-progress: false
+  group: source-main-writes
+  queue: max
 
 jobs:
   refresh:
