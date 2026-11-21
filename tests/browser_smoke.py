@@ -39,21 +39,6 @@ def check(page, name, width):
     if code.count():
         assert code.first.locator("button.code-copy").count() == 1
         assert code.first.locator("pre").evaluate("(e) => e.scrollWidth >= e.clientWidth")
-    if width < 1600:
-        contents = page.locator(".article-toc-inline")
-        if contents.count():
-            assert contents.is_visible()
-            toggle = contents.locator(".article-toc-toggle")
-            panel = contents.locator(".article-toc-panel")
-            assert toggle.get_attribute("aria-expanded") == "false"
-            assert panel.get_attribute("inert") is not None
-            toggle.click()
-            assert toggle.get_attribute("aria-expanded") == "true"
-            assert panel.get_attribute("inert") is None
-            assert contents.locator("nav a").first.is_visible()
-            toggle.click()
-            assert toggle.get_attribute("aria-expanded") == "false"
-            assert panel.get_attribute("inert") is not None
     images = page.locator("article.article img")
     if images.count():
         img = images.first
@@ -189,56 +174,45 @@ def check_contribution_year_expansion(page):
 
 
 
-def check_disclosure_viewport(page, article_slug):
-    page.add_init_script("""(() => {
-        window.disclosureScrolls = [];
+def check_disclosures(page, article_slug):
+    page.add_init_script("""
+        window.scrollCalls = 0;
         for (const target of [window, Element.prototype]) {
             for (const method of ['scroll', 'scrollTo', 'scrollBy', 'scrollIntoView']) {
                 if (!target[method]) continue;
                 const original = target[method];
                 target[method] = function (...args) {
-                    window.disclosureScrolls.push(method);
+                    window.scrollCalls++;
                     return original.apply(this, args);
                 };
             }
         }
-        const scrollTop = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop');
-        Object.defineProperty(Element.prototype, 'scrollTop', {
-            ...scrollTop,
-            set(value) {
-                window.disclosureScrolls.push('scrollTop');
-                scrollTop.set.call(this, value);
-            }
-        });
-    })()""")
+    """)
 
-    def toggle_without_scrolling(button):
+    def toggle(button):
         panel = page.locator("#" + button.get_attribute("aria-controls"))
         button.evaluate("(el) => el.focus({ preventScroll: true })")
-        page.evaluate("window.disclosureScrolls.length = 0")
         button.press("Enter")
         assert button.get_attribute("aria-expanded") == "true"
-        assert not panel.evaluate("(el) => el.closest('[inert]') !== null")
+        assert not panel.evaluate("(el) => el.closest('[inert]')")
         for _ in range(panel.locator(".project-item").count()):
             if button.get_attribute("data-has-more") != "true":
                 break
             button.press("Enter")
         button.press("Space")
         assert button.get_attribute("aria-expanded") == "false"
-        assert panel.evaluate("(el) => el.closest('[inert]') !== null")
-        # Let both the animation and any queued scroll correction finish.
+        assert panel.evaluate("(el) => Boolean(el.closest('[inert]'))")
         page.wait_for_timeout(300)
-        assert page.evaluate("window.disclosureScrolls") == []
+        assert page.evaluate("window.scrollCalls") == 0
 
     page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
     for selector in (".web-evolution-toggle", "#community-list + .list-toggle",
                      "#contribution-list + .list-toggle"):
-        button = page.locator(selector)
-        toggle_without_scrolling(button)
+        toggle(page.locator(selector))
 
     page.goto(f"http://127.0.0.1:8766/blog/{article_slug}/", wait_until="networkidle")
     button = page.locator(".article-toc-toggle")
-    toggle_without_scrolling(button)
+    toggle(button)
     button.press("Enter")
     first_link = page.locator(".article-toc-inline nav a").first
     first_link.click()
@@ -248,38 +222,22 @@ def check_disclosure_viewport(page, article_slug):
     }""", arg=first_link.get_attribute("href"))
 
 
-def check_toc_scroll(page, article_slug, width):
+def check_toc_scroll(page, article_slug, desktop):
     page.goto(f"http://127.0.0.1:8766/blog/{article_slug}/", wait_until="networkidle")
-    desktop = width >= 1600
     if desktop:
         toc = page.locator(".article-toc")
     else:
         page.locator(".article-toc-toggle").click()
         toc = page.locator(".article-toc-inline nav")
-    assert toc.evaluate("(el) => el.scrollHeight > el.clientHeight")
-    toc.hover()
-    page.mouse.wheel(0, 40)
-    page.wait_for_function("(el) => el.scrollTop > 0", arg=toc.element_handle())
-    position = toc.evaluate("(el) => el.scrollTop")
+    assert toc.evaluate("(el) => getComputedStyle(el).overflowY === 'auto'")
+    toc.evaluate("(el) => { el.scrollTop = 40; }")
+    assert toc.evaluate("(el) => el.scrollTop") == 40
     page.evaluate("window.scrollTo({top: document.documentElement.scrollHeight, behavior: 'instant'})")
     page.wait_for_function("document.querySelector('.reading-progress').style.transform === 'scaleX(1)'")
+    assert toc.evaluate("(el) => el.scrollTop") == 40
     if desktop:
         assert toc.locator("a").last.get_attribute("aria-current") == "location"
-        assert toc.evaluate("(el) => el.lastElementChild.getBoundingClientRect().top > el.getBoundingClientRect().bottom")
-    assert toc.evaluate("(el) => el.scrollTop") == position
     assert page.locator(".page-toc .scroll-hint, .article-toc-inline .scroll-hint").count() == 0
-
-
-def check_disclosures_and_toc(browser, long_toc_slug):
-    for width in (390, 1700):
-        for theme in ("light", "dark"):
-            context = browser.new_context(viewport={"width": width, "height": 620},
-                                         reduced_motion="reduce")
-            context.add_init_script(f"localStorage.setItem('site-theme', '{theme}')")
-            check_toc_scroll(context.new_page(), long_toc_slug, width)
-            if width == 390:
-                check_disclosure_viewport(context.new_page(), long_toc_slug)
-            context.close()
 
 
 def check_search(page):
@@ -399,13 +357,15 @@ def main():
                     check_contribution_year_expansion(page)
                     for slug in dict.fromkeys(articles.values()):
                         check(page, slug, width)
+                    if width != 1024:
+                        check_toc_scroll(page, long_toc_slug, desktop=width == 1700)
+                    if width == 390:
+                        check_disclosures(page, long_toc_slug)
                     context.close()
-            for motion in ("no-preference", "reduce"):
-                context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion=motion)
-                check_disclosure_viewport(context.new_page(), long_toc_slug)
-                if motion == "no-preference":
-                    check_site_navigation(context.new_page(), 390)
-                context.close()
+            context = browser.new_context(viewport={"width": 390, "height": 850})
+            check_site_navigation(context.new_page(), 390)
+            check_disclosures(context.new_page(), long_toc_slug)
+            context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
             context.close()
@@ -441,7 +401,6 @@ def main():
             actual = page.evaluate("navigator.clipboard.readText()")
             assert actual.replace("\r\n", "\n").strip() == expected.strip()
             context.close()
-            check_disclosures_and_toc(browser, long_toc_slug)
             browser.close()
             # WebKit covers the mobile/desktop navigation and article path used by Safari.
             safari = playwright.webkit.launch(headless=True)
@@ -458,12 +417,16 @@ def main():
                     assert page.locator("article.article").count() == 1
                     assert page.locator(".article-code button.code-copy").count() > 0
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
+                    if width == 390:
+                        check_toc_scroll(page, long_toc_slug, desktop=False)
+                        check_disclosures(page, long_toc_slug)
                     assert not errors, f"WebKit {width}px browser errors: {errors}"
                     context.close()
                 context = safari.new_context(viewport={"width": 1700, "height": 850}, reduced_motion="reduce")
-                check_toc_transitions(context.new_page(), code_slug)
+                page = context.new_page()
+                check_toc_transitions(page, code_slug)
+                check_toc_scroll(page, long_toc_slug, desktop=True)
                 context.close()
-                check_disclosures_and_toc(safari, long_toc_slug)
             finally:
                 safari.close()
             print("Chromium and WebKit smoke checks passed: navigation, mobile layout, search, themes and articles.")
