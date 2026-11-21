@@ -1,6 +1,6 @@
 # FuTseYi
 
-个人网站的唯一源码与构建仓库。基于原生 HTML、CSS、JavaScript 和 Python 生成静态网站；构建后的文件统一发布到 [FuTseYi.github.io](https://github.com/FuTseYi/FuTseYi.github.io)，由 Vercel 部署至正式生产域名。
+一个使用原生 HTML、CSS、JavaScript 和 Python 构建的开源个人网站项目。仓库维护站点源码、文章和构建工具，构建生成可独立部署的静态文件。
 
 ## 项目结构
 
@@ -40,7 +40,7 @@ python preview.py
 
 ## 构建与发布
 
-**Source**（本仓库）是唯一维护入口；**Published**（`FuTseYi/FuTseYi.github.io`）仅保存由 Source 产生的静态成品。Vercel 使用 Published 的静态文件作为正式生产部署来源，不重复构建网站。GitHub Pages 如启用，仅作为非生产镜像。发布仓库的 `README.md` 由 [PUBLISHED_README.md](PUBLISHED_README.md) 复制生成。
+**Source**（本仓库）维护源码和构建流程。构建输出为 `_site/`，可直接部署到静态托管平台，无需 Python 运行时。本站的发布工作流将产物同步到 [FuTseYi.github.io](https://github.com/FuTseYi/FuTseYi.github.io)。发布仓库的 `README.md` 由 [PUBLISHED_README.md](PUBLISHED_README.md) 复制生成。
 
 ```mermaid
 sequenceDiagram
@@ -52,7 +52,7 @@ sequenceDiagram
     participant App as GitHub App
     participant Deploy as Publish Action
     participant Published as Published main
-    participant Hosts as Vercel Production
+    participant Hosts as 静态托管
 
     opt 每月定时或手动刷新贡献
         Maintainer->>Refresh: schedule / workflow_dispatch
@@ -67,7 +67,7 @@ sequenceDiagram
     opt 日常代码或内容更新
         Maintainer->>Source: Push / merge
     end
-    Source->>Deploy: main push
+    Source->>Deploy: 网站相关变更或手动触发
     Note over Deploy: 测试并离线生成唯一 _site/
     Deploy->>App: 申请 Published 写入 Token
     App-->>Deploy: Installation token
