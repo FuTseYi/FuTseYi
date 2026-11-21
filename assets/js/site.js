@@ -147,11 +147,6 @@
       observers.push(observer);
       return syncHint;
     };
-    const scrollExpandedIntoView = (element) => {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const overflow = element.getBoundingClientRect().bottom - (window.innerHeight - 24);
-      if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' });
-    };
     const setupDisclosure = (container, toggleSelector, panelSelector, onChange) => {
       if (!container) return;
       const button = container.querySelector(toggleSelector);
@@ -164,11 +159,6 @@
       };
       setOpen(false);
       button.addEventListener('click', () => setOpen(!container.classList.contains('is-open')));
-      panel.addEventListener('transitionend', (event) => {
-        if (event.target !== panel || event.propertyName !== 'grid-template-rows' || !container.classList.contains('is-open')) return;
-        onChange?.();
-        scrollExpandedIntoView(container);
-      });
     };
     const inlineToc = document.querySelector('.article-toc-inline');
     if (inlineToc) {
@@ -279,7 +269,7 @@
     if (location.hash) selectTarget(hashTargetId());
     else schedule();
     document.querySelectorAll('[data-expandable]').forEach((list) => {
-      const extra = [...list.querySelectorAll(':scope > .project-item')].slice(3);
+      const extra = [...list.querySelectorAll(`:scope > ${list.dataset.expandable}`)].slice(3);
       if (!extra.length) return;
       const dated = list.id === 'contribution-list';
       const yearOf = (item) => dated ? item.querySelector('time[datetime]').getAttribute('datetime').slice(0, 4) : 'all';
@@ -310,13 +300,7 @@
       button.addEventListener('click', () => {
         revealed = revealed === years.length ? 0 : revealed + 1;
         sync();
-        if (revealed > 0) requestAnimationFrame(() => scrollExpandedIntoView(list));
         releaseTarget();
-      });
-      panel.addEventListener('transitionend', (event) => {
-        if (event.target === panel && event.propertyName === 'grid-template-rows' && list.classList.contains('is-open')) {
-          scrollExpandedIntoView(list);
-        }
       });
       list.after(button);
     });

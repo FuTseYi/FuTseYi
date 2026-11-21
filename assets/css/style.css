@@ -550,7 +550,7 @@ section.section { padding: 38px 0; }
 #recent-blog .project-item h3 a{background-image:none}
 .contribution-date{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
 #contributions .project-tags{margin-top:5px;gap:8px}
-.project-item[hidden]{display:none}
+[data-expandable] .expandable-clip > [hidden]{display:none}
 .list-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:9px 0;border:0;border-radius:0;background-color:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
 .list-toggle .link-arrow{margin-left:0}
 .list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);background-color:transparent;outline:none;text-decoration:none}
@@ -709,7 +709,7 @@ section.section { padding: 32px 0; }
 .article-toc-toggle:is(:hover,:focus-visible),.article-toc-inline.is-open .article-toc-toggle,.article-toc-inline nav a:is(:hover,:focus-visible){color:var(--gold-ink)}
 .article-toc-panel{display:grid;grid-template-rows:1fr}
 .js .article-toc-panel,.js .web-evolution-panel,.js .expandable-panel{grid-template-rows:0fr;transition:grid-template-rows .24s ease}
-.js .article-toc-inline.is-open .article-toc-panel,.js .web-evolution.is-open .web-evolution-panel,.js .project-list.is-open .expandable-panel{grid-template-rows:1fr}
+.js .article-toc-inline.is-open .article-toc-panel,.js .web-evolution.is-open .web-evolution-panel,.js [data-expandable].is-open .expandable-panel{grid-template-rows:1fr}
 .article-toc-clip{min-height:0;overflow:hidden}
 .article-toc-inline nav{display:flex;flex-direction:column;gap:0;max-height:50vh;overflow-y:auto;scrollbar-width:none;padding:8px 6px 12px}
 .article-toc-inline nav::-webkit-scrollbar{display:none}
