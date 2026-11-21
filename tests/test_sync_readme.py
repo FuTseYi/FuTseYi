@@ -15,8 +15,7 @@ class ReadmeTests(unittest.TestCase):
             root = Path(directory)
             readme = root / "README.md"
             readme.write_text("Old profile\n", encoding="utf-8")
-            architecture = root / "docs" / "ARCHITECTURE.md"
-            architecture.parent.mkdir()
+            architecture = root / "ARCHITECTURE.md"
             architecture.write_text("Technical guide\n", encoding="utf-8")
             with patch.object(sync, "ROOT", root), \
                  patch.object(sys, "argv", ["sync_readme.py", "--sync-profile"]), \

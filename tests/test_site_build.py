@@ -6,7 +6,6 @@ class SiteBuildTests(unittest.TestCase):
     def test_build_output_is_reduced_to_counts_without_losing_warnings(self):
         log = "\n".join([
             "Blog: generated 30 article(s)",
-            "Profile README already matches.",
             "Injected latest blog posts into deployed homepage.",
             "::warning::Public activity unavailable (HTTPError); retaining previous snapshot.",
             "Rendered 6 public contribution repositories.",

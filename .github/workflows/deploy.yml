@@ -3,7 +3,7 @@ name: Build and publish static site
 on:
   push:
     branches: [main]
-    paths-ignore: [README.md]
+    paths-ignore: [README.md, ARCHITECTURE.md, AGENTS.md, PREVIEW.md, BLOG_GUIDELINES.md]
   workflow_dispatch:
 
 permissions:

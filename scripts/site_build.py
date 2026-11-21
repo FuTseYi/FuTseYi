@@ -15,14 +15,13 @@ SUMMARY_RULES = (
     (re.compile(r"^Verified (\d+) HTML pages", re.MULTILINE), r"\1 个页面检查通过 / pages verified"),
     (re.compile(r"^Rendered (\d+) public contribution repositories", re.MULTILINE), r"\1 个贡献仓库 / contribution repositories"),
 )
-ROUTINE_MESSAGES = re.compile(r"^(?:Injected latest blog posts|Profile README already matches)")
 
 def summarize(log):
     """Condense build output into counts, returning those parts plus anything unrecognized."""
     parts = [match.expand(template) for pattern, template in SUMMARY_RULES
              if (match := pattern.search(log))]
     unexpected = [line.strip() for line in log.splitlines()
-                  if line.strip() and not ROUTINE_MESSAGES.match(line.strip())
+                  if line.strip() and not line.strip().startswith("Injected latest blog posts")
                   and not any(pattern.search(line) for pattern, _ in SUMMARY_RULES)]
     return parts, unexpected
 
