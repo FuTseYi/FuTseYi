@@ -28,7 +28,7 @@ class ActivityTests(unittest.TestCase):
             activity.validate_snapshot(snapshot([entry("Org/Repo"), entry("org/repo")]))
 
     def test_schema_rejects_invalid_names(self):
-        for name in ("../secret", "org/repo?bad", "FuTseYi/futseyi.github.io", "FuTseYi/FuTseYi-Site", "FuTseYi/FuTseYi"):
+        for name in ("../secret", "org/repo?bad", "FuTseYi/futseyi.github.io", "FuTseYi/FuTseYi"):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 activity.validate_snapshot(snapshot([entry(name)]))
 
@@ -85,10 +85,10 @@ class ActivityTests(unittest.TestCase):
         self.assertEqual(refresh.contribution(original, "2026-11-08T00:00:00Z", "Repository")["activity"], "Repository")
 
     def test_site_is_filtered_from_graphql(self):
-        repo = {"nameWithOwner": "FuTseYi/FuTseYi-Site", "visibility": "PUBLIC",
+        repo = {"nameWithOwner": "FuTseYi/FuTseYi", "visibility": "PUBLIC",
                 "isFork": False, "description": "", "primaryLanguage": None}
         self.assertIsNone(refresh.contribution(repo, "2026-11-08T00:00:00Z", "Commit"))
-        self.assertEqual(refresh.merge([entry("FuTseYi/FuTseYi-Site")]), [])
+        self.assertEqual(refresh.merge([entry("FuTseYi/FuTseYi")]), [])
 
     def test_graphql_merge_preserves_history(self):
         original = entry("org/older", "2025-01-01T00:00:00Z")
