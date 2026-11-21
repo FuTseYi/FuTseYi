@@ -14,7 +14,7 @@ Maintain this as a lightweight, portable static personal website. Favor correct 
 - `contributions.json` is a **tracked, verified** GitHub contribution snapshot; do not confuse it with untracked generated site output.
 - `BLOG_INDEX.json` is a tracked discovery index generated from Markdown metadata. Update via `python scripts/blog_index.py --write` and verify via `--check`; never edit JSON by hand.
 - Do not commit generated `_site/`, `blog/`, `rss.xml`, or `sitemap.xml` to Source.
-- The homepage canonical owns the public Origin; `site_metadata.py` provides the shared URL mapping. The build emits RSS/Sitemap, completes robots.txt, then versions CSS/JS once. `verify.py` checks SEO and content; `site_verify.py` checks final artifact references. Vercel is the production host; Published remains generated output only.
+- The homepage canonical owns the public Origin; `site_metadata.py` provides the shared URL mapping. The build emits RSS/Sitemap, completes robots.txt, then versions CSS/JS once. `verify.py` checks SEO and content; `site_verify.py` checks final artifact references. Keep hosting configuration in the publishing workflow and keep Published generated-only.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the architecture and canonical flow; [PREVIEW.md](PREVIEW.md) for commands and operating procedures.
 
