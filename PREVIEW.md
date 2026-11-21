@@ -1,6 +1,6 @@
 # Development & Preview
 
-This is the operating guide for **Source** (`FuTseYi`). The overview and canonical workflow diagram are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+This is the operating guide for **Source** (`FuTseYi`). The overview and canonical workflow diagram are in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Local preview and build
 

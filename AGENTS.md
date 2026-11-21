@@ -16,7 +16,7 @@ Maintain this as a lightweight, portable static personal website. Favor correct 
 - Do not commit generated `_site/`, `blog/`, `rss.xml`, or `sitemap.xml` to Source.
 - The homepage canonical owns the public Origin; `site_metadata.py` provides the shared URL mapping. The build emits RSS/Sitemap, completes robots.txt, then versions CSS/JS once. `verify.py` checks SEO and content; `site_verify.py` checks final artifact references. Vercel is the production host; Published remains generated output only.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the architecture and canonical flow; [PREVIEW.md](PREVIEW.md) for commands and operating procedures.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the architecture and canonical flow; [PREVIEW.md](PREVIEW.md) for commands and operating procedures.
 
 ## Engineering principles
 
@@ -37,7 +37,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the architecture and canoni
 
 ## Document ownership
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): overview, repository topology, and the single authoritative publishing diagram.
+- [ARCHITECTURE.md](ARCHITECTURE.md): overview, repository topology, and the single authoritative publishing diagram.
 - [PREVIEW.md](PREVIEW.md): executable development, testing, and operational steps.
 - [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md): editorial policy, metadata, fact-checking, and blog index upkeep.
 - [LICENSING.md](LICENSING.md): reuse rights and third-party attribution.

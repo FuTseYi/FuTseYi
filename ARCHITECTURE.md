@@ -36,11 +36,11 @@ FuTseYi/
 python preview.py
 ```
 
-打开 <http://127.0.0.1:8765/>；修改源码后刷新页面即可查看结果，结束时按 Ctrl+C。Windows 可使用 `py -3` 替代 `python`。只构建、运行测试或检查浏览器时，按 [PREVIEW.md](../PREVIEW.md) 中对应步骤操作。
+打开 <http://127.0.0.1:8765/>；修改源码后刷新页面即可查看结果，结束时按 Ctrl+C。Windows 可使用 `py -3` 替代 `python`。只构建、运行测试或检查浏览器时，按 [PREVIEW.md](PREVIEW.md) 中对应步骤操作。
 
 ## 构建与发布
 
-**Source**（本仓库）是唯一维护入口；**Published**（`FuTseYi/FuTseYi.github.io`）仅保存由 Source 产生的静态成品。Vercel 使用 Published 的静态文件作为正式生产部署来源，不重复构建网站。GitHub Pages 如启用，仅作为非生产镜像。发布仓库的 `README.md` 由 [PUBLISHED_README.md](../PUBLISHED_README.md) 复制生成。
+**Source**（本仓库）是唯一维护入口；**Published**（`FuTseYi/FuTseYi.github.io`）仅保存由 Source 产生的静态成品。Vercel 使用 Published 的静态文件作为正式生产部署来源，不重复构建网站。GitHub Pages 如启用，仅作为非生产镜像。发布仓库的 `README.md` 由 [PUBLISHED_README.md](PUBLISHED_README.md) 复制生成。
 
 ```mermaid
 sequenceDiagram
@@ -79,16 +79,14 @@ sequenceDiagram
 
 SEO 元数据以首页 Canonical 为唯一 Origin 来源，由 `scripts/site_metadata.py` 统一解析和映射。文章生成器负责 HTML、RSS、Sitemap；构建编排负责补全 robots.txt，并在 HTML 生成后统一版本化 CSS/JS。语义验证与最终产物验证分别检查索引契约和本地资源完整性。
 
-贡献刷新独立运行：每月 **1 日、15 日 UTC 01:17** 定时执行，也可手动触发；只有数据变化时，才由 GitHub App Bot 提交 `contributions.json`。Source `main` 上的 Push（包括 Bot 的贡献快照提交）会触发网站发布，只有根 README 变更的 Push 除外，发布工作流也支持手动运行。构建只读取已提交的贡献快照，不调用 GraphQL；静态产物未变化时不会产生 Published 提交。Profile README 由独立的 [sync-readme.yml](../.github/workflows/sync-readme.yml) 根据首页和文章元数据生成本仓库根 README，仅在内容变化时由 GitHub App Bot 提交。
+贡献刷新独立运行：每月 **1 日、15 日 UTC 01:17** 定时执行，也可手动触发；只有数据变化时，才由 GitHub App Bot 提交 `contributions.json`。Source `main` 上的 Push（包括 Bot 的贡献快照提交）会触发网站发布，只有根 README 变更的 Push 除外，发布工作流也支持手动运行。构建只读取已提交的贡献快照，不调用 GraphQL；静态产物未变化时不会产生 Published 提交。Profile README 由独立的 [sync-readme.yml](.github/workflows/sync-readme.yml) 根据首页和文章元数据生成本仓库根 README，仅在内容变化时由 GitHub App Bot 提交。
 
 ## 文档
 
-- [AGENTS.md](../AGENTS.md)：仓库工程原则与修改、验证边界
-- [PREVIEW.md](../PREVIEW.md)：开发、构建、测试和自动发布操作
-- [BLOG_GUIDELINES.md](../BLOG_GUIDELINES.md)：博客编辑、研究与索引规范
-- [LICENSING.md](../LICENSING.md)：代码、内容及第三方素材的许可说明
-- [PUBLISHED_README.md](../PUBLISHED_README.md)：Published 仓库 README 的唯一来源
+- [AGENTS.md](AGENTS.md)：仓库工程原则与修改、验证边界
+- [PREVIEW.md](PREVIEW.md)：开发、构建、测试和自动发布操作
+- [BLOG_GUIDELINES.md](BLOG_GUIDELINES.md)：博客编辑、研究与索引规范
+- [LICENSING.md](LICENSING.md)：代码、内容及第三方素材的许可说明
+- [PUBLISHED_README.md](PUBLISHED_README.md)：Published 仓库 README 的唯一来源
 
 **Every line of code should justify its existence. Define once. Reuse everywhere.**
-
-原 Profile 仓库的素材保存在 [docs/profile-assets](profile-assets/)，沿用其[原许可证](LICENSE-PROFILE)。
