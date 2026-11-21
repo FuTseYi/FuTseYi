@@ -1,0 +1,369 @@
+"""Offline checks for preview source watching and recovery."""
+import contextlib
+import importlib.util
+import io
+from http import HTTPStatus
+from pathlib import Path
+import subprocess
+import tempfile
+from threading import Event, Thread
+import time
+import unittest
+from unittest.mock import patch
+
+spec = importlib.util.spec_from_file_location("preview", Path(__file__).resolve().parents[1] / "preview.py")
+preview = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(preview)
+
+
+class PreviewTests(unittest.TestCase):
+    def preview_root(self, root):
+        for name in ("assets", "scripts", "_site"):
+            (root / name).mkdir(parents=True)
+        (root / "index.html").write_text("source")
+        (root / "robots.txt").write_text("robots")
+        (root / "_site/index.html").write_text("last good build")
+
+    def test_hosts_publish_the_same_portable_static_build(self):
+        root = Path(__file__).resolve().parents[1]
+        deploy = (root / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
+        self.assertIn("python preview.py --build-only", deploy)
+        self.assertIn("rsync -a --delete --exclude='.git/' _site/ published/", deploy)
+
+    def test_build_only_does_not_bind_preview_port(self):
+        with patch.object(preview.sys, "argv", ["preview.py", "--build-only"]), \
+                patch.object(preview, "ensure_dependencies"), \
+                patch.object(preview, "rebuild", return_value=True) as rebuild, \
+                patch.object(preview, "PreviewServer") as server:
+            preview.main()
+        self.assertTrue(rebuild.call_args.kwargs["initial"])
+        self.assertTrue(rebuild.call_args.kwargs["options"].build_only)
+        server.assert_not_called()
+
+    def test_startup_failure_can_serve_last_good_site_and_watch_for_fixes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview.sys, "argv", ["preview.py", "--port", "0"]), \
+                    patch.object(preview, "ensure_dependencies"), \
+                    patch.object(preview, "rebuild", return_value=False), \
+                    patch.object(preview, "watch", side_effect=KeyboardInterrupt) as watch, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                preview.main()
+            watch.assert_called_once()
+            self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+
+    def test_broken_local_reference_cannot_replace_last_good_site(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            def render(source, staged, options):
+                staged.mkdir()
+                (staged / "index.html").write_text(
+                    '<link rel="canonical" href="https://example.org/">'
+                    '<a href="missing.html">Broken</a>')
+                return ([], [])
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview.site_build, "build", side_effect=render):
+                with self.assertRaisesRegex(ValueError, "missing local resource"):
+                    preview.build()
+            self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+
+    def test_failed_build_keeps_last_good_site(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview.site_build, "build", side_effect=ValueError("invalid content")):
+                with self.assertRaises(ValueError):
+                    preview.build()
+            self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+            self.assertEqual(list(root.glob(".preview-*")), [])
+
+    def test_publish_waits_for_readers_and_replaces_stale_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            (root / "_site/stale.txt").write_text("old resource")
+            ready = Event()
+            errors = []
+
+            def assemble(source, staged, options):
+                staged.mkdir()
+                (staged / "index.html").write_text(
+                    '<link rel="canonical" href="https://example.org/">new build')
+                ready.set()
+                return ([], [])
+
+            def build():
+                try:
+                    preview.build()
+                except Exception as error:
+                    errors.append(error)
+
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview.site_build, "build", side_effect=assemble):
+                worker = Thread(target=build)
+                try:
+                    with preview.SERVING_LOCK:
+                        worker.start()
+                        self.assertTrue(ready.wait(2))
+                        self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+                finally:
+                    worker.join(3)
+                self.assertFalse(worker.is_alive())
+            self.assertEqual(errors, [])
+            self.assertEqual((root / "_site/index.html").read_text(),
+                             '<link rel="canonical" href="https://example.org/">new build')
+            self.assertFalse((root / "_site/stale.txt").exists())
+            self.assertEqual(list(root.glob(".preview-*")), [])
+
+    def test_installed_dependencies_need_no_setup(self):
+        with patch.object(preview, "REQUIREMENTS", ("packaging>=24,<27",)), \
+                patch.object(preview.sys, "prefix", "venv"), \
+                patch.object(preview.sys, "base_prefix", "system"), \
+                patch.object(preview, "version", side_effect={"packaging": "25.0"}.get), \
+                patch.object(preview.subprocess, "run") as install:
+            preview.ensure_dependencies()
+        install.assert_not_called()
+
+    def test_existing_environment_with_dependencies_skips_installation(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(preview, "ROOT", Path(directory)), \
+                patch.object(preview.sys, "platform", "win32"), \
+                patch.object(preview.sys, "prefix", "system"), \
+                patch.object(preview.sys, "base_prefix", "system"), \
+                patch.object(preview.sys, "argv", ["preview.py"]), \
+                patch.object(preview.venv, "EnvBuilder") as environment, \
+                patch.object(preview.subprocess, "run") as check, \
+                patch.object(preview, "dependencies_ready", side_effect=[False, True]) as ready, \
+                patch.object(preview.subprocess, "call", return_value=0) as restart, \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            interpreter = Path(directory) / ".venv" / "Scripts/python.exe"
+            interpreter.parent.mkdir(parents=True)
+            interpreter.touch()
+            check.return_value.returncode = 0
+            with self.assertRaises(SystemExit) as result:
+                preview.ensure_dependencies()
+        self.assertEqual(result.exception.code, 0)
+        environment.assert_not_called()
+        self.assertEqual([call.args[0] for call in ready.call_args_list], [Path(preview.sys.executable), interpreter])
+        check.assert_not_called()
+        restart.assert_called_once()
+        self.assertEqual(output.getvalue(), "")
+
+    def test_successful_requests_are_not_logged_but_failures_are(self):
+        handler = object.__new__(preview.PreviewHandler)
+        with patch.object(preview.SimpleHTTPRequestHandler, "log_request") as logged:
+            handler.log_request(200, "-")
+            handler.log_request(304, "-")
+            handler.log_request("-", "-")
+            logged.assert_not_called()
+            handler.log_request(404, "-")
+            handler.log_request(HTTPStatus.NOT_FOUND, "-")
+            handler.log_request(500, "-")
+        self.assertEqual([call.args[0] for call in logged.call_args_list],
+                         [404, HTTPStatus.NOT_FOUND, 500])
+
+    def test_unusable_or_outdated_dependency_metadata_counts_as_missing(self):
+        for value in ("not-a-version", "23.0", "27.0"):
+            with self.subTest(version=value), patch.object(preview, "REQUIREMENTS", ("packaging>=24,<27",)), \
+                    patch.object(preview, "version", return_value=value):
+                self.assertFalse(preview.dependencies_valid())
+
+    def test_missing_dependencies_bootstrap_platform_specific_environment(self):
+        for platform, executable in (("win32", "Scripts/python.exe"), ("darwin", "bin/python"), ("linux", "bin/python")):
+            with self.subTest(platform=platform), tempfile.TemporaryDirectory() as directory, \
+                    patch.object(preview, "ROOT", Path(directory)), \
+                    patch.object(preview, "version", side_effect=preview.PackageNotFoundError), \
+                    patch.object(preview.sys, "platform", platform), \
+                    patch.object(preview.sys, "prefix", preview.sys.base_prefix), \
+                    patch.object(preview.sys, "argv", ["preview.py", "--port", "8766"]), \
+                    patch.object(preview.venv, "EnvBuilder") as environment, \
+                    patch.object(preview.subprocess, "run") as install, \
+                    patch.object(preview.subprocess, "call", return_value=0) as restart, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(SystemExit) as result:
+                    preview.ensure_dependencies()
+                self.assertEqual(result.exception.code, 0)
+                interpreter = Path(directory) / ".venv" / executable
+                environment.return_value.create.assert_called_once_with(Path(directory) / ".venv")
+                self.assertEqual(install.call_args_list[0].args[0],
+                                 [str(interpreter), str(Path(preview.__file__).resolve()), preview.CHECK_FLAG])
+                pip_calls = [call for call in install.call_args_list if "pip" in call.args[0]]
+                self.assertEqual(len(pip_calls), 1)
+                self.assertEqual(pip_calls[0].args[0], [str(interpreter), "-m", "pip", "install", "-r", str(Path(directory) / "requirements.txt")])
+                self.assertEqual(restart.call_args.args[0][-2:], ["--port", "8766"])
+
+    def test_source_changes_include_additions_deletions_but_not_outputs(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(preview, "ROOT", Path(directory)), \
+                patch.object(preview.site_build, "SOURCE_FILES", ("robots.txt",)), \
+                patch.object(preview.site_build, "SOURCE_DIRS", ("content",)):
+            root = Path(directory)
+            for folder in ("content", "assets", "scripts", "_site", "output", ".venv", ".git"):
+                (root / folder).mkdir(parents=True, exist_ok=True)
+            (root / "index.html").write_text("home")
+            original = preview.source_state()
+            for filename in ("_site/index.html", "output/index.html", "sitemap.xml", ".git/config", ".venv/test.py"):
+                (root / filename).write_text("generated")
+            self.assertEqual(preview.source_state(), original)
+            for filename in ("content/new.md", "content/image.png", "assets/css/style.css", "scripts/build.py", "requirements.txt", "robots.txt"):
+                file = root / filename
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text("source")
+                added = preview.source_state()
+                self.assertIn(file, added)
+                file.write_text("changed source")
+                self.assertNotEqual(preview.source_state(), added)
+                file.unlink()
+                self.assertEqual(preview.source_state(), original)
+
+    def test_consecutive_saves_are_combined_and_changes_during_build_are_seen(self):
+        states = [{"file": 1}, {"file": 2}, {"file": 2}, {"file": 3}, {"file": 3}]
+        with patch.object(preview, "source_state", side_effect=states), \
+                patch.object(preview.time, "sleep", side_effect=[None] * 5 + [KeyboardInterrupt]), \
+                patch.object(preview, "rebuild") as rebuild:
+            with self.assertRaises(KeyboardInterrupt):
+                preview.watch({})
+        self.assertEqual(rebuild.call_count, 2)
+
+    def test_failed_build_does_not_stop_next_rebuild(self):
+        with patch.object(preview, "source_state", side_effect=[{1: 1}, {1: 1}, {1: 2}, {1: 2}]), \
+                patch.object(preview.time, "sleep", side_effect=[None] * 4 + [KeyboardInterrupt]), \
+                patch.object(preview, "build", side_effect=[subprocess.CalledProcessError(1, "build"), (["2 articles"], [])]) as build, \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            with self.assertRaises(KeyboardInterrupt):
+                preview.watch({})
+        self.assertEqual(build.call_count, 2)
+        self.assertIn("Build failed", output.getvalue())
+        self.assertIn("网站已更新", output.getvalue())
+        self.assertNotIn("2 articles", output.getvalue())
+        self.assertIn("Refresh your browser", output.getvalue())
+
+    def test_http_refresh_does_not_reuse_stale_bytes(self):
+        import http.client
+        import os
+        from functools import partial
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            page = root / "index.html"
+            page.write_bytes(b"old")
+            original = page.stat()
+            server = preview.PreviewServer(("127.0.0.1", 0), partial(preview.PreviewHandler, directory=directory))
+            worker = Thread(target=server.serve_forever, daemon=True)
+            worker.start()
+            connection = http.client.HTTPConnection("127.0.0.1", server.server_port)
+            try:
+                with contextlib.redirect_stderr(io.StringIO()) as log:
+                    connection.request("GET", "/index.html")
+                    response = connection.getresponse()
+                    modified = response.getheader("Last-Modified")
+                    self.assertEqual(response.read(), b"old")
+                    self.assertEqual(log.getvalue(), "")
+                    page.write_bytes(b"new")
+                    os.utime(page, ns=(original.st_atime_ns, original.st_mtime_ns))
+                    for method in ("GET", "HEAD"):
+                        connection.request(method, "/index.html", headers={"If-Modified-Since": modified})
+                        response = connection.getresponse()
+                        self.assertEqual(response.status, 200)
+                        self.assertEqual(response.getheader("Cache-Control"), "no-store")
+                        self.assertEqual(response.read(), b"new" if method == "GET" else b"")
+                    connection.request("GET", "/missing.html")
+                    response = connection.getresponse()
+                    self.assertEqual(response.status, 404)
+                    response.read()
+                    self.assertIn("/missing.html", log.getvalue())
+            finally:
+                connection.close()
+                server.shutdown()
+                worker.join()
+                server.server_close()
+
+    def test_failed_publication_restores_previous_site(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.preview_root(root)
+            def render(source, staged, options):
+                staged.mkdir()
+                (staged / "index.html").write_text(
+                    '<link rel="canonical" href="https://example.org/">new')
+                return ([], [])
+            rename = Path.rename
+            def fail_staged(path, destination):
+                if path.name == "site":
+                    raise OSError("publication failed")
+                return rename(path, destination)
+            with patch.object(preview, "ROOT", root), patch.object(preview, "SITE", root / "_site"), \
+                    patch.object(preview.site_build, "build", side_effect=render), \
+                    patch.object(Path, "rename", fail_staged):
+                with self.assertRaises(OSError):
+                    preview.build()
+            self.assertEqual((root / "_site/index.html").read_text(), "last good build")
+
+    def test_build_refuses_source_and_ancestor_destinations(self):
+        with patch.object(preview.site_build, "build") as render:
+            for path in (preview.ROOT, preview.ROOT.parent, preview.ROOT / "assets"):
+                with self.subTest(path=path), self.assertRaises(ValueError):
+                    preview.build(destination=path)
+            render.assert_not_called()
+
+    def test_colors_are_omitted_when_output_is_not_a_terminal(self):
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(preview.paint("ok", preview.GREEN), "ok")
+
+    def test_colors_wrap_text_when_the_terminal_supports_them(self):
+        with patch.object(preview, "color_enabled", return_value=True):
+            self.assertEqual(preview.paint("ok", preview.GREEN), "\033[32mok\033[0m")
+
+    def test_progress_line_is_silent_when_output_is_redirected(self):
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            with preview.Progress("Building preview..."):
+                time.sleep(0.05)
+        self.assertEqual(output.getvalue(), "")
+
+    def test_progress_line_animates_and_clears_on_a_terminal(self):
+        class Terminal:
+            def __init__(self):
+                self.text = ""
+
+            def isatty(self):
+                return True
+
+            def write(self, text):
+                self.text += text
+
+            def flush(self):
+                pass
+
+        terminal = Terminal()
+        with patch.object(preview.sys, "stdout", terminal):
+            with preview.Progress("Building preview..."):
+                time.sleep(0.3)
+        self.assertIn("Building preview...", terminal.text)
+        frames = [part for part in terminal.text.split("\r") if part.strip()]
+        self.assertTrue(all(part.endswith(" Building preview...") for part in frames))
+        self.assertGreaterEqual(len(frames), 2)
+        erased = terminal.text.split("\r")[-2]  # Spaces overwrite the finished spinner line.
+        self.assertEqual(erased, " " * (len("Building preview...") + 4))
+
+    def test_glyphs_fall_back_when_the_console_encoding_cannot_print_them(self):
+        class Console:
+            def __init__(self, encoding):
+                self.encoding = encoding
+
+        def mark(encoding, preferred, fallback):
+            with patch.object(preview.sys, "stdout", Console(encoding)):
+                return preview.mark(preferred, fallback)
+
+        self.assertEqual(mark("gbk", "✓", "OK"), "OK")
+        self.assertEqual(mark("gbk", "✗", "x"), "x")
+        self.assertEqual(mark("gbk", "→", "->"), "→")  # GBK can print arrows and middle dots.
+        self.assertEqual(mark("ascii", "→", "->"), "->")
+        self.assertEqual(mark("ascii", "·", "-"), "-")
+        self.assertEqual(mark("utf-8", "✓", "OK"), "✓")
+        self.assertEqual(mark(None, "✓", "OK"), "OK")
+
+
+if __name__ == "__main__":
+    unittest.main()
