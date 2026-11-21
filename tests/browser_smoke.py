@@ -188,6 +188,46 @@ def check_contribution_year_expansion(page):
     assert page.locator("#contribution-list .project-item:not([hidden])").count() == 3
 
 
+
+def check_disclosure_viewport(page, article_slug):
+    """Expanding content never commands the page to follow the disclosure."""
+    page.goto("http://127.0.0.1:8766/", wait_until="networkidle")
+    page.evaluate("""() => {
+        window.__disclosureScrolls = [];
+        const original = window.scrollBy.bind(window);
+        window.scrollBy = (...args) => {
+            window.__disclosureScrolls.push(args);
+            return original(...args);
+        };
+    }""")
+    for selector in (".web-evolution-toggle", "#community-list + .list-toggle",
+                     "#contribution-list + .list-toggle"):
+        button = page.locator(selector)
+        if not button.count():
+            continue
+        page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
+        button.evaluate("(element) => element.click()")
+        assert button.get_attribute("aria-expanded") == "true"
+        page.wait_for_timeout(350)
+        assert page.evaluate("window.__disclosureScrolls.length") == 0, selector
+        button.evaluate("(element) => element.click()")
+        page.wait_for_timeout(350)
+        assert page.evaluate("window.__disclosureScrolls.length") == 0, selector
+
+    page.goto(f"http://127.0.0.1:8766/blog/{article_slug}/", wait_until="networkidle")
+    button = page.locator(".article-toc-toggle")
+    if button.count():
+        page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
+        button.evaluate("(element) => element.click()")
+        assert button.get_attribute("aria-expanded") == "true"
+        assert page.evaluate("window.scrollY") == 0
+        nav = page.locator(".article-toc-inline nav")
+        assert nav.evaluate("(element) => getComputedStyle(element).overflowY === 'auto'")
+        assert nav.evaluate("(element) => element.clientHeight <= innerHeight / 2 + 1")
+        button.evaluate("(element) => element.click()")
+        assert button.get_attribute("aria-expanded") == "false"
+
+
 def check_search(page):
     posts = json.loads((SITE / "blog/posts.json").read_text(encoding="utf-8"))
     post = next(post for post in posts if len(re.findall(r"[A-Za-z]{3,}", post["title"])) >= 2)
@@ -303,9 +343,12 @@ def main():
                     for slug in dict.fromkeys(articles.values()):
                         check(page, slug, width)
                     context.close()
-            context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="no-preference")
-            check_site_navigation(context.new_page(), 390)
-            context.close()
+            for motion in ("no-preference", "reduce"):
+                context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion=motion)
+                check_disclosure_viewport(context.new_page(), code_slug)
+                if motion == "no-preference":
+                    check_site_navigation(context.new_page(), 390)
+                context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
             context.close()

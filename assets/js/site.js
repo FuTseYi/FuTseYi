@@ -147,11 +147,6 @@
       observers.push(observer);
       return syncHint;
     };
-    const scrollExpandedIntoView = (element) => {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const overflow = element.getBoundingClientRect().bottom - (window.innerHeight - 24);
-      if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' });
-    };
     const setupDisclosure = (container, toggleSelector, panelSelector, onChange) => {
       if (!container) return;
       const button = container.querySelector(toggleSelector);
@@ -164,11 +159,6 @@
       };
       setOpen(false);
       button.addEventListener('click', () => setOpen(!container.classList.contains('is-open')));
-      panel.addEventListener('transitionend', (event) => {
-        if (event.target !== panel || event.propertyName !== 'grid-template-rows' || !container.classList.contains('is-open')) return;
-        onChange?.();
-        scrollExpandedIntoView(container);
-      });
     };
     const inlineToc = document.querySelector('.article-toc-inline');
     if (inlineToc) {
@@ -310,13 +300,7 @@
       button.addEventListener('click', () => {
         revealed = revealed === years.length ? 0 : revealed + 1;
         sync();
-        if (revealed > 0) requestAnimationFrame(() => scrollExpandedIntoView(list));
         releaseTarget();
-      });
-      panel.addEventListener('transitionend', (event) => {
-        if (event.target === panel && event.propertyName === 'grid-template-rows' && list.classList.contains('is-open')) {
-          scrollExpandedIntoView(list);
-        }
       });
       list.after(button);
     });
