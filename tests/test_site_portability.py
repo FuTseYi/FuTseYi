@@ -14,22 +14,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SitePortabilityTests(unittest.TestCase):
-    def test_canonical_origin_validation(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "index.html"
-            for canonical, expected in (
-                ("https://example.org/", "https://example.org"),
-                ("https://www.example.org/", "https://www.example.org"),
-            ):
-                source.write_text(f'<link rel="canonical" href="{canonical}">', encoding="utf-8")
-                self.assertEqual(site_url(root), expected)
-            for canonical in ("http://example.org/", "https://example.org/path/",
-                              "https://example.org/?test=1"):
-                source.write_text(f'<link rel="canonical" href="{canonical}">', encoding="utf-8")
-                with self.assertRaises(ValueError):
-                    site_url(root)
-
     def test_full_build_uses_alternate_origin(self):
         # A new checkout name and unrelated HTTPS origin must not change the build.
         from scripts import site_build

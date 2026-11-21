@@ -43,15 +43,19 @@ class SiteMetadataTests(unittest.TestCase):
             self.assertNotIn('href="#unlisted"', generated)
             self.assertIn('content="zh_CN"', generated)
 
-    def test_canonical_origin_rejects_paths_and_non_https(self):
+    def test_canonical_origin_validation(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "index.html").write_text('<link rel="canonical" href="https://example.org/subpath/">')
-            with self.assertRaises(ValueError):
-                site_url(root)
-            (root / "index.html").write_text('<link rel="canonical" href="http://example.org/">')
-            with self.assertRaises(ValueError):
-                site_url(root)
+            source = root / "index.html"
+            for origin in ("https://example.org", "https://www.example.org"):
+                with self.subTest(origin=origin):
+                    source.write_text(f'<link rel="canonical" href="{origin}/">', encoding="utf-8")
+                    self.assertEqual(site_url(root), origin)
+            for url in ("http://example.org/", "https://example.org/path/", "https://example.org/?test=1"):
+                with self.subTest(url=url):
+                    source.write_text(f'<link rel="canonical" href="{url}">', encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        site_url(root)
 
     def test_canonical_page_url_maps_generated_index_files(self):
         self.assertEqual(canonical_page_url("https://example.org", Path("index.html")),

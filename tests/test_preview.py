@@ -7,7 +7,6 @@ from pathlib import Path
 import subprocess
 import tempfile
 from threading import Event, Thread
-import time
 import unittest
 from unittest.mock import patch
 
@@ -319,33 +318,27 @@ class PreviewTests(unittest.TestCase):
     def test_progress_line_is_silent_when_output_is_redirected(self):
         with contextlib.redirect_stdout(io.StringIO()) as output:
             with preview.Progress("Building preview..."):
-                time.sleep(0.05)
+                pass
         self.assertEqual(output.getvalue(), "")
 
     def test_progress_line_animates_and_clears_on_a_terminal(self):
-        class Terminal:
-            def __init__(self):
-                self.text = ""
+        two_frames = Event()
 
+        class Terminal(io.StringIO):
             def isatty(self):
                 return True
 
-            def write(self, text):
-                self.text += text
-
             def flush(self):
-                pass
+                if self.getvalue().count("Building preview...") >= 2:
+                    two_frames.set()
 
         terminal = Terminal()
         with patch.object(preview.sys, "stdout", terminal):
             with preview.Progress("Building preview..."):
-                time.sleep(0.3)
-        self.assertIn("Building preview...", terminal.text)
-        frames = [part for part in terminal.text.split("\r") if part.strip()]
+                self.assertTrue(two_frames.wait(2), "Progress did not render two frames")
+        frames = [part for part in terminal.getvalue().split("\r") if part.strip()]
         self.assertTrue(all(part.endswith(" Building preview...") for part in frames))
-        self.assertGreaterEqual(len(frames), 2)
-        erased = terminal.text.split("\r")[-2]  # Spaces overwrite the finished spinner line.
-        self.assertEqual(erased, " " * (len("Building preview...") + 4))
+        self.assertTrue(terminal.getvalue().endswith("\r" + " " * (len("Building preview...") + 4) + "\r"))
 
     def test_glyphs_fall_back_when_the_console_encoding_cannot_print_them(self):
         class Console:
