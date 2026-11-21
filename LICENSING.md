@@ -23,6 +23,7 @@ When reusing website code, retain the copyright and permission notice in [LICENS
 - The bundled Caveat font remains under the [SIL Open Font License 1.1](assets/fonts/Caveat-OFL.txt).
 - The bundled Bodoni Moda numeral subset is from [Google Fonts](https://fonts.google.com/specimen/Bodoni+Moda), by the Bodoni Moda Project Authors, under the [SIL Open Font License 1.1](assets/fonts/Bodoni-Moda-OFL.txt).
 - The bundled Swup 4.10.0 navigation library retains its [MIT license](assets/js/swup-LICENSE.txt).
+- The WebGL simplex noise implementation used in the homepage atmosphere retains its [MIT license](assets/js/webgl-noise-LICENSE.txt) and original attribution.
 - Third-party names, logos, screenshots and quoted material are not relicensed by this repository. Follow the source attribution and obtain any permissions required for your use.
 - These licenses do not grant trademark, privacy, publicity or endorsement rights. Reusing the design does not authorize representing yourself as FuTseYi (Shine) or implying an affiliation.
 
