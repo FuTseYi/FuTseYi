@@ -185,12 +185,11 @@ def check_search(page):
     page.locator(".search-open").click()
     dialog = page.locator("#search-dialog")
     assert dialog.evaluate("(el) => el.open")
-    assert dialog.evaluate("(el) => el.getBoundingClientRect().top >= document.querySelector('.header-inner').getBoundingClientRect().bottom")
     search = page.locator("#blog-search")
     assert search.evaluate("(el) => document.activeElement === el")
     assert not page.locator("#search-results").is_visible()
     assert not dialog.locator(".scroll-hint").is_visible()
-    assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
+    assert dialog.locator(".search-field").bounding_box()["height"] <= 58
     result = page.locator(f'#search-results a[href="{post["url"]}"]')
     search.fill(terms[0])
     marks = result.locator(".link-label mark")
@@ -205,18 +204,17 @@ def check_search(page):
     assert not page.locator("#search-results").is_visible()
     page.keyboard.press("Control+k")
     assert dialog.evaluate("(el) => el.open")
-    assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
-    top = dialog.bounding_box()["y"]
-    page.mouse.move(4, top + 10)
-    page.mouse.wheel(0, 240)
-    page.wait_for_function("scrollY > 0")
-    assert dialog.bounding_box()["y"] == top
+    assert dialog.locator(".search-field").bounding_box()["height"] <= 58
     page.set_viewport_size({"width": 850, "height": 390})
     search.fill(terms[0])
     expect(marks.first).to_be_visible(timeout=15000)
-    assert dialog.evaluate("(el) => { const r = el.getBoundingClientRect(); return r.top >= 16 && r.bottom <= innerHeight - 16; }")
+    assert dialog.evaluate("(el) => { const r = el.getBoundingClientRect(); return r.top === 0 && r.bottom === innerHeight && r.left === 0 && r.right === innerWidth; }")
+    scroll_y = page.evaluate("scrollY")
+    dialog.locator(".search-field").hover()
+    page.mouse.wheel(0, 240)
     dialog.locator(".search-close").click()
     assert not dialog.evaluate("(el) => el.open")
+    assert page.evaluate("scrollY") == scroll_y
 
 def check_rss_links(page):
     for route, selector in (("/", '.hero-content .hero-links a[href="/rss.xml"]'),
