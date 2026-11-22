@@ -185,6 +185,7 @@ def check_search(page):
     page.locator(".search-open").click()
     dialog = page.locator("#search-dialog")
     assert dialog.evaluate("(el) => el.open")
+    assert dialog.evaluate("(el) => el.getBoundingClientRect().top >= document.querySelector('.header-inner').getBoundingClientRect().bottom")
     search = page.locator("#blog-search")
     assert search.evaluate("(el) => document.activeElement === el")
     assert not page.locator("#search-results").is_visible()
