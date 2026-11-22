@@ -178,6 +178,7 @@ def check_contribution_year_expansion(page):
 
 
 def check_search(page):
+    viewport = page.viewport_size
     posts = json.loads((SITE / "blog/posts.json").read_text(encoding="utf-8"))
     post = next(post for post in posts if len(re.findall(r"[A-Za-z]{3,}", post["title"])) >= 2)
     terms = re.findall(r"[A-Za-z]{3,}", post["title"])[:2]
@@ -217,6 +218,7 @@ def check_search(page):
     assert not dialog.evaluate("(el) => el.open")
     assert page.evaluate("scrollY") == scroll_y
     expect(page.locator("#site-header")).to_be_visible()
+    page.set_viewport_size(viewport)
 
 def check_rss_links(page):
     for route, selector in (("/", '.hero-content .hero-links a[href="/rss.xml"]'),
@@ -297,9 +299,6 @@ def main():
             check_contribution_year_expansion(context.new_page())
             check_search(context.new_page())
             context.close()
-            context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
-            check_search(context.new_page())
-            context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850})
             check_rss_links(context.new_page())
             context.close()
@@ -343,6 +342,7 @@ def main():
                     errors = []
                     page.on("pageerror", lambda error: errors.append(str(error)))
                     check_site_navigation(page, width)
+                    check_search(page)
                     page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/")
                     assert page.locator("article.article").count() == 1
                     assert page.locator(".article-code button.code-copy").count() > 0
