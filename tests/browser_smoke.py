@@ -209,9 +209,11 @@ def check_search(page):
     page.mouse.move(4, top + 10)
     page.mouse.wheel(0, 240)
     page.wait_for_function("scrollY > 0")
-    page.set_viewport_size({**page.viewport_size, "height": 800})
-    page.evaluate("new Promise(requestAnimationFrame)")
     assert dialog.bounding_box()["y"] == top
+    page.set_viewport_size({"width": 850, "height": 390})
+    search.fill(terms[0])
+    expect(marks.first).to_be_visible(timeout=15000)
+    assert dialog.evaluate("(el) => { const r = el.getBoundingClientRect(); return r.top >= 16 && r.bottom <= innerHeight - 16; }")
     dialog.locator(".search-close").click()
     assert not dialog.evaluate("(el) => el.open")
 
@@ -285,6 +287,7 @@ def main():
                     context.add_init_script(f"localStorage.setItem('site-theme', '{theme}')")
                     page = context.new_page()
                     check_site_navigation(page, width)
+                    check_search(page)
                     for slug in dict.fromkeys(articles.values()):
                         check(page, slug, width)
                     context.close()

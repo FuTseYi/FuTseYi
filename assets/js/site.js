@@ -332,7 +332,6 @@
         return pagefind;
       });
       const openSearch = () => {
-        dialog.style.setProperty('--search-top', `${Math.max(16, Math.round(openButton.getBoundingClientRect().bottom + 12))}px`);
         dialog.showModal();
         searchInput.focus({ preventScroll: true });
         syncScrollHint();
