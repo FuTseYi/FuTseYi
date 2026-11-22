@@ -1,4 +1,9 @@
 (() => {
+  const syncPointerType = (event) => {
+    document.documentElement.classList.toggle('touch-input', event.pointerType === 'touch');
+  };
+  document.addEventListener('pointerdown', syncPointerType, { passive: true });
+  document.addEventListener('pointermove', syncPointerType, { passive: true });
   const root = document.documentElement;
   const siteName = document.querySelector('meta[property="og:site_name"]')?.content;
   const sourceUrl = document.querySelector('.footer-brand')?.href;

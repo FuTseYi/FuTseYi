@@ -153,7 +153,7 @@ html:not(.js) .theme-control,.theme-control [data-theme-icon]{display:none}
 
 a { color: var(--accent); text-decoration: none; }
 
-a:is(:hover,:focus-visible) { text-decoration: none; }
+a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) { text-decoration: none; }
 
 /* Keyboard focus and shared section descriptions. */
 a:focus-visible,button:focus-visible{outline:2px solid var(--gold-ink);outline-offset:4px;border-radius:3px}
@@ -223,7 +223,7 @@ strong { font-weight: 600; }
 .site-header.is-scrolled .brand img { transform: scale(.8333); }
 .js:not(.is-ready) .header-inner,.js:not(.is-ready) .brand img,html:not(.is-ready) .page-toc { transition: none; }
 
-@media (hover:hover) {.brand:hover { opacity: .7; }}
+@media (hover:hover) {.brand:is(:where(html:not(.touch-input)) :hover,:active) { opacity: .7; }}
 
 .nav-toggle {
     display: none;
@@ -237,7 +237,7 @@ strong { font-weight: 600; }
     -webkit-tap-highlight-color: transparent;
   }
 
-.nav-toggle:is(:hover,:focus-visible){color:var(--gold-ink)}
+.nav-toggle:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 
 .menu-icon {
     display: block; width: 18px; height: 12px; position: relative;
@@ -274,7 +274,7 @@ strong { font-weight: 600; }
     padding: 6px 0;
   }
 
-:is(.nav-links a,.theme-control):is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
+:is(.nav-links a,.theme-control):is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 
 .nav-links a.is-active { color: var(--gold-ink); }
 
@@ -388,7 +388,7 @@ strong { font-weight: 600; }
     text-decoration: none;
   }
 
-.hero-links a:is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
+.hero-links a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 
 .hero-links .link-icon{width:16px;height:16px;display:block;flex-shrink:0}
 
@@ -414,7 +414,7 @@ strong { font-weight: 600; }
   }
 
 @media(hover:hover){
- .intro-portrait:hover{transform:rotate(3deg) scale(1.05);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+ .intro-portrait:is(:where(html:not(.touch-input)) :hover,:active){transform:rotate(3deg) scale(1.05);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
 }
 
 .portrait figcaption{font-size:11px;color:var(--ink-faint);text-align:center;margin-top:8px}
@@ -512,7 +512,7 @@ section.section { padding: 38px 0; }
 
 .education-list .education-school { font-size: 17px; font-weight: 500; letter-spacing: -.015em; }
 .education-list .education-school a { color: var(--accent); }
-.education-list .education-school a:is(:hover,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
+.education-list .education-school a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) { color: var(--gold-ink); text-decoration: none; }
 .education-content p { font-size: 13px; color: var(--ink-soft); }
 
 @media (max-width: 680px) {
@@ -530,14 +530,14 @@ section.section { padding: 38px 0; }
 .project-item{display:grid;grid-template-columns:46px minmax(0,1fr);gap:18px;padding:14px 0;align-items:start}
 .project-item h3{font-size:15px;font-weight:500;line-height:1.5}
 .project-item h3 a{color:var(--ink)}
-.project-item h3 a:is(:hover,:focus-visible){color:var(--gold-ink)}
+.project-item h3 a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 .project-item p{font-size:13px;line-height:1.65;color:var(--ink-soft);margin-top:3px}
 .project-tags{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px;font-size:11px;color:var(--ink-faint)}
 #main > section{background:transparent}
 
 /* Entire rows share the same hover and keyboard-focus affordance. */
 .education-list .education-item,.project-item{transition:transform .2s ease}
-:is(.education-list .education-item,.project-item):is(:hover,:focus-within){transform:translateY(-2px)}
+:is(.education-list .education-item,.project-item):is(:where(html:not(.touch-input)) :hover,:active,:focus-within){transform:translateY(-2px)}
 
 .activity-note{font-size:11px;color:var(--ink-faint);margin-top:14px}
 
@@ -555,7 +555,7 @@ section.section { padding: 38px 0; }
 [data-expandable] .expandable-clip > [hidden]{display:none}
 .list-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:9px 0;border:0;border-radius:0;background-color:transparent;font:500 13px/1.5 var(--font);color:var(--ink);cursor:pointer;min-height:40px}
 .list-toggle .link-arrow{margin-left:0}
-.list-toggle:is(:hover,:focus-visible){color:var(--gold-ink);background-color:transparent;outline:none;text-decoration:none}
+.list-toggle:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink);background-color:transparent;outline:none;text-decoration:none}
 
 @media (max-width: 680px) {
  #active-in .project-item,#recent-blog .project-item,#contributions .project-item { padding: 20px 0; }
@@ -579,7 +579,7 @@ section.section { padding: 38px 0; }
 .page-toc.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 .page-toc a{display:block;padding:5px 10px 5px 12px;border-left:2px solid var(--line);color:var(--ink-faint);font-size:12px;font-weight:500;letter-spacing:.01em;line-height:1.3;text-decoration:none;white-space:normal;overflow-wrap:anywhere;transition:color .15s ease,border-color .15s ease}
 .page-toc .toc-level-2{padding-left:24px;font-size:11px}
-.page-toc a:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
+.page-toc a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink);text-decoration:none}
 .page-toc a.is-active{color:var(--gold-ink);border-left-color:var(--gold)}
 @media(min-width:1600px){
  .page-toc{display:flex;position:fixed;right:max(16px,calc((100vw - var(--max-width)) / 2 - 176px));top:50%;transform:translateY(-50%)}
@@ -605,7 +605,7 @@ footer {
 .footer-license{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
 .footer-license .link-arrow{position:relative;left:-2px;margin-left:0}
 .footer-license,.footer-back-top,.footer-brand{color:var(--ink-faint)}
-.footer-license:is(:hover,:focus-visible),.footer-back-top:is(:hover,:focus-visible),.footer-brand:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
+.footer-license:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible),.footer-back-top:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible),.footer-brand:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink);text-decoration:none}
 .footer-back-top{display:inline-flex;align-items:center;gap:6px;margin-left:auto;white-space:nowrap}
 .footer-back-top .link-arrow{position:relative;top:2px;margin-left:0}
 .footer-back-top .link-arrow{animation:footer-back-top 1.4s ease-in-out infinite}
@@ -706,9 +706,9 @@ section.section { padding: 32px 0; }
 .article-toc-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 6px;font:inherit;font-size:15px;font-weight:500;color:var(--ink-soft);background:none;border:0;text-align:left;cursor:pointer;transition:color .2s}
 .article-toc-toggle::after,.web-evolution-toggle::after,button.list-toggle::after{content:"";display:block;flex:none;width:7px;height:7px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .24s ease}
 .article-toc-inline.is-open .article-toc-toggle::after,.web-evolution.is-open .web-evolution-toggle::after,button.list-toggle[aria-expanded="true"][data-has-more="false"]::after{transform:rotate(225deg)}
-:is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:hover,:focus-visible)::after{transform:translateX(3px) rotate(45deg)}
-:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"][data-has-more="false"]):is(:hover,:focus-visible)::after{transform:translateX(-3px) rotate(225deg)}
-.article-toc-toggle:is(:hover,:focus-visible),.article-toc-inline.is-open .article-toc-toggle,.article-toc-inline nav a:is(:hover,:focus-visible){color:var(--gold-ink)}
+:is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:where(html:not(.touch-input)) :hover,:active,:focus-visible)::after{transform:translateX(3px) rotate(45deg)}
+:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"][data-has-more="false"]):is(:where(html:not(.touch-input)) :hover,:active,:focus-visible)::after{transform:translateX(-3px) rotate(225deg)}
+.article-toc-toggle:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible),.article-toc-inline.is-open .article-toc-toggle,.article-toc-inline nav a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 .article-toc-panel{display:grid;grid-template-rows:1fr}
 .js .article-toc-panel,.js .web-evolution-panel,.js .expandable-panel{grid-template-rows:0fr;transition:grid-template-rows .24s ease}
 .js .article-toc-inline.is-open .article-toc-panel,.js .web-evolution.is-open .web-evolution-panel,.js [data-expandable].is-open .expandable-panel{grid-template-rows:1fr}
@@ -725,7 +725,7 @@ section.section { padding: 32px 0; }
 /* A small, manually maintained history within About. */
 .web-evolution{max-width:790px;margin-top:22px}
 .web-evolution-toggle{display:inline-flex;align-items:center;gap:6px;padding:0;background:none;border:0;color:var(--ink);font:500 13px/1.75 var(--font);text-align:left;cursor:pointer}
-.web-evolution-toggle:is(:hover,:focus-visible){color:var(--gold-ink)}
+.web-evolution-toggle:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 .expandable-panel,.web-evolution-panel{display:grid;grid-template-rows:1fr}
 .expandable-clip{min-height:0;overflow:hidden}
 .web-evolution-clip{min-height:0;overflow:hidden}
@@ -739,7 +739,7 @@ section.section { padding: 32px 0; }
 .web-evolution-stack p{font-size:13px;line-height:1.75;color:var(--ink-soft)}
 @media(max-width:680px){.web-evolution{margin-top:18px}.web-evolution-history li{grid-template-columns:82px minmax(0,1fr);gap:10px}}
 @media(prefers-reduced-motion:reduce){.web-evolution-panel,.web-evolution-toggle::after,.article-toc-toggle::after,button.list-toggle::after{transition:none}}
-@media(prefers-reduced-motion:reduce){:is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:hover,:focus-visible)::after{transform:rotate(45deg)}:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"][data-has-more="false"]):is(:hover,:focus-visible)::after{transform:rotate(225deg)}}
+@media(prefers-reduced-motion:reduce){:is(.article-toc-toggle,.web-evolution-toggle,button.list-toggle):is(:where(html:not(.touch-input)) :hover,:active,:focus-visible)::after{transform:rotate(45deg)}:is(.article-toc-inline.is-open .article-toc-toggle,.web-evolution.is-open .web-evolution-toggle,button.list-toggle[aria-expanded="true"][data-has-more="false"]):is(:where(html:not(.touch-input)) :hover,:active,:focus-visible)::after{transform:rotate(225deg)}}
 
 /* Blog: shared page width, navigation and footer. */
 .blog-page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
@@ -752,7 +752,7 @@ section.section { padding: 32px 0; }
 .blog-actions{display:flex;align-items:center;align-self:center;gap:20px}
 .search-open{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:8px 0;border:0;border-bottom:1px solid var(--line);background-color:transparent;color:var(--ink-soft);font:500 13px var(--font);cursor:pointer}
 .search-label{flex:1;text-align:left}
-.search-open:is(:hover,:focus-visible){color:var(--gold-ink)}
+.search-open:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 .search-open svg{flex:none}
 .search-open kbd{color:var(--ink-faint);font:11px var(--font)}
 .search-dialog{--search-top:calc(var(--nav-offset) + var(--nav-h) + 12px);position:fixed;top:var(--search-top);left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 32px));max-height:min(580px,calc(100svh - var(--search-top) - 16px));margin:0;padding:0;border-radius:14px;color:var(--ink);box-shadow:0 16px 48px rgba(18,19,23,.14);overflow:hidden}
@@ -765,7 +765,7 @@ section.section { padding: 32px 0; }
 .search-field input::placeholder{color:var(--ink-faint)}
 .search-field input::-webkit-search-cancel-button{display:none}
 .search-close{display:flex;align-items:center;justify-content:center;flex:none;width:30px;height:36px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--ink-faint);font:24px/1 var(--font);cursor:pointer}
-.search-close:is(:hover,:focus-visible){color:var(--ink);background:var(--surface)}
+.search-close:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--ink);background:var(--surface)}
 #search-results{min-height:0;overflow-y:auto;scrollbar-width:none;border-top:1px solid var(--line)}
 #search-results:empty{display:none}
 #search-results::-webkit-scrollbar{display:none}
@@ -786,7 +786,7 @@ section.section { padding: 32px 0; }
 html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .back-link,.all-tags-link{display:inline-flex}
 .back-link,.all-tags-link,.blog-tags-mobile{align-items:center;gap:8px;min-height:36px;color:var(--ink-soft);font-size:13px;font-weight:600;}
-.back-link:is(:hover,:focus-visible),.all-tags-link:is(:hover,:focus-visible),.blog-tags-mobile:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
+.back-link:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible),.all-tags-link:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible),.blog-tags-mobile:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink);text-decoration:none}
 .blog-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:28px 40px;width:min(100%,1000px);margin:0 auto}
 .blog-list{grid-column:1;min-width:0;display:flow-root}
 .archive-year{container-type:inline-size;margin-top:64px}
@@ -795,8 +795,8 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .archive-heading h2{position:absolute;top:calc(11px - .5em);left:0;right:0;color:transparent;-webkit-text-stroke:1px var(--archive-year-ink);font:italic 500 clamp(80px,24cqi,120px)/1 "Bodoni Moda",Georgia,serif}
 .archive-heading span{position:relative;color:var(--ink-faint);font-size:13px;line-height:22px}
 .blog-entry{position:relative;z-index:1;display:grid;grid-template-columns:116px minmax(0,1fr);gap:22px;align-items:baseline;padding:5px 12px;margin:0 -12px;border-radius:10px;color:inherit;transition:transform .2s ease,box-shadow .2s ease}
-.blog-entry:is(:hover,:focus-visible){transform:translateY(-2px);text-decoration:none}
-.blog-entry:is(:hover,:focus-visible) h3,#search-results li a:is(:hover,:focus-visible){color:var(--gold-ink);text-decoration:none}
+.blog-entry:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){transform:translateY(-2px);text-decoration:none}
+.blog-entry:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) h3,#search-results li a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink);text-decoration:none}
 .blog-entry .post-date,.post-date{font-size:12px;color:var(--ink-faint)}
 .blog-entry .post-date.is-active{color:var(--gold-ink)}
 .blog-entry h3,#search-results li a{font-weight:500;font-size:15px;color:var(--ink);line-height:1.5}
@@ -827,8 +827,8 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .post-neighbor-label{display:flex;align-items:center;gap:9px;color:var(--ink-faint);font-size:12px;margin-bottom:4px}
 .post-neighbor.next .post-neighbor-label{justify-content:flex-end}
 .post-neighbor strong{font-size:15px;font-weight:600;line-height:1.5}
-.post-neighbor:is(:hover,:focus-visible){text-decoration:none}
-.post-neighbor:is(:hover,:focus-visible) strong{color:var(--gold-ink)}
+.post-neighbor:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){text-decoration:none}
+.post-neighbor:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) strong{color:var(--gold-ink)}
 .article{font-size:16px;line-height:1.85;overflow-wrap:break-word}
 .article > :first-child{margin-top:0}
 .article > :last-child{margin-bottom:0}
@@ -850,7 +850,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 .article .article-code{position:relative;margin:26px 0;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bg-soft);overflow:hidden}
 .article .article-code-header{display:flex;justify-content:flex-end;align-items:center;min-height:38px;padding:3px 10px;border-bottom:1px solid var(--line)}
 .article .code-copy{border:0;border-radius:5px;background:transparent;color:var(--ink-soft);padding:5px 9px;font:500 12px/1.3 var(--font);cursor:pointer}
-.article .code-copy:is(:hover,:focus-visible){color:var(--gold-ink)}
+.article .code-copy:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 .article .code-copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .article pre{margin:26px 0;overflow:auto;max-width:100%;padding:16px 18px;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;line-height:1.65;tab-size:4}
 .article .article-code pre{margin:0;border:0;border-radius:0;background:transparent}
@@ -886,7 +886,7 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
  .blog-sidebar{display:none}
  .blog-actions{width:auto;gap:10px}
  .search-open{justify-content:center;width:44px;min-height:44px;padding:0;border-bottom:0;background-color:transparent}
- .search-open:is(:hover,:focus-visible){background-color:transparent}
+ .search-open:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){background-color:transparent}
  .search-open .search-label,.search-open kbd{display:none}
  html:has(.search-dialog[open]){overflow:hidden}
  html:has(.search-dialog[open]) :is(.site-header,#main,.site-footer){visibility:hidden}
@@ -912,15 +912,14 @@ html:not(.js) .search-open,html:not(.js) .search-dialog{display:none}
 
 /* ELPA link chevrons: a short nudge on hover or keyboard focus. */
 .link-arrow{display:inline-block;vertical-align:middle;flex:0 0 auto;width:7px;height:7px;margin-left:6px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .16s ease}
-a:is(:hover,:focus-visible) .link-arrow{transform:translateX(3px) rotate(45deg)}
+a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-arrow{transform:translateX(3px) rotate(45deg)}
 .link-arrow-left{transform:rotate(225deg)}
-a:is(:hover,:focus-visible) .link-arrow-left{transform:translateX(-3px) rotate(225deg)}
+a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-arrow-left{transform:translateX(-3px) rotate(225deg)}
 .link-arrow-up{transform:rotate(-45deg)}
-a:is(:hover,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45deg)}
-@media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:hover,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:hover,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}a:is(:hover,:focus-visible) .link-arrow-left{transform:rotate(225deg)}}
+a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45deg)}
+@media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-arrow-left{transform:rotate(225deg)}}
 
-a:is(:active,:focus-visible){color:var(--gold-ink)}
-@media(hover:hover){a:hover{color:var(--gold-ink)}}
+a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible){color:var(--gold-ink)}
 
 /* Shared left-to-right underline, including wrapped inline links. */
 :where(a:not(:has(img),.blog-entry,.post-neighbor,.page-toc a,#search-results li a),.theme-control,.list-toggle,.search-open,.link-label,.post-neighbor strong){
@@ -931,15 +930,10 @@ a:is(:active,:focus-visible){color:var(--gold-ink)}
     background-size:var(--underline-width) 1.5px;
     -webkit-box-decoration-break:clone;box-decoration-break:clone;
     transition:background-size .48s cubic-bezier(.22,1,.36,1),color .3s ease;
-    &:where(:not(.link-label,.post-neighbor strong)):is(:active,:focus-visible){--underline-width:100%}
-    @media(hover:hover){&:where(:not(.link-label,.post-neighbor strong)):hover{--underline-width:100%}}
   }
-:is(.education-list .education-item,.project-item):focus-within :is(a,.link-label),.blog-entry:is(:active,:focus-visible) .link-label,#search-results li a:is(:active,:focus-visible) .link-label,.post-neighbor:is(:active,:focus-visible) strong{
+:where(a:not(:has(img),.blog-entry,.post-neighbor,.page-toc a,#search-results li a),.theme-control,.list-toggle,.search-open):is(:where(html:not(.touch-input)) :hover,:active,:focus-visible),:is(.education-list .education-item,.project-item):is(:where(html:not(.touch-input)) :hover,:active,:focus-within) a,:is(.education-list .education-item,.project-item):is(:where(html:not(.touch-input)) :hover,:active,:focus-within) .link-label,.blog-entry:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-label,#search-results li a:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) .link-label,.post-neighbor:is(:where(html:not(.touch-input)) :hover,:active,:focus-visible) strong{
     --underline-width:100%;
   }
-@media(hover:hover){
-  :is(.education-list .education-item,.project-item):hover :is(a,.link-label),.blog-entry:hover .link-label,#search-results li a:hover .link-label,.post-neighbor:hover strong{--underline-width:100%}
-}
 .nav-links a,.theme-control{--underline-offset:2px}
 .nav-links a.is-active{--underline-width:100%}
 @media(max-width:860px){.nav-links a,.search-open{background-image:none}}

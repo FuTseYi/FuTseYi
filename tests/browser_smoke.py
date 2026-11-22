@@ -342,6 +342,7 @@ def main():
                     color = tag.evaluate("el => getComputedStyle(el).color")
                     # Simulate the hover state WebKit can leave behind after touch navigation.
                     tag.hover()
+                    page.dispatch_event("html", "pointerdown", {"pointerType": "touch"})
                     assert tag.evaluate("el => el.matches(':hover')")
                     expect(tag).to_have_css("color", color)
                     expect(tag).to_have_css("background-size", "0% 1.5px")
