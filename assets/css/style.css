@@ -919,7 +919,8 @@ a:is(:hover,:focus-visible) .link-arrow-left{transform:translateX(-3px) rotate(2
 a:is(:hover,:focus-visible) .link-arrow-up{transform:translateY(-3px) rotate(-45deg)}
 @media(prefers-reduced-motion:reduce){.link-arrow{transition:none}a:is(:hover,:focus-visible) .link-arrow{transform:rotate(45deg)}a:is(:hover,:focus-visible) .link-arrow-up{transform:rotate(-45deg)}a:is(:hover,:focus-visible) .link-arrow-left{transform:rotate(225deg)}}
 
-a:is(:hover,:focus-visible){color:var(--gold-ink)}
+a:is(:active,:focus-visible){color:var(--gold-ink)}
+@media(hover:hover){a:hover{color:var(--gold-ink)}}
 
 /* Shared left-to-right underline, including wrapped inline links. */
 :where(a:not(:has(img),.blog-entry,.post-neighbor,.page-toc a,#search-results li a),.theme-control,.list-toggle,.search-open,.link-label,.post-neighbor strong){
@@ -930,10 +931,15 @@ a:is(:hover,:focus-visible){color:var(--gold-ink)}
     background-size:var(--underline-width) 1.5px;
     -webkit-box-decoration-break:clone;box-decoration-break:clone;
     transition:background-size .48s cubic-bezier(.22,1,.36,1),color .3s ease;
+    &:where(:not(.link-label,.post-neighbor strong)):is(:active,:focus-visible){--underline-width:100%}
+    @media(hover:hover){&:where(:not(.link-label,.post-neighbor strong)):hover{--underline-width:100%}}
   }
-:where(a:not(:has(img),.blog-entry,.post-neighbor,.page-toc a,#search-results li a),.theme-control,.list-toggle,.search-open):is(:hover,:focus-visible),:is(.education-list .education-item,.project-item):is(:hover,:focus-within) a,:is(.education-list .education-item,.project-item):is(:hover,:focus-within) .link-label,.blog-entry:is(:hover,:focus-visible) .link-label,#search-results li a:is(:hover,:focus-visible) .link-label,.post-neighbor:is(:hover,:focus-visible) strong{
+:is(.education-list .education-item,.project-item):focus-within :is(a,.link-label),.blog-entry:is(:active,:focus-visible) .link-label,#search-results li a:is(:active,:focus-visible) .link-label,.post-neighbor:is(:active,:focus-visible) strong{
     --underline-width:100%;
   }
+@media(hover:hover){
+  :is(.education-list .education-item,.project-item):hover :is(a,.link-label),.blog-entry:hover .link-label,#search-results li a:hover .link-label,.post-neighbor:hover strong{--underline-width:100%}
+}
 .nav-links a,.theme-control{--underline-offset:2px}
 .nav-links a.is-active{--underline-width:100%}
 @media(max-width:860px){.nav-links a,.search-open{background-image:none}}

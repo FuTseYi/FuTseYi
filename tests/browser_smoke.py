@@ -335,6 +335,16 @@ def main():
             # WebKit covers the mobile/desktop navigation and article path used by Safari.
             safari = playwright.webkit.launch(headless=True)
             try:
+                with safari.new_context(is_mobile=True, has_touch=True, reduced_motion="reduce") as context:
+                    page = context.new_page()
+                    page.goto(f"http://127.0.0.1:8766/blog/{code_slug}/")
+                    tag = page.locator(".post-tags .post-tag").first
+                    color = tag.evaluate("el => getComputedStyle(el).color")
+                    # Simulate the hover state WebKit can leave behind after touch navigation.
+                    tag.hover()
+                    assert tag.evaluate("el => el.matches(':hover')")
+                    expect(tag).to_have_css("color", color)
+                    expect(tag).to_have_css("background-size", "0% 1.5px")
                 for width in (390, 1024):
                     context = safari.new_context(viewport={"width": width, "height": 850},
                                                  reduced_motion="reduce")
