@@ -331,17 +331,13 @@
         await pagefind.options({ excerptLength: 18, excerptEllipsis: '…' });
         return pagefind;
       });
-      const positionSearch = () => {
-        dialog.style.setProperty('--search-top', `${Math.round(openButton.getBoundingClientRect().bottom + 12)}px`);
-      };
       const openSearch = () => {
-        positionSearch();
+        dialog.style.setProperty('--search-top', `${Math.max(16, Math.round(openButton.getBoundingClientRect().bottom + 12))}px`);
         dialog.showModal();
         searchInput.focus({ preventScroll: true });
         syncScrollHint();
       };
       openButton.addEventListener('click', openSearch);
-      listen(window, 'resize', () => { if (dialog.open) positionSearch(); });
       dialog.addEventListener('close', () => {
         ++sequence;
         searchInput.value = '';

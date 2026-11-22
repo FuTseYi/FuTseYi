@@ -205,6 +205,13 @@ def check_search(page):
     page.keyboard.press("Control+k")
     assert dialog.evaluate("(el) => el.open")
     assert dialog.evaluate("(el) => el.getBoundingClientRect().height <= 58")
+    top = dialog.bounding_box()["y"]
+    page.mouse.move(4, top + 10)
+    page.mouse.wheel(0, 240)
+    page.wait_for_function("scrollY > 0")
+    page.set_viewport_size({**page.viewport_size, "height": 800})
+    page.evaluate("new Promise(requestAnimationFrame)")
+    assert dialog.bounding_box()["y"] == top
     dialog.locator(".search-close").click()
     assert not dialog.evaluate("(el) => el.open")
 
@@ -284,6 +291,7 @@ def main():
             context = browser.new_context(viewport={"width": 390, "height": 850}, reduced_motion="no-preference")
             check_site_navigation(context.new_page(), 390)
             check_contribution_year_expansion(context.new_page())
+            check_search(context.new_page())
             context.close()
             context = browser.new_context(viewport={"width": 1024, "height": 850}, reduced_motion="reduce")
             check_search(context.new_page())
