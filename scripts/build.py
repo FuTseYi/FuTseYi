@@ -61,6 +61,7 @@ def shared_layout() -> dict[str, str]:
     return {
         "header": header,
         "icons": '\n'.join(re.findall(r'<link rel="(?:icon|apple-touch-icon|manifest)"[^>]*>', home)),
+        "preloads": '\n'.join(re.findall(r'<link rel="preload"[^>]* data-shared>', home)),
         "footer": re.search(r'<footer class="site-footer">.*?</footer>', home, re.S)[0],
         "css": '/' + re.search(r'<link rel="stylesheet" href="([^"]+)"', home)[1],
         "theme_init": re.search(r'<script data-theme-init>.*?</script>', home, re.S)[0],
@@ -91,7 +92,7 @@ def layout(title: str, description: str, url: str, content: str, body_class: str
 <title>{title} · FuTseYi</title><link rel="canonical" href="{url}">
 <link rel="alternate" type="application/rss+xml" title="Blog RSS" href="/rss.xml">
 {icons}
-<link rel="preload" href="/assets/fonts/caveat-handwriting.woff2" as="font" type="font/woff2" crossorigin>
+{shared["preloads"]}
 {year_font}{theme_init}
 <link rel="stylesheet" href="{css}">{scripts}
 </head>

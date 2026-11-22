@@ -21,6 +21,7 @@ When reusing website code, retain the copyright and permission notice in [LICENS
 ## Third-party material and identity
 
 - The bundled Caveat font remains under the [SIL Open Font License 1.1](assets/fonts/Caveat-OFL.txt).
+- The bundled [Chen Yuluoyan Thin](https://github.com/Chenyu-otf/chenyuluoyan_thin) subset is licensed under the [SIL Open Font License 1.1](assets/fonts/Chen-Yuluoyan-OFL.txt).
 - The bundled Bodoni Moda numeral subset is from [Google Fonts](https://fonts.google.com/specimen/Bodoni+Moda), by the Bodoni Moda Project Authors, under the [SIL Open Font License 1.1](assets/fonts/Bodoni-Moda-OFL.txt).
 - The bundled Swup 4.10.0 navigation library retains its [MIT license](assets/js/swup-LICENSE.txt).
 - The WebGL simplex noise implementation used in the homepage atmosphere retains its [MIT license](assets/js/webgl-noise-LICENSE.txt) and original attribution.

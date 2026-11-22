@@ -26,6 +26,10 @@ class LayoutTests(unittest.TestCase):
         self.assertIn(shared["footer"], first)
         self.assertIn(shared["footer"], second)
 
+        self.assertIn('as="font"', shared["preloads"])
+        self.assertIn(shared["preloads"], first)
+        self.assertIn(shared["preloads"], second)
+
 
 if __name__ == "__main__":
     unittest.main()

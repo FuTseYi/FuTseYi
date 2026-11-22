@@ -1,4 +1,5 @@
 @font-face{font-family:Caveat;src:url("../fonts/caveat-handwriting.woff2") format("woff2");font-style:normal;font-weight:400 600;font-display:block}
+@font-face{font-family:"Chinese Name Script";src:url("../fonts/chen-yuluoyan-name.woff2") format("woff2");font-style:normal;font-weight:400;font-display:block}
 @font-face{font-family:"Bodoni Moda";src:url("../fonts/bodoni-moda-numerals.ttf") format("truetype");font-style:italic;font-weight:500;font-display:block;unicode-range:U+0030-0039}
 
 :root {
@@ -334,7 +335,8 @@ strong { font-weight: 600; }
 .about-intro .bio { margin-top: 18px; font-size: 15px; line-height: 1.8; color: var(--ink-soft); }
 .bio a { color: var(--accent); }
 .bio strong { color: var(--ink); font-weight: 600; }
-.bio .handwritten-name { font-size: 1.4em; line-height: 1; }
+.bio :is(.handwritten-name, .chinese-name) { font-size: 1.4em; line-height: 1; }
+.bio .chinese-name { font-family: "Chinese Name Script", KaiTi, var(--font); color: var(--ink); white-space: nowrap; }
 .bio p+p { margin-top: 12px; }
 .about-intro .profile-note { margin: 12px 0 0; font-size: 13px; font-weight: 400; font-style: italic; color: var(--ink-soft); }
 .bio-detail { margin-top: 12px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
