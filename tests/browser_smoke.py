@@ -209,12 +209,14 @@ def check_search(page):
     search.fill(terms[0])
     expect(marks.first).to_be_visible(timeout=15000)
     assert dialog.evaluate("(el) => { const r = el.getBoundingClientRect(); return r.top === 0 && r.bottom === innerHeight && r.left === 0 && r.right === innerWidth; }")
+    assert not page.locator("#site-header").is_visible()
     scroll_y = page.evaluate("scrollY")
     dialog.locator(".search-field").hover()
     page.mouse.wheel(0, 240)
     dialog.locator(".search-close").click()
     assert not dialog.evaluate("(el) => el.open")
     assert page.evaluate("scrollY") == scroll_y
+    expect(page.locator("#site-header")).to_be_visible()
 
 def check_rss_links(page):
     for route, selector in (("/", '.hero-content .hero-links a[href="/rss.xml"]'),
