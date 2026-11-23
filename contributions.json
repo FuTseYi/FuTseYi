@@ -1,6 +1,20 @@
 {
-  "updated_at": "2026-11-21T03:42:39.913838+00:00",
+  "updated_at": "2026-11-23T09:01:36.844177+00:00",
   "entries": [
+    {
+      "name": "HAI-HKUST/HAI-HKUST.github.io",
+      "date": "2026-11-23T08:00:00Z",
+      "activity": "Commit",
+      "description": "香港科技大学前沿人工智能社团 / HKUST(GZ) Frontier AI Club 双语静态网站",
+      "language": "JavaScript"
+    },
+    {
+      "name": "FuTseYi/Cloudflare-D1-Visit-Counter",
+      "date": "2026-11-21T08:00:00Z",
+      "activity": "Commit",
+      "description": "A self-hosted visitor counter and SVG badge generator powered by Cloudflare Workers and D1, with a dashboard and history charts.",
+      "language": "JavaScript"
+    },
     {
       "name": "UEM-Stu/UEM-Stu-Brand",
       "date": "2026-11-13T08:00:00Z",
@@ -44,6 +58,13 @@
       "language": ""
     },
     {
+      "name": "tseyiwork/FuTseYi-Site-Source",
+      "date": "2026-11-08T08:00:00Z",
+      "activity": "Commit",
+      "description": "Source and single build pipeline for FuTseYi-Site",
+      "language": "Python"
+    },
+    {
       "name": "tseyicontact/FuTseYi-Site-Source",
       "date": "2026-11-08T08:00:00Z",
       "activity": "Commit",
@@ -76,20 +97,6 @@
       "date": "2026-11-05T15:37:08Z",
       "activity": "Pull request",
       "description": "A HKUST & HKUST(GZ) ELPA speaking practice resource with question banks, mock drills, notes, and progress tracking.",
-      "language": "JavaScript"
-    },
-    {
-      "name": "HAI-HKUST/HAI-HKUST.github.io",
-      "date": "2026-11-05T08:37:52Z",
-      "activity": "Pull request",
-      "description": "香港科技大学前沿人工智能社团 / HKUST(GZ) Frontier AI Club 双语静态网站",
-      "language": "JavaScript"
-    },
-    {
-      "name": "FuTseYi/Cloudflare-D1-Visit-Counter",
-      "date": "2026-11-02T08:00:00Z",
-      "activity": "Commit",
-      "description": "A self-hosted visitor counter and SVG badge generator powered by Cloudflare Workers and D1, with a dashboard and history charts.",
       "language": "JavaScript"
     },
     {
