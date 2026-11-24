@@ -713,10 +713,11 @@ section.section { padding: 32px 0; }
 .js .article-toc-panel,.js .web-evolution-panel,.js .expandable-panel{grid-template-rows:0fr;transition:grid-template-rows .24s ease}
 .js .article-toc-inline.is-open .article-toc-panel,.js .web-evolution.is-open .web-evolution-panel,.js [data-expandable].is-open .expandable-panel{grid-template-rows:1fr}
 .article-toc-clip{min-height:0;overflow:hidden}
-.article-toc-inline nav{display:flex;flex-direction:column;gap:0;max-height:50vh;overflow-y:auto;scrollbar-width:none;padding:8px 6px 12px}
+.article-toc-inline nav{max-height:24rem;overflow-y:auto;overscroll-behavior-y:contain;scrollbar-width:none;padding:8px 6px 12px}
 .article-toc-inline nav::-webkit-scrollbar{display:none}
-.article-toc-inline .scroll-hint{margin-bottom:8px}
-.article-toc-inline:not(.is-open) .scroll-hint{display:none}
+.scroll-fade{--fade-size:48px;--fade-top:0px;--fade-bottom:0px;mask-image:linear-gradient(to bottom,transparent,#000 var(--fade-top),#000 calc(100% - var(--fade-bottom)),transparent)}
+.scroll-fade.can-scroll-up{--fade-top:var(--fade-size)}
+.scroll-fade.can-scroll-down{--fade-bottom:var(--fade-size)}
 .article-toc-inline nav a{display:block;padding:12px 6px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .article-toc-inline nav a:last-child{border:0}
 .article-toc-inline nav .toc-level-2{padding-left:20px}
